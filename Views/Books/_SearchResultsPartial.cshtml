@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Biblio.Models.ViewModels.BookCreateViewModel>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No results.</p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var book in Model)
+        {
+            var bookJson = System.Text.Json.JsonSerializer.Serialize(book);
+            <div class="list-group-item d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-start">
+                    <img src="@book.CoverImageUrl" width="70" class="me-3" onerror="this.src='/images/no-cover.png';" />
+                    <div>
+                        <h5 class="mb-1">@book.Title</h5>
+                        <small>
+                            <strong>Author:</strong> @book.Author &nbsp;|&nbsp;
+                            <strong>Publisher:</strong> @book.Publisher &nbsp;|&nbsp;
+                            <strong>Year:</strong> @(book.PublishYear ?? 0) &nbsp;|&nbsp;
+                            <strong>Pages:</strong> @(book.Pages ?? 0)
+                        </small>
+                        <p class="mb-0">@book.Description</p>
+                        <small class="text-muted">ISBN: @book.ISBN</small>
+                    </div>
+                </div>
+
+                <div>
+                    <button class="btn btn-sm btn-primary add-book-btn"
+                            data-book='@Html.Raw(bookJson)'>
+                        Add this Item
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}

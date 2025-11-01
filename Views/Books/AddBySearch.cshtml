@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Add Book by Search";
+}
+
+<h2>Add Book by Search</h2>
+
+<div class="mb-3 input-group">
+    <input id="searchQuery" class="form-control" placeholder="Enter ISBN or Title or author..." />
+    <button id="searchBtn" class="btn btn-outline-secondary">Search</button>
+</div>
+
+<div id="searchResults"></div>
+
+<!-- Modal لاختيار Collections -->
+<div class="modal fade" id="collectionsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Collections to add the book to</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="collectionsCheckboxes">
+                    <!-- هنا هيتحمل الـcheckboxes -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmAdd" type="button" class="btn btn-success">Add Book</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Search
+        $("#searchBtn").on("click", function () {
+            const q = $("#searchQuery").val();
+            if (!q) return alert("Please enter a search term or ISBN.");
+            $.post('@Url.Action("AddBySearch", "Books")', { query: q }, function (html) {
+                $("#searchResults").html(html);
+                wireUpAddButtons();
+            }).fail(() => alert("Search failed."));
+        });
+
+        // attach click handlers to dynamic add buttons
+        function wireUpAddButtons() {
+            $(".add-book-btn").off("click").on("click", function () {
+                const bookJson = $(this).data("book");
+                openCollectionsModal(bookJson, $(this));
+            });
+        }
+
+        let selectedBook = null;
+        let currentAddButton = null;
+
+        function openCollectionsModal(bookJson, addBtn) {
+            selectedBook = bookJson;
+            currentAddButton = addBtn;
+
+            // load user's collections
+            $.get('@Url.Action("GetUserCollections", "Collections")', function (collections) {
+                let html = "";
+                if (!collections || !collections.length) {
+                    html = "<p class='text-muted'>You have no collections yet.</p>";
+                } else {
+                    collections.forEach(c => {
+                        html += `<div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="${c.id}" id="col_${c.id}">
+                                    <label class="form-check-label" for="col_${c.id}">${c.name}</label>
+                                 </div>`;
+                    });
+                }
+                $("#collectionsCheckboxes").html(html);
+                // show modal
+                var modal = new bootstrap.Modal(document.getElementById('collectionsModal'));
+                modal.show();
+            }).fail(() => alert("Failed to load collections."));
+        }
+
+        // Confirm add: يجمع الـ selected collection ids ويرسل للـ AddBookFromSearch
+        $("#confirmAdd").on("click", function () {
+            const selected = $("#collectionsCheckboxes input:checked").map(function () { return parseInt(this.value); }).get();
+            // نحط ids داخل object الكتاب
+            selectedBook.selectedCollectionIds = selected;
+
+            $.ajax({
+                url: '@Url.Action("AddBookFromSearch", "Books")',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(selectedBook),
+                success: function (res) {
+                    // Hide modal
+                    var modalEl = document.getElementById('collectionsModal');
+                    var modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+
+                    // Hide add button واظهر edit/delete buttons (أبسط: نخفي الزر الحالي)
+                    if (currentAddButton) {
+                        $(currentAddButton).hide();
+                        // ممكن تضيف أزرار edit/delete وتربطها برابط الـ Edit/Delete بتاعك
+                        const parent = $(currentAddButton).parent();
+                        parent.append(`<a class="btn btn-sm btn-warning ms-1" href="/Books/Edit/${res.bookId}">Edit</a>`);
+                        parent.append(`<a class="btn btn-sm btn-danger ms-1" href="/Books/Delete/${res.bookId}">Delete</a>`);
+                    }
+
+                    alert("Book added successfully.");
+                },
+                error: function (xhr) {
+                    if (xhr.status === 409) alert("This book already exists.");
+                    else alert("Error adding book.");
+                }
+            });
+        });
+    </script>
+}

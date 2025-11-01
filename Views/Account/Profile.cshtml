@@ -1,0 +1,38 @@
+﻿@using Biblio.Models.ViewModels
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h2 class="mb-4 text-center">User Profile</h2>
+
+        <dl class="row">
+            <dt class="col-sm-3">Full Name</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Plan Type</dt>
+            <dd class="col-sm-9">@Model.PlanType</dd>
+
+            <dt class="col-sm-3">Role(s)</dt>
+            <dd class="col-sm-9">
+                @if (Model.Roles != null && Model.Roles.Count > 0)
+                {
+                    @string.Join(", ", Model.Roles)
+                }
+                else
+                {
+                    <span class="text-muted">No role assigned</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="text-center mt-4">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+</div>
