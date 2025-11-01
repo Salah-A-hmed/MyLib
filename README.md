@@ -1,3 +1,4 @@
+# Edit
 # Biblio
 
 Biblio is a comprehensive web application for managing a personal or small library. It allows users to manage their books, collections, borrowings, and visitors. The application is built with ASP.NET Core and Entity Framework Core, and it uses a SQL Server database.
