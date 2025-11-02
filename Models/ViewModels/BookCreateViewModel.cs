@@ -19,5 +19,13 @@ namespace Biblio.Models.ViewModels
         public int? StockCount { get; set; } = 1;
         public List<int> SelectedCollectionIds { get; set; } = new List<int>();
         public List<SelectListItem> Collections { get; set; } = new List<SelectListItem>();
+        public SelectList StatusOptions { get; set; } = new SelectList(new List<string>
+        {
+            "Not Begun",
+            "In Progress",
+            "Completed",
+            "Abandoned"
+        });
+
     }
 }

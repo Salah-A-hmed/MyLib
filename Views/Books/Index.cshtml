@@ -4,6 +4,64 @@
     ViewData["Title"] = "Index";
 }
 
+@{
+    // get current values from QueryString (or from ViewData)
+    var currentSort = ViewData["CurrentSort"]?.ToString() ?? Context.Request.Query["sortOrder"].ToString();
+    if (String.IsNullOrEmpty(currentSort)) currentSort = "Title";
+
+    var currentStatus = ViewData["StatusFilter"]?.ToString() ?? Context.Request.Query["statusFilter"].ToString();
+    if (String.IsNullOrEmpty(currentStatus)) currentStatus = "All";
+
+    // helper to compute toggled sort for a field
+    Func<string, string> ToggleSort = field =>
+    {
+        if (currentSort == field) return field + "_desc";
+        if (currentSort == field + "_desc") return field;
+        // keep direction consistent: if currently desc for some field, keep desc for new
+        return currentSort.EndsWith("_desc") ? field + "_desc" : field;
+    };
+}
+
+<div class="d-flex align-items-center gap-2 mb-3">
+
+    <!-- Sort dropdown (links) -->
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Sort: @currentSort.Replace("_desc", "")
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Title"), statusFilter = currentStatus })'>Title</a></li>
+            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Author"), statusFilter = currentStatus })'>Author</a></li>
+            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Publisher"), statusFilter = currentStatus })'>Publisher</a></li>
+            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Category"), statusFilter = currentStatus })'>Category</a></li>
+            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Rating"), statusFilter = currentStatus })'>Rating</a></li>
+        </ul>
+    </div>
+
+
+    @{
+
+        var fieldName = currentSort.Replace("_desc", "");
+        var toggled = currentSort.EndsWith("_desc") ? fieldName : fieldName + "_desc";
+    }
+    <a class="btn btn-outline-secondary" href='@Url.Action("Index", new { sortOrder = toggled, statusFilter = currentStatus })' title="Toggle direction">
+        <i class="@(currentSort.EndsWith("_desc") ? "bi bi-arrow-down" : "bi bi-arrow-up")"></i>
+    </a>
+
+    <!-- Status filter select -->
+    <form method="get" asp-action="Index" class="m-0 p-0">
+        <input type="hidden" name="sortOrder" value="@currentSort" />
+        <select name="statusFilter" class="form-select d-inline-block" style="width:180px;" onchange="this.form.submit()">
+            <option value="All" selected="@(currentStatus == "All" ? "selected" : null)">All Statuses</option>
+            <option value="Not Begin" selected="@(currentStatus == "Not Begin" ? "selected" : null)">Not Begin</option>
+            <option value="In Progress" selected="@(currentStatus == "In Progress" ? "selected" : null)">In Progress</option>
+            <option value="Completed" selected="@(currentStatus == "Completed" ? "selected" : null)">Completed</option>
+            <option value="Abandon" selected="@(currentStatus == "Abandon" ? "selected" : null)">Abandon</option>
+            <option value="No Status" selected="@(currentStatus == "No Status" ? "selected" : null)">No Status</option>
+        </select>
+
+    </form>
+</div>
 <h1>Index</h1>
 
 <p>
@@ -73,7 +131,7 @@
                 @Html.DisplayFor(modelItem => item.ISBN)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CoverImageUrl)
+                    <img src="@Html.DisplayFor(modelItem => item.CoverImageUrl)" width="70" class="me-3" onerror="this.src='https://www.libib.com/img/library/missing.png';" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Category)
@@ -99,3 +157,5 @@
 }
     </tbody>
 </table>
+
+

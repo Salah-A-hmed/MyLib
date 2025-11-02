@@ -1,5 +1,4 @@
-﻿// EDIT: Enforce ownership, removed Bind attributes and auto-assign UserId in Create/Edit POST (by dev tool)
-using Biblio.Data;
+﻿using Biblio.Data;
 using Biblio.Models;
 using Biblio.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -9,8 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,13 +32,51 @@ namespace Biblio.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string statusFilter)
         {
+            // get current user
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var appDbContext = _context.Books.Include(b => b.User).Where(b => b.UserId == userId);
-            return View(await appDbContext.ToListAsync());
-        }
 
+            // normalize inputs
+            sortOrder = string.IsNullOrEmpty(sortOrder) ? "Title" : sortOrder;
+            statusFilter = string.IsNullOrEmpty(statusFilter) ? "All" : statusFilter;
+
+            // base query (only this user's books)
+            var books = _context.Books
+                .Include(b => b.User)
+                .Where(b => b.UserId == userId)
+                .AsQueryable();
+
+            // apply filter 
+            if (statusFilter != "All")
+            {
+                books = books.Where(b => b.Status == statusFilter);
+            }
+
+            // apply sorting
+            books = sortOrder switch
+            {
+                "Title_desc" => books.OrderByDescending(b => b.Title),
+                "Author_desc" => books.OrderByDescending(b => b.Author),
+                "Publisher_desc" => books.OrderByDescending(b => b.Publisher),
+                "Category_desc" => books.OrderByDescending(b => b.Category),
+                "Rating_desc" => books.OrderByDescending(b => b.Rating),
+
+                "Author" => books.OrderBy(b => b.Author),
+                "Publisher" => books.OrderBy(b => b.Publisher),
+                "Category" => books.OrderBy(b => b.Category),
+                "Rating" => books.OrderBy(b => b.Rating),
+
+                // default
+                _ => books.OrderBy(b => b.Title)
+            };
+
+            // send current state to view so links can show active selections
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["StatusFilter"] = statusFilter;
+
+            return View(await books.AsNoTracking().ToListAsync());
+        }
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {

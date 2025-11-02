@@ -12,7 +12,7 @@ else
             var bookJson = System.Text.Json.JsonSerializer.Serialize(book);
             <div class="list-group-item d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-start">
-                    <img src="@book.CoverImageUrl" width="70" class="me-3" onerror="this.src='/images/no-cover.png';" />
+                    <img src="@book.CoverImageUrl" width="70" class="me-3" onerror="this.src='https://www.libib.com/img/library/missing.png';" />
                     <div>
                         <h5 class="mb-1">@book.Title</h5>
                         <small>
