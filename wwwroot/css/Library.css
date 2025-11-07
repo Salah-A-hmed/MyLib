@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --sidebar-bg: #f8f9fa;
   --sidebar-text: #495057;
   --sidebar-hover: #e9ecef;
@@ -850,3 +850,43 @@ body {
   visibility: visible;
   transform: translateY(0);
 }
+/*
+=====================================================
+  View Switcher Styles (الصحيح)
+=====================================================
+*/
+
+/* الحالة الافتراضية (والـ Summary):
+  إخفاء كارت الـ List وكارت الـ Cover
+*/
+.book.view-summary .book-card-list,
+.book.view-summary .book-card-cover,
+.book:not(.view-list):not(.view-cover) .book-card-list,
+.book:not(.view-list):not(.view-cover) .book-card-cover {
+    display: none;
+}
+
+/*
+  عند اختيار List:
+  إخفاء كارت الـ Summary وكارت الـ Cover
+*/
+.book.view-list .book-card-summary,
+.book.view-list .book-card-cover {
+    display: none;
+}
+
+.book.view-list .book-card-list {
+    display: block;
+}
+
+/* عند اختيار Cover:
+  إخفاء كارت الـ Summary وكارت الـ List
+*/
+.book.view-cover .book-card-summary,
+.book.view-cover .book-card-list {
+    display: none;
+}
+
+.book.view-cover .book-card-cover {
+    display: block;
+}}

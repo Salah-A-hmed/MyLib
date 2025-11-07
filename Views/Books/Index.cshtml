@@ -1,161 +1,202 @@
 ﻿@model IEnumerable<Biblio.Models.Book>
 
 @{
-    ViewData["Title"] = "Index";
-}
+    ViewData["Title"] = "My Library";
 
-@{
-    // get current values from QueryString (or from ViewData)
-    var currentSort = ViewData["CurrentSort"]?.ToString() ?? Context.Request.Query["sortOrder"].ToString();
-    if (String.IsNullOrEmpty(currentSort)) currentSort = "Title";
+    // (1) نفس منطق الـ Razor الخاص بك لحساب المتغيرات
+    var currentSort = ViewData["CurrentSort"]?.ToString() ?? "Title";
+    var currentStatus = ViewData["StatusFilter"]?.ToString() ?? "All";
+    var currentCollectionId = (int?)(ViewData["CurrentCollection"] ?? 0);
+    var currentSearch = ViewData["CurrentSearch"]?.ToString();
 
-    var currentStatus = ViewData["StatusFilter"]?.ToString() ?? Context.Request.Query["statusFilter"].ToString();
-    if (String.IsNullOrEmpty(currentStatus)) currentStatus = "All";
-
-    // helper to compute toggled sort for a field
     Func<string, string> ToggleSort = field =>
     {
         if (currentSort == field) return field + "_desc";
         if (currentSort == field + "_desc") return field;
-        // keep direction consistent: if currently desc for some field, keep desc for new
         return currentSort.EndsWith("_desc") ? field + "_desc" : field;
     };
+
+    var fieldName = currentSort.Replace("_desc", "");
+    var toggled = currentSort.EndsWith("_desc") ? fieldName : fieldName + "_desc";
 }
 
-<div class="d-flex align-items-center gap-2 mb-3">
-
-    <!-- Sort dropdown (links) -->
-    <div class="dropdown">
-        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            Sort: @currentSort.Replace("_desc", "")
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Title"), statusFilter = currentStatus })'>Title</a></li>
-            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Author"), statusFilter = currentStatus })'>Author</a></li>
-            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Publisher"), statusFilter = currentStatus })'>Publisher</a></li>
-            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Category"), statusFilter = currentStatus })'>Category</a></li>
-            <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Rating"), statusFilter = currentStatus })'>Rating</a></li>
-        </ul>
-    </div>
-
-
-    @{
-
-        var fieldName = currentSort.Replace("_desc", "");
-        var toggled = currentSort.EndsWith("_desc") ? fieldName : fieldName + "_desc";
-    }
-    <a class="btn btn-outline-secondary" href='@Url.Action("Index", new { sortOrder = toggled, statusFilter = currentStatus })' title="Toggle direction">
-        <i class="@(currentSort.EndsWith("_desc") ? "bi bi-arrow-down" : "bi bi-arrow-up")"></i>
-    </a>
-
-    <!-- Status filter select -->
-    <form method="get" asp-action="Index" class="m-0 p-0">
+<div class="top-header" style="padding-left: 0; padding-right: 0; border-bottom: none; background: none;">
+    <form asp-controller="Books" asp-action="Index" method="get" class="search-container">
         <input type="hidden" name="sortOrder" value="@currentSort" />
-        <select name="statusFilter" class="form-select d-inline-block" style="width:180px;" onchange="this.form.submit()">
-            <option value="All" selected="@(currentStatus == "All" ? "selected" : null)">All Statuses</option>
-            <option value="Not Begun" selected="@(currentStatus == "Not Begun" ? "selected" : null)">Not Begun</option>
-            <option value="In Progress" selected="@(currentStatus == "In Progress" ? "selected" : null)">In Progress</option>
-            <option value="Completed" selected="@(currentStatus == "Completed" ? "selected" : null)">Completed</option>
-            <option value="Abandoned" selected="@(currentStatus == "Abandoned" ? "selected" : null)">Abandoned</option>
-            <option value="No Status" selected="@(currentStatus == "No Status" ? "selected" : null)">No Status</option>
-        </select>
+        <input type="hidden" name="statusFilter" value="@currentStatus" />
+        <input type="hidden" name="collectionId" value="@currentCollectionId" />
 
+        <i class="fas fa-search search-icon"></i>
+        <input type="text"
+               class="search-input"
+               placeholder="Search Title, Author, ISBN..."
+               name="searchString"
+               value="@currentSearch">
     </form>
 </div>
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Author)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Publisher)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PublishYear)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ISBN)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CoverImageUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Review)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StockCount)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PublishYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ISBN)
-            </td>
-            <td>
-                    <img src="@Html.DisplayFor(modelItem => item.CoverImageUrl)" width="70" class="me-3" onerror="this.src='https://www.libib.com/img/library/missing.png';" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Review)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StockCount)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
+<div class="controls-section">
+    <div class="view-controls">
+        <div class="control-dropdown">
+            <div class="control-button" id="viewButton">
+                <i class="fas fa-align-left"></i>
+                <span id="viewText">Summary</span>
+            </div>
+            <div class="select-dropdown-content">
+                <div class="select-option" data-value="cover" data-icon="fas fa-th">Cover</div>
+                <div class="select-option" data-value="list" data-icon="fas fa-list">List</div>
+                <div class="select-option" data-value="summary" data-icon="fas fa-align-left">Summary</div>
+            </div>
+        </div>
+
+        <div class="control-dropdown dropdown">
+            <button class="control-button" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-sort-alpha-down"></i>
+                <span>@fieldName</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Title"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Title</a></li>
+                <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Author"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Author</a></li>
+                <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Publisher"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Publisher</a></li>
+                <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Category"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Category</a></li>
+                <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Rating"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Rating</a></li>
+            </ul>
+        </div>
+
+        <a class="btn btn-outline-secondary" href='@Url.Action("Index", new { sortOrder = toggled, statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })' title="Toggle direction">
+            <i class="@(currentSort.EndsWith("_desc") ? "bi bi-arrow-down" : "bi bi-arrow-up")"></i>
+        </a>
+    </div>
+
+    <button class="filter-button" id="filterButton">
+        <i class="fas fa-filter"></i>
+        Filters
+    </button>
+</div>
+
+<div class="filter-overlay" id="filterOverlay"></div>
+<div class="filter-sidebar" id="filterSidebar">
+    <div class="filter-header">
+        <h3 class="filter-title">Filters</h3>
+        <div>
+            <a asp-action="Index" class="filter-clear">Clear all</a>
+            <button class="filter-close" id="filterClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="filter-content">
+        <form asp-action="Index" method="get" id="filterForm">
+            <input type="hidden" name="sortOrder" value="@currentSort" />
+            <input type="hidden" name="searchString" value="@currentSearch" />
+
+            <div class="filter-section">
+                <div class="filter-section-title">Status</div>
+                <div class="status-options">
+                    <select name="statusFilter" class="form-select" onchange="this.form.submit()">
+                        <option value="All" selected="@(currentStatus == "All")">All Statuses</option>
+                        <option value="No Status" selected="@(currentStatus == "No Status")">No Status</option>
+                        <option value="Not Begun" selected="@(currentStatus == "Not Begun")">Not Begun</option>
+                        <option value="In Progress" selected="@(currentStatus == "In Progress")">In Progress</option>
+                        <option value="Completed" selected="@(currentStatus == "Completed")">Completed</option>
+                        <option value="Abandoned" selected="@(currentStatus == "Abandoned")">Abandoned</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-section-title">Collection</div>
+                <select name="collectionId"
+                        class="form-select"
+                        asp-items='(List<SelectListItem>)ViewData["CollectionList"]'
+                        onchange="this.form.submit()">
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="book flex flex-col gap-8">
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state" style="padding-top: 20px;">
+            <h2>No books found.</h2>
+            <p>Try adjusting your search or filters, or add a new item.</p>
+        </div>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="book-card-summary">
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-5 mb-8">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-shrink-0">
+                            <img src="@item.CoverImageUrl"
+                                 alt="@item.Title"
+                                 class="w-32 h-48 object-cover rounded shadow-md"
+                                 onerror="this.src='https://www.libib.com/img/library/missing.png'" />
+                        </div>
+
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">@item.Title</h3>
+                                    <p class="text-base md:text-lg text-gray-600 text-left">@item.Author</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3 text-sm text-gray-600 mb-3 text-left">
+                                <span class="font-semibold text-black">@item.PublishYear</span>
+                                <span>@item.Pages pages</span>
+                                <span>(@item.Publisher)</span>
+                            </div>
+                            <div class="text-sm text-gray-700 mb-3 text-left">
+                                <span class="font-semibold text-black">ISBN:</span> @item.ISBN
+                            </div>
+                            <div class="text-sm text-gray-700 mb-4 text-left">
+                                <span class="font-semibold text-black">Status:</span> @item.Status
+                            </div>
+                            <div class="border-t border-gray-200 pt-4 text-left">
+                                <p class="text-xs text-gray-700 leading-relaxed text-left">@item.Description</p>
+                            </div>
+                            <div class="mt-3 text-left">
+                                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-outline-secondary">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card-list">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">@item.Title</h3>
+                        <p class="text-sm text-gray-600 text-left">@item.Author</p>
+                    </div>
+                    <div class="text-sm text-gray-700 mt-2 sm:mt-0 text-left ">
+                        <span class="block"><span class="font-semibold text-black">ISBN:</span> @item.ISBN</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-card-cover">
+                <div class="flex flex-col items-center text-center bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4">
+                    <img src="@item.CoverImageUrl"
+                         alt="@item.Title"
+                         class="w-36 h-52 object-cover rounded shadow-md mb-3"
+                         onerror="this.src='https://via.placeholder.com/144x208/e5e7eb/6b7280?text=No+Image'">
+
+                    <h3 class="text-sm font-semibold text-gray-900 mb-1 w-full truncate">@item.Title</h3>
+                    <p class="text-xs text-gray-600">@item.Author</p>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
 }
-    </tbody>
-</table>
-
-

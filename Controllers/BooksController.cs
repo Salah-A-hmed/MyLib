@@ -1,6 +1,7 @@
 ﻿using Biblio.Data;
 using Biblio.Models;
 using Biblio.Models.ViewModels;
+using Biblio.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,58 +25,60 @@ namespace Biblio.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IHttpClientFactory _httpClientFactory;
-
-        public BooksController(AppDbContext context, IHttpClientFactory httpClientFactory)
+        private readonly IBookFilterService _bookFilterService; // <-- إضافة الـ Service
+        public BooksController(AppDbContext context, IHttpClientFactory httpClientFactory, IBookFilterService bookFilterService)
         {
             _context = context;
             _httpClientFactory = httpClientFactory;
+            _bookFilterService = bookFilterService;
         }
 
         // GET: Books
-        public async Task<IActionResult> Index(string sortOrder, string statusFilter)
+        public async Task<IActionResult> Index(string sortOrder, string statusFilter, string searchString, int? collectionId)
         {
             // get current user
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // normalize inputs
-            sortOrder = string.IsNullOrEmpty(sortOrder) ? "Title" : sortOrder;
-            statusFilter = string.IsNullOrEmpty(statusFilter) ? "All" : statusFilter;
+            // ----------------------------------------------------
+            // قم بتعيين قيم افتراضية إذا كانت الباراميترات null (عند أول تحميل)
+            // ----------------------------------------------------
+            string effectiveSortOrder = sortOrder ?? "Title";
+            string effectiveStatusFilter = statusFilter ?? "All";
+            int? effectiveCollectionId = collectionId ?? 0; //  يمثل "الكل" 0
 
-            // base query (only this user's books)
-            var books = _context.Books
-                .Include(b => b.User)
-                .Where(b => b.UserId == userId)
-                .AsQueryable();
-
-            // apply filter 
-            if (statusFilter != "All")
+            // ----------------------------------------------------
+            // الخطوة 1: تجهيز كل الـ ViewData (الفلاتر الحالية)
+            // ----------------------------------------------------
+            ViewData["CurrentSort"] = sortOrder ?? "Title";
+            ViewData["StatusFilter"] = statusFilter ?? "All";
+            ViewData["CurrentSearch"] = searchString;
+            ViewData["CurrentCollection"] = collectionId;
+            
+            // ----------------------------------------------------
+            // الخطوة 2: تجهيز قائمة الـ Collections للـ Dropdown
+            // (ده الكود اللي سألت عليه، ومكانه هنا صحيح)
+            // ----------------------------------------------------
+            var collections = _context.Collections
+                                      .Where(c => c.UserId == userId)
+                                      .Select(c => new SelectListItem { Value = c.ID.ToString(), Text = c.Name }).ToList();
+            collections.Insert(0, new SelectListItem { Value = "0", Text = "All Collections" });
+            var selectedCollection = collections.FirstOrDefault(c => c.Value == effectiveCollectionId.ToString());
+            if (selectedCollection != null)
             {
-                books = books.Where(b => b.Status == statusFilter);
+                selectedCollection.Selected = true;
             }
-
-            // apply sorting
-            books = sortOrder switch
-            {
-                "Title_desc" => books.OrderByDescending(b => b.Title),
-                "Author_desc" => books.OrderByDescending(b => b.Author),
-                "Publisher_desc" => books.OrderByDescending(b => b.Publisher),
-                "Category_desc" => books.OrderByDescending(b => b.Category),
-                "Rating_desc" => books.OrderByDescending(b => b.Rating),
-
-                "Author" => books.OrderBy(b => b.Author),
-                "Publisher" => books.OrderBy(b => b.Publisher),
-                "Category" => books.OrderBy(b => b.Category),
-                "Rating" => books.OrderBy(b => b.Rating),
-
-                // default
-                _ => books.OrderBy(b => b.Title)
-            };
-
-            // send current state to view so links can show active selections
-            ViewData["CurrentSort"] = sortOrder;
-            ViewData["StatusFilter"] = statusFilter;
-
-            return View(await books.AsNoTracking().ToListAsync());
+            ViewData["CollectionList"] = collections;
+           
+            // ------------------------------------------------------
+            // الخطوة 3: استدعاء الـ Service لبناء الـ Query الرئيسية
+            // ------------------------------------------------------
+            var booksQuery = _bookFilterService.GetFilteredBooks(userId, sortOrder, statusFilter, searchString, collectionId);
+            
+            // ----------------------------------------------------
+            // الخطوة 4: تنفيذ الـ Query وإرسال النتائج للـ View
+            // ----------------------------------------------------            
+            var books = await booksQuery.AsNoTracking().ToListAsync();
+            return View(books);
         }
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)

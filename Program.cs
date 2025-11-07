@@ -1,5 +1,6 @@
 using Biblio.Data;
 using Biblio.Models;
+using Biblio.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -32,6 +33,7 @@ namespace Biblio
             });
 
             builder.Services.AddHttpClient();
+            builder.Services.AddScoped<IBookFilterService, BookFilterService>();
 
             var app = builder.Build();
 
