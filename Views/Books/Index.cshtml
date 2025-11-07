@@ -53,10 +53,10 @@
         <input type="hidden" name="sortOrder" value="@currentSort" />
         <select name="statusFilter" class="form-select d-inline-block" style="width:180px;" onchange="this.form.submit()">
             <option value="All" selected="@(currentStatus == "All" ? "selected" : null)">All Statuses</option>
-            <option value="Not Begin" selected="@(currentStatus == "Not Begin" ? "selected" : null)">Not Begin</option>
+            <option value="Not Begun" selected="@(currentStatus == "Not Begun" ? "selected" : null)">Not Begun</option>
             <option value="In Progress" selected="@(currentStatus == "In Progress" ? "selected" : null)">In Progress</option>
             <option value="Completed" selected="@(currentStatus == "Completed" ? "selected" : null)">Completed</option>
-            <option value="Abandon" selected="@(currentStatus == "Abandon" ? "selected" : null)">Abandon</option>
+            <option value="Abandoned" selected="@(currentStatus == "Abandoned" ? "selected" : null)">Abandoned</option>
             <option value="No Status" selected="@(currentStatus == "No Status" ? "selected" : null)">No Status</option>
         </select>
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Text.Json.Serialization;
 
 namespace Biblio.Models.ViewModels
 {
@@ -20,9 +21,10 @@ namespace Biblio.Models.ViewModels
         public int? StockCount { get; set; } = 1;
         public List<int> SelectedCollectionIds { get; set; } = new List<int>();
         public List<SelectListItem> Collections { get; set; } = new List<SelectListItem>();
-
+        [JsonIgnore]
         public SelectList StatusOptions { get; set; } = new SelectList(new List<string>
         {
+            "No Status",
             "Not Begun",
             "In Progress",
             "Completed",

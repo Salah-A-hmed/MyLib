@@ -4,25 +4,48 @@
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 
-<ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-        </form>
-    </li>
+    <div class="user-account">
+        <div class="user-info" id="userInfo" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="user-details">
+                <p class="user-name">@UserManager.GetUserName(User)</p>
+                <p class="account-menu-text">Account Menu</p>
+            </div>
+            <img src="../img/userlogo.jpg" alt="User Avatar" class="user-avatar" />
+        </div>
+
+        <div class="user-dropdown dropdown-menu dropdown-menu-end" id="userDropdown">
+            <div class="dropdown-header">
+                <p class="dropdown-user-name">@UserManager.GetUserName(User)</p>
+                <p class="dropdown-user-email">@UserManager.GetUserAsync(User).Result.Email</p>
+                <p class="dropdown-plan">Basic</p>
+            </div>
+            <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Profile">
+                Profile
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                Account Settings
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a href="#" class="dropdown-item">
+                Go Pro!
+                <span class="upgrade-tag">Upgrade Now</span>
+            </a>
+        </div>
+    </div>
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
+    <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    </ul>
 }
-</ul>
+
+
