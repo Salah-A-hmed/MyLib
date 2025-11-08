@@ -134,10 +134,19 @@
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-5 mb-8">
                     <div class="flex flex-col md:flex-row gap-6">
                         <div class="flex-shrink-0">
-                            <img src="@item.CoverImageUrl"
-                                 alt="@item.Title"
-                                 class="w-32 h-48 object-cover rounded shadow-md"
-                                 onerror="this.src='/img/missing.png'" />
+                            @if (item.CoverImageUrl == null)
+                            {
+                                <img src="~/img/missing.png"
+                                     alt="@item.Title"
+                                     class="w-32 h-48 object-cover rounded shadow-md">
+                            }
+                            else
+                            {
+                                <img src="@item.CoverImageUrl"
+                                     alt="@item.Title"
+                                     class="w-32 h-48 object-cover rounded shadow-md"
+                                     onerror="this.onerror=null; this.src='@Url.Content("~/img/missing.png")';" />
+                            }
                         </div>
 
                         <div class="flex-grow">
@@ -185,11 +194,19 @@
 
             <div class="book-card-cover">
                 <div class="flex flex-col items-center text-center bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 p-4">
-                    <img src="@item.CoverImageUrl"
-                         alt="@item.Title"
-                         class="w-36 h-52 object-cover rounded shadow-md mb-3"
-                         onerror="this.src='/img/missing.png'" />
-
+                    @if (item.CoverImageUrl == null)
+                    {
+                        <img src="~/img/missing.png"
+                             alt="@item.Title"
+                             class="w-36 h-52 object-cover rounded shadow-md mb-3">
+                    }
+                    else
+                    {
+                        <img src="@item.CoverImageUrl"
+                             alt="@item.Title"
+                             class="w-36 h-52 object-cover rounded shadow-md mb-3"
+                             onerror="this.onerror=null; this.src='@Url.Content("~/img/missing.png")';" />
+                    }
                     <h3 class="text-sm font-semibold text-gray-900 mb-1 w-full truncate">@item.Title</h3>
                     <p class="text-xs text-gray-600">@item.Author</p>
                 </div>
