@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let activePageData = null; // (القيمة الافتراضية هي "لا شيء")
 
         // (أ) فحص الحالات الخاصة أولاً (حسب الـ Action)
-        if (path.includes("/books/addbysearch") || path.includes("/books/create")) {
+        if (path.includes("/books/addbook")) {
             activePageData = "add-items";
         }
 

@@ -1,0 +1,41 @@
+﻿@* ده المحتوى اللي كان موجود في AddBySearch.cshtml
+  مع تطبيق الستايل الجديد على مربع البحث والـ Modal
+*@
+
+<div class="row">
+    <div class="col-md-8">
+        <label class="form-label" for="searchQuery">Search by ISBN, Title, or Author</label>
+        <div class="input-group mb-3">
+            <input id="searchQuery" class="form-control w-75 mt-4 mb-2 search-input" placeholder="Enter search term..." />
+            <button id="searchBtn" class="btn btn-submit mt-4 mb-2">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+        <small class="form-text text-muted">Searching by ISBN is the fastest way to get an exact match.</small>
+    </div>
+</div>
+
+
+<div id="searchResults" class="mt-4">
+    @* نتايج البحث هتظهر هنا *@
+</div>
+
+<div class="modal fade" id="collectionsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Select Collections</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="collectionsCheckboxes">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary mt-4 mb-2 h-25" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmAdd" type="button" class="btn btn-submit mt-4 mb-2 h-25 p-2">Add Book</button>
+            </div>
+        </div>
+    </div>
+</div>
+

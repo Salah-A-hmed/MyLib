@@ -100,11 +100,37 @@ namespace Biblio.Controllers
 
             return View(book);
         }
-        // GET: Books/AddBySearch
-        public IActionResult AddBySearch()
+        
+        // -----------------------------------------------------------------
+        // الخطوة 1: تعديل الـ Controller
+        // -----------------------------------------------------------------
+
+        // (جديد) GET: Books/AddBook
+        // دي الصفحة الرئيسية الجديدة اللي فيها الـ Tabs
+        public IActionResult AddBook()
         {
-            return View();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // هنجهّز الـ ViewModel هنا عشان نمرره للـ Partial View بتاع الإضافة اليدوية
+            var viewModel = new BookCreateViewModel
+            {
+                Collections = _context.Collections
+                    .Where(c => c.UserId == userId)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.ID.ToString(),
+                        Text = c.Name
+                    }).ToList()
+            };
+            // هنرجع الـ View الجديد بتاعنا
+            return View(viewModel);
         }
+
+
+        // (تم الحذف) GET: Books/AddBySearch
+        //public IActionResult AddBySearch()
+        //{
+        //    return View();
+        //}
 
         // POST: Books/AddBySearch  -> يبحث في Google Books ويرجع PartialView بنتايج البحث
         [HttpPost]
@@ -217,22 +243,22 @@ namespace Biblio.Controllers
             return Ok(new { bookId = book.ID });
         }
 
-        // GET: Books/Create
-        public IActionResult Create()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var viewModel = new BookCreateViewModel
-            {
-                Collections = _context.Collections
-                    .Where(c => c.UserId == userId)
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.ID.ToString(),
-                        Text = c.Name
-                    }).ToList()
-            };
-            return View(viewModel);
-        }
+        //(تم الحذف) GET: Books/Create
+        //public IActionResult Create()
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var viewModel = new BookCreateViewModel
+        //    {
+        //        Collections = _context.Collections
+        //            .Where(c => c.UserId == userId)
+        //            .Select(c => new SelectListItem
+        //            {
+        //                Value = c.ID.ToString(),
+        //                Text = c.Name
+        //            }).ToList()
+        //    };
+        //    return View(viewModel);
+        //}
 
         // POST: Books/Create
         [HttpPost]
@@ -283,7 +309,7 @@ namespace Biblio.Controllers
                      Text = c.Name
                  }).ToList();
 
-            return View(model);
+            return View("AddBook",model);
         }
 
         // GET: Books/Edit/5

@@ -1,13 +1,9 @@
-﻿@model Biblio.Models.ViewModels.BookEditViewModel
+﻿@model Biblio.Models.ViewModels.BookCreateViewModel
+@using System.Security.Claims
 
-@{
-    ViewData["Title"] = "Edit";
-}
-
-
-<form asp-action="Edit">
+<form asp-action="Create">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="ID" />
+
     <div class="row">
 
         <div class="col-md-12">
@@ -118,7 +114,7 @@
 
         <div class="col-md-6">
             <div class_models="form-group mb-3">
-                <label asp-for="Collections" class="form-label">Select Collections</label>
+                <label asp-for ="Collections" class="form-label">Select Collections</label>
                 <select asp-for="SelectedCollectionIds"
                         asp-items="Model.Collections"
                         class="form-control"
@@ -130,14 +126,6 @@
 
     <div class="form-group mt-4">
         @* بنستخدم نفس كلاسات البوتستراب اللي الـ Theme بتاعك بيظبطها *@
-        <input type="submit" value="Save" class="btn btn-submit btn-lg" />
+        <input type="submit" value="Create Book" class="btn btn-submit btn-lg" />
     </div>
 </form>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

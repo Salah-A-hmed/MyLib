@@ -1,0 +1,146 @@
+﻿@model Biblio.Models.ViewModels.BookCreateViewModel
+@{
+    ViewData["Title"] = "Add Book";
+}
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+
+        <button class="nav-link active" id="nav-search-tab" data-bs-toggle="tab" data-bs-target="#nav-search" type="button" role="tab" aria-controls="nav-search" aria-selected="true">
+            <i class="fas fa-search"></i> Add by Search
+        </button>
+
+        <button class="nav-link" id="nav-manual-tab" data-bs-toggle="tab" data-bs-target="#nav-manual" type="button" role="tab" aria-controls="nav-manual" aria-selected="false">
+            <i class="fas fa-edit"></i> Add Manually
+        </button>
+
+    </div>
+</nav>
+
+<div class="tab-content p-3 border-end border-start border-bottom rounded-bottom" id="nav-tabContent">
+
+    @* التاب الأول: البحث *@
+    <div class="tab-pane fade show active" id="nav-search" role="tabpanel" aria-labelledby="nav-search-tab" tabindex="0">
+        <partial name="_AddBySearchPartial" />
+    </div>
+
+    @* التاب الثاني: الإضافة اليدوية *@
+    <div class="tab-pane fade" id="nav-manual" role="tabpanel" aria-labelledby="nav-manual-tab" tabindex="0">
+        @* هنا بنمرر الـ Model للـ Partial View ده
+      عشان يقدر يعرض قايمة الـ Collections
+    *@
+        <partial name="_AddManuallyPartial" model="Model" />
+    </div>
+
+</div>
+
+@* الـ Scripts اللي عرفناها بـ @section Scripts 
+  في ملف _AddBySearchPartial.cshtml هتظهر في مكانها الصح في آخر الصفحة
+*@
+@* الـ Scripts دي مهمة جداً عشان الـ AJAX يشتغل
+  وهي هتتضاف في مكانها الصح في الـ Layout
+*@
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            function performSearch() {
+                const q = $("#searchQuery").val();
+                if (!q) {
+                    alert("Please enter a search term or ISBN.");
+                    return;
+                }
+
+                // Show loading spinner (optional)
+                $("#searchResults").html('<div class="d-flex justify-content-center mt-5"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+
+                $.post('@Url.Action("AddBySearch", "Books")', { query: q }, function (html) {
+                    $("#searchResults").html(html);
+                    wireUpAddButtons();
+                }).fail(() => alert("Search failed. Please try again."));
+            }
+
+            // Search on button click
+            $("#searchBtn").on("click", performSearch);
+
+            // Search on Enter key press
+            $("#searchQuery").on("keypress", function (e) {
+                if (e.which === 13) { // 13 is the Enter key
+                    e.preventDefault(); // Prevent form submission
+                    performSearch();
+                }
+            });
+
+            // attach click handlers to dynamic add buttons
+            function wireUpAddButtons() {
+                $(".add-book-btn").off("click").on("click", function () {
+                    const bookJson = $(this).data("book");
+                    openCollectionsModal(bookJson, $(this));
+                });
+            }
+
+            let selectedBook = null;
+            let currentAddButton = null;
+            function openCollectionsModal(bookJson, addBtn) {
+                selectedBook = bookJson;
+                currentAddButton = addBtn;
+
+                // load user's collections
+                $.get('@Url.Action("GetUserCollections", "Collections")', function (collections) {
+                    let html = "";
+                    if (!collections || !collections.length) {
+                        html = "<p class='text-muted'>You have no collections yet. <a href='@Url.Action("Create", "Collections")'>Create one?</a></p>";
+                    } else {
+                        collections.forEach(c => {
+                            html += `<div class="form-check fs-5">
+                                        <input class="form-check-input" type="checkbox" value="${c.id}" id="col_${c.id}">
+                                        <label class="form-check-label" for="col_${c.id}">${c.name}</label>
+                                     </div>`;
+                        });
+                    }
+                    $("#collectionsCheckboxes").html(html);
+                    // show modal
+                    var modal = new bootstrap.Modal(document.getElementById('collectionsModal'));
+                    modal.show();
+                }).fail(() => alert("Failed to load collections."));
+            }
+
+            // Confirm add: يجمع الـ selected collection ids ويرسل للـ AddBookFromSearch
+            $("#confirmAdd").on("click", function () {
+                const selected = $("#collectionsCheckboxes input:checked").map(function () { return parseInt(this.value); }).get();
+                // نحط ids داخل object الكتاب
+                selectedBook.selectedCollectionIds = selected;
+
+                $.ajax({
+                    url: '@Url.Action("AddBookFromSearch", "Books")',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(selectedBook),
+                    success: function (res) {
+                        // Hide modal
+                        var modalEl = document.getElementById('collectionsModal');
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        modal.hide();
+
+                        // نغيّر شكل الزرار ونخليه Edit/Delete
+                        if (currentAddButton) {
+                            const parent = $(currentAddButton).parent();
+                            $(currentAddButton).remove(); // نشيل زرار "Add"
+
+                            // نضيف الأزرار الجديدة
+                            parent.append(`<a class="btn btn-sm btn-outline-success disabled" href="#">Added</a>`);
+                            parent.append(`<a class="btn btn-sm btn-outline-warning ms-1" href="/Books/Edit/${res.bookId}">Edit</a>`);
+                        }
+                        // ممكن نضيف (Toast) هنا بدل الـ alert
+                        // alert("Book added successfully.");
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 409) alert("This book already exists in your library.");
+                        else alert("Error adding book.");
+                    }
+                });
+            });
+
+        }); // End of document ready
+    </script>
+}

@@ -20,17 +20,6 @@
                 <p class="dropdown-user-name">@UserManager.GetUserName(User)</p>
                 <p class="dropdown-user-email">@UserManager.GetUserAsync(User).Result.Email</p>
                 <p class="dropdown-plan">@UserManager.GetUserAsync(User).Result.PlanType</p>
-                <p
-                    class="dropdown-role">
-                    @if (UserManager.GetRolesAsync(UserManager.GetUserAsync(User).Result).Result.Count > 0)
-                    {
-                        @string.Join(", ", UserManager.GetRolesAsync(UserManager.GetUserAsync(User).Result).Result)
-                    }
-                    else
-                    {
-						<span class="text-muted">No role assigned</span>
-                    }
-				</p>
             </div>
             <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Profile">
 				<i class="fas fa-user-circle"></i>
