@@ -4,28 +4,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // -----------------------------------------------------------------
-    // (1) كود الـ User Dropdown (كما هو)
-    // -----------------------------------------------------------------
-    const userInfo = document.getElementById('userInfo');
-    const userDropdown = document.getElementById('userDropdown');
-
-    if (userInfo && userDropdown) {
-        userInfo.addEventListener('click', function (e) {
-            e.stopPropagation();
-            var myDropdown = new bootstrap.Dropdown(userInfo);
-            myDropdown.toggle();
-        });
-
-        document.addEventListener('click', function (e) {
-            if (userDropdown.classList.contains('show') && !userInfo.contains(e.target)) {
-                var myDropdown = bootstrap.Dropdown.getInstance(userInfo);
-                if (myDropdown) myDropdown.hide();
-            }
-        });
-    }
-
-    // -----------------------------------------------------------------
-    // (2) كود تحديد الصفحة النشطة (النسخة المعدلة)
+    //  كود تحديد الصفحة النشطة (النسخة المعدلة)
     // -----------------------------------------------------------------
     try {
         const path = window.location.pathname.toLowerCase();
@@ -36,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let activePageData = null; // (القيمة الافتراضية هي "لا شيء")
 
         // (أ) فحص الحالات الخاصة أولاً (حسب الـ Action)
-        if (path.includes("/books/addbysearch" || path.includes("/books/create"))) {
+        if (path.includes("/books/addbysearch") || path.includes("/books/create")) {
             activePageData = "add-items";
         }
 

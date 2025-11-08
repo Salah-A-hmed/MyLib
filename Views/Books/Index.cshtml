@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Biblio.Models.Book>
 
 @{
-    ViewData["Title"] = "My Library";
+    ViewData["Title"] = "Library";
 
     // (1) نفس منطق الـ Razor الخاص بك لحساب المتغيرات
     var currentSort = ViewData["CurrentSort"]?.ToString() ?? "Title";
@@ -137,7 +137,7 @@
                             <img src="@item.CoverImageUrl"
                                  alt="@item.Title"
                                  class="w-32 h-48 object-cover rounded shadow-md"
-                                 onerror="this.src='https://www.libib.com/img/library/missing.png'" />
+                                 onerror="this.src='/img/missing.png'" />
                         </div>
 
                         <div class="flex-grow">
@@ -188,7 +188,7 @@
                     <img src="@item.CoverImageUrl"
                          alt="@item.Title"
                          class="w-36 h-52 object-cover rounded shadow-md mb-3"
-                         onerror="this.src='https://via.placeholder.com/144x208/e5e7eb/6b7280?text=No+Image'">
+                         onerror="this.src='/img/missing.png'" />
 
                     <h3 class="text-sm font-semibold text-gray-900 mb-1 w-full truncate">@item.Title</h3>
                     <p class="text-xs text-gray-600">@item.Author</p>
