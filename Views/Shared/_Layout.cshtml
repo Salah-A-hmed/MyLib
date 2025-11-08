@@ -19,16 +19,18 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo-container">
-                <div class="logo">
-                    <img src="~/img/logo.png" alt="Biblio Logo" class="logo">
-                </div>
-                <h1 class="brand-name">Biblio</h1>
+                <a asp-controller="Home" asp-action="Index" class="nav-link">
+                    <div class="logo">
+                        <img src="~/img/logo.png" alt="Biblio Logo" class="logo">
+                    </div>
+                    <h1 class="brand-name">Biblio</h1>
+                </a>
             </div>
         </div>
 
         <nav class="sidebar-nav">
             <div class="nav-item">
-                <a asp-controller="Home" asp-action="Index" class="nav-link" data-page="library">
+                <a asp-controller="Books" asp-action="Index" class="nav-link" data-page="library">
                     <i class="nav-icon fas fa-book-open"></i>
                     <span class="nav-text">Library</span>
                 </a>
@@ -36,11 +38,11 @@
             <div class="nav-item">
                 <a asp-controller="Books" asp-action="AddBySearch" class="nav-link" data-page="add-items">
                     <i class="nav-icon fas fa-plus-circle"></i>
-                    <span class="nav-text">Add Items</span>
+                    <span class="nav-text">Add Books</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a asp-controller="Collections" asp-action="Index" class="nav-link" data-page="add-collection">
+                <a asp-controller="Collections" asp-action="Create" class="nav-link" data-page="add-collection">
                     <i class="nav-icon fas fa-folder-plus"></i>
                     <span class="nav-text">Collections</span>
                 </a>
