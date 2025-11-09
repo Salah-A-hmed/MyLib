@@ -1,0 +1,62 @@
+﻿@* ملف جديد: Views/Books/_BookDetailsContent.cshtml *@
+@* ده مش مودال، ده مجرد HTML عادي بيمثل شكل صفحة التفاصيل *@
+
+<div>
+    <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+        <button type="button" id="backToLibraryBtn" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Library
+        </button>
+        <div class="modal-actions">
+            <a href="#" id="modalEditButton" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+
+            @* زرار الحذف بقى بيشاور على الـ ID بتاع مودال الحذف بتاعك *@
+            <button type="button" id="modalDeleteButton" class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#DeleteConfirmationModal"
+                    data-delete-url=""
+                    data-entity-name="">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 col-lg-3 text-center text-md-start">
+            <img id="modalBookImage" src="" class="img-fluid rounded shadow-sm mb-3" alt="Book Cover" style="max-width: 250px; object-fit: contain;">
+        </div>
+        <div class="col-md-8 col-lg-9">
+
+            @* ضفنا الـ Badge هنا عشان يبقى زي صورة libib *@
+            <span id="modalBookStatusBadge" class="badge rounded-pill fs-6 mb-2"></span>
+
+            <h2 id="modalBookTitle"></h2>
+            <p id="modalBookAuthor"></p>
+
+            <div class="border-top pt-3 mt-3">
+                <h5 id="descriptionHeader">Description</h5>
+                <p id="modalBookDescription"></p>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Details</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>ISBN:</strong> <span id="modalBookISBN"></span></li>
+                        <li><strong>Publisher:</strong> <span id="modalBookPublisher"></span></li>
+                        <li><strong>Year:</strong> <span id="modalBookYear"></span></li>
+                        <li><strong>Pages:</strong> <span id="modalBookPages"></span></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>My Info</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Rating:</strong> <span id="modalBookRating"></span></li>
+                        <li><strong>Review:</strong> <span id="modalBookReview"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

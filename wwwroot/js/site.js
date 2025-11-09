@@ -1,85 +1,156 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
 
     // -----------------------------------------------------------------
-    //  كود تحديد الصفحة النشطة (النسخة المعدلة)
+    //  (1) كود تحديد الصفحة النشطة (الخاص بك)
     // -----------------------------------------------------------------
     try {
         const path = window.location.pathname.toLowerCase();
-
         const navLinks = document.querySelectorAll(".nav-link[data-page]");
         navLinks.forEach((link) => link.classList.remove("active"));
+        let activePageData = null; 
 
-        let activePageData = null; // (القيمة الافتراضية هي "لا شيء")
-
-        // (أ) فحص الحالات الخاصة أولاً (حسب الـ Action)
         if (path.includes("/books/addbook")) {
             activePageData = "add-items";
         }
-
-        // (ب) إذا لم تكن حالة خاصة، افحص الـ Controller
         else if (path.startsWith("/collections")) {
             activePageData = "add-collection";
         }
         else if (path.startsWith("/borrowings")) {
             activePageData = "borrowings";
         }
-
-        // (ج) حالة الـ Library (الكتب)
         else if (path.startsWith("/books")) {
             activePageData = "library";
         }
-
-        // (د) حالة الصفحة الرئيسية (Home) أو الجذر (/)
-        // (هنا تم التعديل: لا تقم بتعيين أي قيمة، اتركها null)
         else if (path.startsWith("/home") || path === "/") {
-            // لا تفعل شيئاً
+            // No action
         }
 
-        // (هـ) تفعيل اللينك الصحيح (فقط إذا وجدنا تطابق)
         if (activePageData) {
             const activeLink = document.querySelector(`.nav-link[data-page="${activePageData}"]`);
             if (activeLink) {
                 activeLink.classList.add("active");
             }
         }
-
-        // (و) تم حذف "else"
-        // إذا لم نجد تطابقاً (بما في ذلك Home)، لن يتم تفعيل أي لينك
-
     } catch (e) {
         console.error("Error setting active nav link:", e);
     }
 
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    // --- كود الـ Modal الموحد للحذف ---
-    var DeleteConfirmationModal = document.getElementById('DeleteConfirmationModal');
-    if (DeleteConfirmationModal) {
-        DeleteConfirmationModal.addEventListener('show.bs.modal', function (event) {
-            // الزرار اللي داس عليه المستخدم (اللي فتح الـ modal)
+    
+    // -----------------------------------------------------------------
+    //  (2) كود الـ Modal الموحد للحذف (الخاص بك)
+    // -----------------------------------------------------------------
+    var confirmationModalEl = document.getElementById('DeleteConfirmationModal'); // (بنستخدم الـ ID الصحيح)
+    if (confirmationModalEl) {
+        confirmationModalEl.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
-
-            // استخراج المعلومات من الزرار
             var deleteUrl = button.getAttribute('data-delete-url');
             var entityName = button.getAttribute('data-entity-name');
-
-            // تحديث رسالة التأكيد
-            var modalMessage = DeleteConfirmationModal.querySelector('#DeleteConfirmationModalMessage');
+            
+            var modalMessage = confirmationModalEl.querySelector('#DeleteConfirmationModalMessage');
             if (entityName) {
-                modalMessage.textContent = 'Are you sure you want to delete "' + entityName + '" ? This cannot be reversed.';
+                modalMessage.textContent = 'Are you sure you want to delete "' + entityName + '"? This action cannot be undone.';
             } else {
-                modalMessage.textContent = 'Are you sure you want to delete This ? It cannot be reversed.';
+                modalMessage.textContent = 'Are you sure you want to delete this item? This action cannot be undone.';
             }
 
-            // تحديث الـ action بتاع الفورم
-            var form = DeleteConfirmationModal.querySelector('#DeleteConfirmationModalForm');
+            var form = confirmationModalEl.querySelector('#DeleteConfirmationModalForm');
             form.setAttribute('action', deleteUrl);
         });
     }
 
-});
+    // -----------------------------------------------------------------
+    //  (3) كود "محاكاة الصفحة" الجديد
+    // -----------------------------------------------------------------
+    const libraryContent = document.getElementById('library-main-content');
+    const detailsView = document.getElementById('book-details-view');
+    const backBtn = document.getElementById('backToLibraryBtn');
+    const bookCards = document.querySelectorAll('.js-book-details-trigger');
+
+    // (أ) وظيفة إظهار التفاصيل
+    function showDetailsView(card) {
+        if (!libraryContent || !detailsView) return; // نتأكد إننا في الصفحة الصح
+
+        // 1. قراءة البيانات من الكارت
+        var title = card.getAttribute('data-title');
+        var author = card.getAttribute('data-author');
+        var description = card.getAttribute('data-description');
+        var cover = card.getAttribute('data-cover');
+        var isbn = card.getAttribute('data-isbn');
+        var publisher = card.getAttribute('data-publisher');
+        var year = card.getAttribute('data-year');
+        var pages = card.getAttribute('data-pages');
+        var status = card.getAttribute('data-status');
+        var rating = card.getAttribute('data-rating');
+        var review = card.getAttribute('data-review');
+        var editUrl = card.getAttribute('data-edit-url');
+        var deleteUrl = card.getAttribute('data-delete-url');
+        var missingImgUrl = card.getAttribute('data-missing-img-url');
+
+        // 2. ملء البيانات في حاوية التفاصيل
+        var view = detailsView; 
+        view.querySelector('#modalBookTitle').textContent = title || 'N/A';
+        view.querySelector('#modalBookAuthor').textContent = author || 'N/A';
+        view.querySelector('#modalBookDescription').textContent = description || 'No description provided.';
+        view.querySelector('#modalBookISBN').textContent = isbn || 'N/A';
+        view.querySelector('#modalBookPublisher').textContent = publisher || 'N/A';
+        view.querySelector('#modalBookYear').textContent = year || 'N/A';
+        view.querySelector('#modalBookPages').textContent = pages || 'N/A';
+        view.querySelector('#modalBookRating').textContent = rating || 'N/A';
+        view.querySelector('#modalBookReview').textContent = review || 'No review.';
+        view.querySelector('#modalBookImage').src = cover ? cover : missingImgUrl;
+        view.querySelector('#modalBookImage').alt = title;
+
+        // 3. تحديث أزرار الحذف والتعديل
+        view.querySelector('#modalEditButton').href = editUrl;
+        var deleteBtn = view.querySelector('#modalDeleteButton');
+        deleteBtn.setAttribute('data-delete-url', deleteUrl);
+        deleteBtn.setAttribute('data-entity-name', title);
+        
+        // 4. تحديث الـ Status Badge
+        var statusBadge = view.querySelector('#modalBookStatusBadge');
+        if(statusBadge) {
+            statusBadge.textContent = status;
+            statusBadge.className = "badge rounded-pill fs-6 mb-2"; // Reset classes
+
+            if (status === "Completed") {
+                statusBadge.classList.add("bg-success");
+            } else if (status === "In Progress") {
+                statusBadge.classList.add("bg-info", "text-dark");
+            } else if (status === "Not Begun") {
+                statusBadge.classList.add("bg-secondary");
+            } else {
+                statusBadge.classList.add("bg-light", "text-dark"); 
+            }
+        }
+
+        // 5. تبديل العرض
+        libraryContent.style.display = 'none';
+        detailsView.style.display = 'block';
+    }
+
+    // (ب) وظيفة إظهار المكتبة (زرار الرجوع)
+    function showLibraryView() {
+        if (!libraryContent || !detailsView) return;
+        libraryContent.style.display = 'block';
+        detailsView.style.display = 'none';
+    }
+
+    // (ج) ربط كل الكروت بوظيفة إظهار التفاصيل
+    bookCards.forEach(card => {
+        card.addEventListener('click', function () {
+            // نتأكد إن اللي داس عليه مش زرار (لو لسه في أزرار قديمة)
+            if (event.target.closest('A, BUTTON')) {
+                return;
+            }
+            showDetailsView(this);
+        });
+    });
+
+    // (د) ربط زرار الرجوع بوظيفة إظهار المكتبة
+    if (backBtn) {
+        backBtn.addEventListener('click', showLibraryView);
+    }
+    
+    // (هـ) حذف الكود القديم بتاع "الكوبري" (مبقاش مطلوب)
+
+}); // نهاية الـ DOMContentLoaded

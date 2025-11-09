@@ -80,27 +80,28 @@ namespace Biblio.Controllers
             var books = await booksQuery.AsNoTracking().ToListAsync();
             return View(books);
         }
-        // GET: Books/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // GET: Books/Details/5 (Replaced by a partial view)
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var book = await _context.Books
-                .Include(b => b.User)
-                .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
-            if (book == null)
-            {
-                return NotFound();
-            }
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            return View(book);
-        }
-        
+        //    var book = await _context.Books
+        //        .Include(b => b.User)
+        //        .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
+        //    if (book == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(book);
+        //}
+
         // -----------------------------------------------------------------
         // الخطوة 1: تعديل الـ Controller
         // -----------------------------------------------------------------

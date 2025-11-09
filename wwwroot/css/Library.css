@@ -889,4 +889,72 @@ body {
 
 .book.view-cover .book-card-cover {
     display: block;
-}}
+}
+
+/*
+=====================================================
+  Book Details View Styles (التنسيق الجديد)
+=====================================================
+*/
+
+/* بنستهدف الـ ID بتاع الحاوية الجديدة */
+#book-details-view {
+    padding-top: 1rem; /* مسافة بسيطة من فوق */
+}
+
+/* تنسيق العنوان (زي الصورة) */
+#book-details-view #modalBookTitle {
+    font-size: 2.2rem; /* خط ضخم */
+    font-weight: 700;
+    color: #212529; /* أسود غامق */
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+/* تنسيق اسم المؤلف */
+#book-details-view #modalBookAuthor {
+    font-size: 1.15rem;
+    color: #6c757d; /* رمادي (Muted) */
+    margin-bottom: 0.5rem; /* مسافة أقل عشان الـ Badge */
+    font-weight: 400;
+}
+
+/* تنسيق العناوين الصغيرة (Details, My Info, Description) */
+#book-details-view h5 {
+    font-size: 0.85rem !important; /* تصغير الخط */
+    text-transform: uppercase; /* حروف كبيرة */
+    letter-spacing: 0.5px;
+    color: #555;
+    border-bottom: 1px solid #eee; /* خط خفيف تحتها */
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+/* تنسيق قوائم التفاصيل */
+#book-details-view ul.list-unstyled {
+    font-size: 0.9rem; /* خط أصغر */
+    color: #454545;
+    padding-left: 0; /* إلغاء الـ padding الافتراضي */
+    list-style: none; /* إلغاء النقط */
+}
+
+    #book-details-view ul.list-unstyled li {
+        margin-bottom: 6px; /* مسافات بين السطور */
+    }
+
+    #book-details-view ul.list-unstyled strong {
+        color: #888; /* لون رمادي للكـ "Key" */
+        width: 80px; /* توحيد عرض الـ Keys */
+        display: inline-block;
+    }
+
+/* تنسيق الوصف (Description) */
+#book-details-view #modalBookDescription {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #333;
+    max-height: 400px; /* زيادة الارتفاع */
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-top: -10px;
+}
