@@ -460,7 +460,7 @@ body {
 
 /* Controls Section */
 .controls-section {
-  padding: 20px 30px;
+  padding: 0px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -661,7 +661,7 @@ body {
 
 /* Content Area */
 .content-area {
-  padding: 60px 30px;
+  padding: 30px 30px;
   text-align: center;
 }
 
@@ -716,7 +716,7 @@ body {
   
 
   .controls-section {
-    padding: 15px 20px;
+    padding: 0px 20px;
     flex-direction: column;
     gap: 15px;
     align-items: stretch;
@@ -751,7 +751,7 @@ body {
   }
 
   .content-area {
-    padding: 40px 15px;
+    padding: 20px 15px;
   }
 
   .empty-state h2 {
@@ -891,70 +891,120 @@ body {
     display: block;
 }
 
+
 /*
 =====================================================
-  Book Details View Styles (التنسيق الجديد)
+  Book Details View Styles (التنسيق النهائي)
 =====================================================
 */
 
-/* بنستهدف الـ ID بتاع الحاوية الجديدة */
+/* (1) الحل الأول: فرض المحاذاة لليسار */
 #book-details-view {
-    padding-top: 1rem; /* مسافة بسيطة من فوق */
+    text-align: left !important;
 }
 
-/* تنسيق العنوان (زي الصورة) */
+/* (2) تنسيق الخطوط الرئيسية */
 #book-details-view #modalBookTitle {
-    font-size: 2.2rem; /* خط ضخم */
+    font-size: 2.2rem;
     font-weight: 700;
-    color: #212529; /* أسود غامق */
+    color: #212529;
     margin-bottom: 0.25rem;
     line-height: 1.2;
 }
 
-/* تنسيق اسم المؤلف */
 #book-details-view #modalBookAuthor {
     font-size: 1.15rem;
-    color: #6c757d; /* رمادي (Muted) */
-    margin-bottom: 0.5rem; /* مسافة أقل عشان الـ Badge */
+    color: #6c757d;
+    margin-bottom: 0.5rem;
     font-weight: 400;
 }
 
-/* تنسيق العناوين الصغيرة (Details, My Info, Description) */
+/* (3) تنسيق العناوين الفرعية (الخط اللي تحتها) */
 #book-details-view h5 {
-    font-size: 0.85rem !important; /* تصغير الخط */
-    text-transform: uppercase; /* حروف كبيرة */
+    font-size: 0.85rem !important;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #555;
-    border-bottom: 1px solid #eee; /* خط خفيف تحتها */
+    color: var(--sidebar-text); /* لون الثيم */
+    border-bottom: 2px solid var(--active-bg); /* خط بلون الثيم */
     padding-bottom: 8px;
     margin-bottom: 12px;
+    display: inline-block; /* عشان الخط يقف مع آخر كلمة */
 }
 
-/* تنسيق قوائم التفاصيل */
+/* (4) تنسيق قوائم التفاصيل (شمال ويمين) */
 #book-details-view ul.list-unstyled {
-    font-size: 0.9rem; /* خط أصغر */
+    font-size: 0.85rem;
     color: #454545;
-    padding-left: 0; /* إلغاء الـ padding الافتراضي */
-    list-style: none; /* إلغاء النقط */
+    padding-left: 0;
+    list-style: none;
 }
 
-    #book-details-view ul.list-unstyled li {
-        margin-bottom: 6px; /* مسافات بين السطور */
-    }
+#book-details-view ul.list-unstyled li {
+    margin-bottom: 8px;
+}
 
-    #book-details-view ul.list-unstyled strong {
-        color: #888; /* لون رمادي للكـ "Key" */
-        width: 80px; /* توحيد عرض الـ Keys */
-        display: inline-block;
-    }
+#book-details-view ul.list-unstyled strong {
+    color: #888;
+    width: 80px; /* توحيد عرض الـ Keys */
+    display: inline-block;
+    font-weight: 600;
+}
 
-/* تنسيق الوصف (Description) */
+/* (5) تنسيق حاوية الوصف (Description) */
+#book-details-view .details-description-box {
+    background-color: #f8f9fa; /* لون رمادي خفيف */
+    border-left: 4px solid var(--active-bg); /* خط لبني على الشمال */
+    padding: 1.25rem;
+    border-radius: 0 8px 8px 0;
+}
+
 #book-details-view #modalBookDescription {
     font-size: 0.95rem;
     line-height: 1.6;
     color: #333;
-    max-height: 400px; /* زيادة الارتفاع */
+    max-height: 250px; /* ارتفاع للوصف */
     overflow-y: auto;
-    padding-right: 10px;
-    margin-top: -10px;
+    padding-right: 10px; 
+}
+
+/* (6) تنسيق حاوية الـ Review (الجديدة) */
+#book-details-view .details-review-box {
+    background-color: #fdfdfd;
+    border: 1px dashed #e0e0e0; /* بوردر منقط */
+    padding: 1rem;
+    border-radius: 8px;
+    max-height: 150px; /* ارتفاع أصغر */
+    overflow-y: auto;
+}
+
+#book-details-view #modalBookReview {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #555;
+    font-style: italic; /* ستايل مائل للـ review */
+}
+
+/* (7) تنسيق النجوم */
+#book-details-view .rating-stars {
+    color: #ffc107; /* لون ذهبي */
+    font-size: 1rem;
+    margin-right: 5px;
+}
+#book-details-view .rating-stars .fa-regular {
+    color: #ccc; /* لون النجمة الفاضية */
+}
+
+/* (8) تنسيق الـ Status Badge (لو مكنتش ضفته قبل كده) */
+#modalBookStatusBadge.bg-success {
+    background-color: #198754 !important;
+}
+#modalBookStatusBadge.bg-info {
+    background-color: #0dcaf0 !important;
+}
+#modalBookStatusBadge.bg-secondary {
+    background-color: #6c757d !important;
+}
+#modalBookStatusBadge.bg-light {
+    background-color: #f8f9fa !important;
+    border: 1px solid #ddd;
 }

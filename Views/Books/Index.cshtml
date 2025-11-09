@@ -73,7 +73,44 @@
 
     <div class="filter-overlay" id="filterOverlay"></div>
     <div class="filter-sidebar" id="filterSidebar">
-        @* ... (كود الفلتر الجانبي زي ما هو) ... *@
+        <div class="filter-header">
+            <h3 class="filter-title">Filters</h3>
+            <div>
+                <a asp-action="Index" class="filter-clear">Clear all</a>
+                <button class="filter-close" id="filterClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="filter-content">
+            <form asp-action="Index" method="get" id="filterForm">
+            <input type="hidden" name="sortOrder" value="@currentSort" />
+            <input type="hidden" name="searchString" value="@currentSearch" />
+
+            <div class="filter-section">
+                <div class="filter-section-title">Status</div>
+                <div class="status-options">
+                    <select name="statusFilter" class="form-select" onchange="this.form.submit()">
+                        <option value="All" selected="@(currentStatus == "All")">All Statuses</option>
+                        <option value="No Status" selected="@(currentStatus == "No Status")">No Status</option>
+                        <option value="Not Begun" selected="@(currentStatus == "Not Begun")">Not Begun</option>
+                        <option value="In Progress" selected="@(currentStatus == "In Progress")">In Progress</option>
+                        <option value="Completed" selected="@(currentStatus == "Completed")">Completed</option>
+                        <option value="Abandoned" selected="@(currentStatus == "Abandoned")">Abandoned</option>
+                    </select>
+                </div>
+                <div class="filter-section-title">Collection</div>
+                 <div class="collection-options">
+                        <select name="collectionId"
+                                class="form-select"
+                                asp-items='(List<SelectListItem>)ViewData["CollectionList"]'
+                                onchange="this.form.submit()">
+                        </select>
+                 </div>
+             </div>
+            </form>
+
+        </div>
     </div>
 
     <div class="book flex flex-col gap-8">
@@ -97,6 +134,7 @@
                 var rating = item.Rating?.ToString() ?? "";
                 var year = item.PublishYear?.ToString() ?? "";
                 var pages = item.Pages?.ToString() ?? "";
+				var stock = item.StockCount?.ToString() ?? "";
                 var isbn = item.ISBN ?? "";
                 var status = item.Status ?? "No Status";
                 var cover = item.CoverImageUrl ?? "";
@@ -114,6 +152,7 @@
                      data-publisher="@publisher"
                      data-year="@year"
                      data-pages="@pages"
+                     data-stock="@stock"
                      data-status="@status"
                      data-rating="@rating"
                      data-review="@review"
@@ -169,6 +208,7 @@
                      data-publisher="@publisher"
                      data-year="@year"
                      data-pages="@pages"
+                     data-stock="@stock"
                      data-status="@status"
                      data-rating="@rating"
                      data-review="@review"
@@ -199,6 +239,7 @@
                      data-publisher="@publisher"
                      data-year="@year"
                      data-pages="@pages"
+                     data-stock="@stock"
                      data-status="@status"
                      data-rating="@rating"
                      data-review="@review"

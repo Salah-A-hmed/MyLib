@@ -67,8 +67,9 @@
     const bookCards = document.querySelectorAll('.js-book-details-trigger');
 
     // (أ) وظيفة إظهار التفاصيل
+    // (أ) وظيفة إظهار التفاصيل (النسخة المحدثة)
     function showDetailsView(card) {
-        if (!libraryContent || !detailsView) return; // نتأكد إننا في الصفحة الصح
+        if (!libraryContent || !detailsView) return;
 
         // 1. قراءة البيانات من الكارت
         var title = card.getAttribute('data-title');
@@ -79,15 +80,16 @@
         var publisher = card.getAttribute('data-publisher');
         var year = card.getAttribute('data-year');
         var pages = card.getAttribute('data-pages');
+        var stock = card.getAttribute('data-stock');
         var status = card.getAttribute('data-status');
-        var rating = card.getAttribute('data-rating');
+        var rating = card.getAttribute('data-rating'); // ده رقم (e.g., "4.5")
         var review = card.getAttribute('data-review');
         var editUrl = card.getAttribute('data-edit-url');
         var deleteUrl = card.getAttribute('data-delete-url');
         var missingImgUrl = card.getAttribute('data-missing-img-url');
 
         // 2. ملء البيانات في حاوية التفاصيل
-        var view = detailsView; 
+        var view = detailsView;
         view.querySelector('#modalBookTitle').textContent = title || 'N/A';
         view.querySelector('#modalBookAuthor').textContent = author || 'N/A';
         view.querySelector('#modalBookDescription').textContent = description || 'No description provided.';
@@ -95,8 +97,16 @@
         view.querySelector('#modalBookPublisher').textContent = publisher || 'N/A';
         view.querySelector('#modalBookYear').textContent = year || 'N/A';
         view.querySelector('#modalBookPages').textContent = pages || 'N/A';
-        view.querySelector('#modalBookRating').textContent = rating || 'N/A';
-        view.querySelector('#modalBookReview').textContent = review || 'No review.';
+        view.querySelector('#modalBookStock').textContent = stock || 'N/A';
+
+        // (تعديل) عرض الـ Review
+        var reviewP = view.querySelector('#modalBookReview');
+        if (review && review.trim() !== "") {
+            reviewP.textContent = review;
+        } else {
+            reviewP.textContent = 'No review yet.';
+        }
+
         view.querySelector('#modalBookImage').src = cover ? cover : missingImgUrl;
         view.querySelector('#modalBookImage').alt = title;
 
@@ -105,29 +115,51 @@
         var deleteBtn = view.querySelector('#modalDeleteButton');
         deleteBtn.setAttribute('data-delete-url', deleteUrl);
         deleteBtn.setAttribute('data-entity-name', title);
-        
+
         // 4. تحديث الـ Status Badge
         var statusBadge = view.querySelector('#modalBookStatusBadge');
-        if(statusBadge) {
+        if (statusBadge) {
             statusBadge.textContent = status;
-            statusBadge.className = "badge rounded-pill fs-6 mb-2"; // Reset classes
-
-            if (status === "Completed") {
-                statusBadge.classList.add("bg-success");
-            } else if (status === "In Progress") {
-                statusBadge.classList.add("bg-info", "text-dark");
-            } else if (status === "Not Begun") {
-                statusBadge.classList.add("bg-secondary");
-            } else {
-                statusBadge.classList.add("bg-light", "text-dark"); 
-            }
+            statusBadge.className = "badge rounded-pill fs-6 mb-2";
+            if (status === "Completed") statusBadge.classList.add("bg-success");
+            else if (status === "In Progress") statusBadge.classList.add("bg-info", "text-dark");
+            else if (status === "Not Begun") statusBadge.classList.add("bg-secondary");
+            else statusBadge.classList.add("bg-light", "text-dark");
         }
 
-        // 5. تبديل العرض
+        // 5. (جديد) لوجيك إنشاء النجوم
+        var ratingValue = parseFloat(rating) || 0; // تحويل الرقم
+        var starsContainer = view.querySelector('#modalBookRatingStars');
+        var ratingText = view.querySelector('#modalBookRating');
+
+        starsContainer.innerHTML = ""; // فضي الحاوية
+
+        if (ratingValue > 0) {
+            for (let i = 1; i <= 5; i++) {
+                if (i <= ratingValue) {
+                    // نجمة مليانة
+                    starsContainer.innerHTML += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= ratingValue) {
+                    // نص نجمة
+                    starsContainer.innerHTML += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    // نجمة فاضية
+                    starsContainer.innerHTML += '<i class="far fa-star"></i>';
+                }
+            }
+            ratingText.textContent = `(${ratingValue.toFixed(1)})`; // (4.5)
+        } else {
+            // لو مفيش تقييم
+            for (let i = 1; i <= 5; i++) {
+                starsContainer.innerHTML += '<i class="far fa-star"></i>'; // 5 نجوم فاضية
+            }
+            ratingText.textContent = "(No rating)";
+        }
+
+        // 6. تبديل العرض
         libraryContent.style.display = 'none';
         detailsView.style.display = 'block';
     }
-
     // (ب) وظيفة إظهار المكتبة (زرار الرجوع)
     function showLibraryView() {
         if (!libraryContent || !detailsView) return;
