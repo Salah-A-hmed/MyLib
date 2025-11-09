@@ -1,0 +1,69 @@
+﻿@* ملف جديد لعرض تفاصيل الكتاب في Modal *@
+<div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsModalLabel" aria-hidden="true">
+
+    @* استخدمنا modal-lg عشان ندي مساحة أكبر لعرض التفاصيل *@
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                @* الأزرار اللي طلبتها: Edit و Delete *@
+                <div class="modal-actions">
+                    <a href="#" id="modalEditButton" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <button type="button" id="modalDeleteButton" class="btn btn-outline-danger btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#confirmationModal"
+                            data-delete-url=""
+                            data-entity-name="">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+
+                @* ده زرار الإغلاق (X) اللي بييجي مع Bootstrap *@
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    @* الجزء الأيسر: الصورة *@
+                    <div class="col-md-4 text-center">
+                        <img id="modalBookImage" src="" class="img-fluid rounded shadow-sm mb-3" alt="Book Cover" style="max-height: 300px;">
+                    </div>
+
+                    @* الجزء الأيمن: التفاصيل *@
+                    <div class="col-md-8">
+                        <h2 id="modalBookTitle" class="h4 mb-1"></h2>
+                        <p id="modalBookAuthor" class="lead fs-6 text-muted"></p>
+
+                        <div class="border-top pt-2 mt-2">
+                            <h5 class="fs-6 fw-bold">Description</h5>
+                            <p id="modalBookDescription" class="text-muted" style="font-size: 0.9rem; max-height: 150px; overflow-y: auto;"></p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <h5 class="fs-6 fw-bold">Details</h5>
+                                <ul class="list-unstyled text-muted" style="font-size: 0.9rem;">
+                                    <li><strong>ISBN:</strong> <span id="modalBookISBN"></span></li>
+                                    <li><strong>Publisher:</strong> <span id="modalBookPublisher"></span></li>
+                                    <li><strong>Year:</strong> <span id="modalBookYear"></span></li>
+                                    <li><strong>Pages:</strong> <span id="modalBookPages"></span></li>
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="fs-6 fw-bold">My Info</h5>
+                                <ul class="list-unstyled text-muted" style="font-size: 0.9rem;">
+                                    <li><strong>Status:</strong> <span id="modalBookStatus"></span></li>
+                                    <li><strong>Rating:</strong> <span id="modalBookRating"></span></li>
+                                    <li><strong>Review:</strong> <span id="modalBookReview"></span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
