@@ -45,8 +45,14 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
+                <button type="button" class="btn btn-link text-danger js-delete"
+                        data-bs-toggle="modal"
+                        data-bs-target="#DeleteConfirmationModal"
+                        data-delete-url="@Url.Action("Delete", "Notifications", new { id = item.ID })"
+                        data-entity-name="Notification">
+                    Delete
+                </button>
+                </td>
         </tr>
 }
     </tbody>

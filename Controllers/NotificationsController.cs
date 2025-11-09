@@ -16,10 +16,12 @@ namespace Biblio.Controllers
     public class NotificationsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public NotificationsController(AppDbContext context)
+        public NotificationsController(AppDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Notifications
@@ -55,7 +57,11 @@ namespace Biblio.Controllers
         // GET: Notifications/Create
         public IActionResult Create()
         {
-            ViewData["VisitorID"] = new SelectList(_context.Visitors, "ID", "ID");
+            var userId = _userManager.GetUserId(User);
+            var VisitorSelectListItems = _context.Visitors
+                .Where(v => v.UserId == userId)
+                .Select(v => new SelectListItem { Value = v.ID.ToString(), Text = v.Name }).ToList();
+            ViewBag.VisitorSelectList = VisitorSelectListItems;
             return View();
         }
 
@@ -94,7 +100,10 @@ namespace Biblio.Controllers
             {
                 return NotFound();
             }
-            ViewData["VisitorID"] = new SelectList(_context.Visitors, "ID", "ID", notification.VisitorID);
+            var VisitorSelectListItems = _context.Visitors
+                .Where(v => v.UserId == userId)
+                .Select(v => new SelectListItem { Value = v.ID.ToString(), Text = v.Name, Selected = (v.ID == notification.VisitorID) }).ToList();
+            ViewBag.VisitorSelectList = VisitorSelectListItems;
             return View(notification);
         }
 
@@ -137,27 +146,27 @@ namespace Biblio.Controllers
             return View(notification);
         }
 
-        // GET: Notifications/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        // GET: Notifications/Delete/5 (Replaced by a Modal)
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var notification = await _context.Notifications
-                .Include(n => n.User)
-                .Include(n => n.Visitor)
-                .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
-            if (notification == null)
-            {
-                return NotFound();
-            }
+        //    var notification = await _context.Notifications
+        //        .Include(n => n.User)
+        //        .Include(n => n.Visitor)
+        //        .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
+        //    if (notification == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(notification);
-        }
+        //    return View(notification);
+        //}
 
         // POST: Notifications/Delete/5
         [HttpPost, ActionName("Delete")]

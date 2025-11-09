@@ -39,7 +39,13 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <button type="button" class="btn btn-link text-danger js-delete"
+                        data-bs-toggle="modal"
+                        data-bs-target="#DeleteConfirmationModal"
+                        data-delete-url="@Url.Action("Delete", "Visitors", new { id = item.ID })"
+                        data-entity-name="@item.Name">
+                    Delete
+                </button>
             </td>
         </tr>
 }

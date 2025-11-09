@@ -138,26 +138,26 @@ namespace Biblio.Controllers
             return View(collection);
         }
 
-        // GET: Collections/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        // GET: Collections/Delete/5 (Replaced by a Modal)
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var collection = await _context.Collections
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
-            if (collection == null)
-            {
-                return NotFound();
-            }
+        //    var collection = await _context.Collections
+        //        .Include(c => c.User)
+        //        .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
+        //    if (collection == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(collection);
-        }
+        //    return View(collection);
+        //}
 
         // POST: Collections/Delete/5
         [HttpPost, ActionName("Delete")]

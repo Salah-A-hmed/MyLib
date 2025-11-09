@@ -1,0 +1,24 @@
+﻿@* ملف جديد وموحد لكل عمليات الحذف *@
+<div class="modal fade" id="DeleteConfirmationModal" tabindex="-1" aria-labelledby="DeleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeleteConfirmationModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @* الرسالة دي هتتغير بالـ JavaScript *@
+                <p id="DeleteConfirmationModalMessage">Are you sure you want to delete this item?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+                @* الفورم دي الـ "action" بتاعها هيتغير بالـ JavaScript *@
+                <form id="DeleteConfirmationModalForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

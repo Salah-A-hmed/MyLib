@@ -54,3 +54,32 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    // --- كود الـ Modal الموحد للحذف ---
+    var DeleteConfirmationModal = document.getElementById('DeleteConfirmationModal');
+    if (DeleteConfirmationModal) {
+        DeleteConfirmationModal.addEventListener('show.bs.modal', function (event) {
+            // الزرار اللي داس عليه المستخدم (اللي فتح الـ modal)
+            var button = event.relatedTarget;
+
+            // استخراج المعلومات من الزرار
+            var deleteUrl = button.getAttribute('data-delete-url');
+            var entityName = button.getAttribute('data-entity-name');
+
+            // تحديث رسالة التأكيد
+            var modalMessage = DeleteConfirmationModal.querySelector('#DeleteConfirmationModalMessage');
+            if (entityName) {
+                modalMessage.textContent = 'Are you sure you want to delete "' + entityName + '" ? This cannot be reversed.';
+            } else {
+                modalMessage.textContent = 'Are you sure you want to delete This ? It cannot be reversed.';
+            }
+
+            // تحديث الـ action بتاع الفورم
+            var form = DeleteConfirmationModal.querySelector('#DeleteConfirmationModalForm');
+            form.setAttribute('action', deleteUrl);
+        });
+    }
+
+});

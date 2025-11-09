@@ -1,21 +1,17 @@
 ﻿@model Biblio.Models.Notification
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Notification";
 }
 
-<h1>Edit</h1>
-
-<h4>Notification</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <label asp-for="VisitorID" class="control-label"></label>
-                <select asp-for="VisitorID" class="form-control" asp-items="ViewBag.VisitorID"></select>
+                <label asp-for="VisitorID" class="control-label">Visitor</label>
+                <select asp-for="VisitorID" class="form-control" asp-items="ViewBag.VisitorSelectList"></select>
                 <span asp-validation-for="VisitorID" class="text-danger"></span>
             </div>
             <div class="form-group">

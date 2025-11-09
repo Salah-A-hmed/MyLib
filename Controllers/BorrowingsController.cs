@@ -229,28 +229,28 @@ namespace Biblio.Controllers
 
             return View(borrowing);
         }
-        // GET: Borrowings/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        // GET: Borrowings/Delete/5 (Replaced by a Modal)
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var borrowing = await _context.Borrowings
-                .Include(b => b.Book)
-                .Include(b => b.User)
-                .Include(b => b.Visitor)
-                .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
-            if (borrowing == null)
-            {
-                return NotFound();
-            }
+        //    var borrowing = await _context.Borrowings
+        //        .Include(b => b.Book)
+        //        .Include(b => b.User)
+        //        .Include(b => b.Visitor)
+        //        .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
+        //    if (borrowing == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(borrowing);
-        }
+        //    return View(borrowing);
+        //}
 
         // POST: Borrowings/Delete/5
         [HttpPost, ActionName("Delete")]
