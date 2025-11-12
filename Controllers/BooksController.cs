@@ -396,7 +396,7 @@ namespace Biblio.Controllers
                 await _context.SaveChangesAsync();
                 foreach (var collectionId in model.SelectedCollectionIds)
                 {
-                    book.Collections.Add(new BookCollection { CollectionID = collectionId });
+                    book.Collections.Add(new BookCollection { CollectionID = collectionId , UserId = User.FindFirstValue(ClaimTypes.NameIdentifier) });
                 }
 
                 await _context.SaveChangesAsync();
