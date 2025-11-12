@@ -134,8 +134,16 @@
     </div>
 </form>
 
+@*
+      دلوقتي اللينك ده لما يرجع "للخلف"، هيرجع للـ URL
+      اللي هو /Books/Index#book-5
+      ولما الصفحة دي تفتح، الـ JavaScript (اللي في الخطوة 2) هيشتغل
+      ويقرأ الـ "هاش" (#book-5) ويفتحلك التفاصيل أوتوماتيك.
+    *@
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Details
+    </a>
 </div>
 
 @section Scripts {

@@ -69,9 +69,10 @@
     // (أ) وظيفة إظهار التفاصيل
     // (أ) وظيفة إظهار التفاصيل (النسخة المحدثة)
     function showDetailsView(card) {
-        if (!libraryContent || !detailsView) return;
+        if (!libraryContent || !detailsView || !card) return;
 
         // 1. قراءة البيانات من الكارت
+        var bookId = card.getAttribute('data-book-id');
         var title = card.getAttribute('data-title');
         var author = card.getAttribute('data-author');
         var description = card.getAttribute('data-description');
@@ -159,19 +160,26 @@
         // 6. تبديل العرض
         libraryContent.style.display = 'none';
         detailsView.style.display = 'block';
+        // 7. (جديد) تحديث الـ URL Hash
+        // ده بيغير الـ URL في المتصفح من غير ما يعمل Reload
+        // عشان لو عمل "Back" يرجع للـ URL ده
+        window.history.pushState(null, "", "#book-" + bookId);
     }
     // (ب) وظيفة إظهار المكتبة (زرار الرجوع)
     function showLibraryView() {
         if (!libraryContent || !detailsView) return;
         libraryContent.style.display = 'block';
         detailsView.style.display = 'none';
+        // (جديد) إزالة الـ Hash من الـ URL
+        // (بنستخدم pathname عشان نرجع للـ URL الأصلي: /Books)
+        window.history.pushState(null, "", window.location.pathname);
     }
 
     // (ج) ربط كل الكروت بوظيفة إظهار التفاصيل
     bookCards.forEach(card => {
-        card.addEventListener('click', function () {
+        card.addEventListener('click', function (e) {
             // نتأكد إن اللي داس عليه مش زرار (لو لسه في أزرار قديمة)
-            if (event.target.closest('A, BUTTON')) {
+            if (e.target.closest('A, BUTTON')) {
                 return;
             }
             showDetailsView(this);
@@ -183,6 +191,24 @@
         backBtn.addEventListener('click', showLibraryView);
     }
     
-    // (هـ) حذف الكود القديم بتاع "الكوبري" (مبقاش مطلوب)
+    // -----------------------------------------------------------------
+    //  (4) (جديد) كود التشغيل عند تحميل الصفحة (لقراءة الـ Hash)
+    // -----------------------------------------------------------------
+    // الكود ده بيشوف لو الـ URL فيه "هاش" (زي #book-5) أول ما الصفحة تفتح
+    // لو لقى "هاش"، بيفتح التفاصيل بتاعة الكتاب ده علطول.
+
+    function checkHashAndShowDetails() {
+        if (window.location.hash && window.location.hash.startsWith("#book-")) {
+            const bookId = window.location.hash.substring(6); // بيشيل #book-
+            const cardToOpen = document.querySelector(`.js-book-details-trigger[data-book-id="${bookId}"]`);
+
+            if (cardToOpen) {
+                showDetailsView(cardToOpen);
+            }
+        }
+    }
+
+    // شغل الكود ده أول ما الصفحة تفتح
+    checkHashAndShowDetails();
 
 }); // نهاية الـ DOMContentLoaded
