@@ -85,43 +85,32 @@
 
     // --- (ج) رسم الـ Bar Charts (Plotly) ---
     function drawBarCharts() {
-        const barLayout = { ...plotlyBaseLayout, yaxis: { automargin: true, type: 'category' } };
+        const barLayout = { ...plotlyBaseLayout, yaxis: { automargin: true } };
 
         // 1. Top 10 Copies
         const copiesChartDiv = document.getElementById('copiesBarChart');
-        const copiesLabels = toStringArray(data?.copiesBarChart?.labels);
-        const copiesData = toNumberArray(data?.copiesBarChart?.data);
-        console.log("copiesLabels length:", copiesLabels.length, "copiesData length:", copiesData.length);
-        if (copiesLabels.length > 0 && copiesData.length === copiesLabels.length) {
+        if (data.copiesBarChart.labels.length > 0) {
             var traceCopies = {
-                x: copiesData,
-                y: copiesLabels,
-                type: 'bar', orientation: 'h', marker: { color: themeColor },
-                hovertemplate: '%{y}<br>%{x}<extra></extra>'
+                x: data.copiesBarChart.data,
+                y: data.copiesBarChart.labels,
+                type: 'bar', orientation: 'h', marker: { color: themeColor }
             };
-            Plotly.newPlot(copiesChartDiv, [traceCopies], { ...barLayout, xaxis: { tickformat: '~s' } }, { responsive: true });
-        } else if (copiesData.some(d => d > 0)) {
-            copiesChartDiv.innerHTML = "<p class='text-muted text-center p-5'>Data available but labels missing.</p>";
+            Plotly.newPlot(copiesChartDiv, [traceCopies], barLayout, { responsive: true });
         } else {
             copiesChartDiv.innerHTML = "<p class='text-muted text-center p-5'>No copies tracked in this collection.</p>";
         }
 
         // 2. Top 10 Price
         const priceChartDiv = document.getElementById('priceBarChart');
-        const priceLabels = toStringArray(data?.priceBarChart?.labels);
-        const priceData = toNumberArray(data?.priceBarChart?.data);
-        console.log("priceLabels length:", priceLabels.length, "priceData length:", priceData.length);
-        if (priceLabels.length > 0 && priceData.length === priceLabels.length) {
+        if (data.priceBarChart.labels.length > 0) {
             var traceValue = {
-                x: priceData,
-                y: priceLabels,
+                x: data.priceBarChart.data,
+                y: data.priceBarChart.labels,
                 type: 'bar', orientation: 'h', marker: { color: valueColor },
-                text: priceData.map(v => `EGP ${Number(v).toLocaleString('en-EG')}`),
+                text: data.priceBarChart.data.map(v => `EGP ${v.toLocaleString('en-EG')}`),
                 textposition: 'auto', hoverinfo: 'y+text'
             };
-            Plotly.newPlot(priceChartDiv, [traceValue], { ...barLayout, xaxis: { tickformat: '~s' } }, { responsive: true });
-        } else if (priceData.some(d => d > 0)) {
-            priceChartDiv.innerHTML = "<p class='text-muted text-center p-5'>Pricing data available but labels missing.</p>";
+            Plotly.newPlot(priceChartDiv, [traceValue], barLayout, { responsive: true });
         } else {
             priceChartDiv.innerHTML = "<p class='text-muted text-center p-5'>No pricing data found for books in this collection.</p>";
         }

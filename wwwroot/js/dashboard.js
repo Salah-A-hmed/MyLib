@@ -1,4 +1,4 @@
-function initCollectionDashboard(dashboardData) {
+﻿function initCollectionDashboard(dashboardData) {
 
     console.log("Dashboard Data Received:", dashboardData);
 
