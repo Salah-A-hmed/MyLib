@@ -81,7 +81,11 @@
         var publisher = card.getAttribute('data-publisher');
         var year = card.getAttribute('data-year');
         var pages = card.getAttribute('data-pages');
-        var stock = card.getAttribute('data-stock');
+        // --- (التعديلات هنا) ---
+        var totalCopies = card.getAttribute('data-total-copies');
+        var availableCopies = card.getAttribute('data-available-copies');
+        var price = card.getAttribute('data-price');
+        // --- (نهاية التعديلات) ---
         var status = card.getAttribute('data-status');
         var rating = card.getAttribute('data-rating'); // ده رقم (e.g., "4.5")
         var review = card.getAttribute('data-review');
@@ -98,9 +102,15 @@
         view.querySelector('#modalBookPublisher').textContent = publisher || 'N/A';
         view.querySelector('#modalBookYear').textContent = year || 'N/A';
         view.querySelector('#modalBookPages').textContent = pages || 'N/A';
-        view.querySelector('#modalBookStock').textContent = stock || 'N/A';
 
-        // (تعديل) عرض الـ Review
+        var stockEl = view.querySelector('#modalBookStock'); // (اتأكد إن الـ ID ده موجود في _BookDetailsContent.cshtml)
+        if (stockEl) {
+            stockEl.textContent = availableCopies + " Available / " + totalCopies + " Total";
+        }
+        var priceEl = view.querySelector('#modalBookPrice'); // (هنحتاج نضيف ID ده)
+        if (priceEl) {
+            priceEl.textContent = (price && parseFloat(price) > 0) ? ("$" + parseFloat(price).toFixed(2)) : "N/A";
+        }
         var reviewP = view.querySelector('#modalBookReview');
         if (review && review.trim() !== "") {
             reviewP.textContent = review;

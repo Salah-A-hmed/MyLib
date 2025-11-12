@@ -18,7 +18,8 @@ namespace Biblio.Models.ViewModels
         public decimal? Rating { get; set; } // from 0 to 5
         public string? Review { get; set; }
         public string? Status { get; set; } // abandoned, Not Begun, In Progress, Completed
-        public int? StockCount { get; set; } = 1;
+        public int TotalCopies { get; set; }
+        public decimal? Price { get; set; }
         public List<int> SelectedCollectionIds { get; set; } = new List<int>();
         public List<SelectListItem> Collections { get; set; } = new List<SelectListItem>();
         [JsonIgnore]

@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System; // (1) لازم دي تكون موجودة عشان DateTime
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; // (2) لازم دي تكون موجودة عشان [NotMapped] و [Column]
 
 namespace Biblio.Models
 {
@@ -19,19 +20,28 @@ namespace Biblio.Models
         public decimal? Rating { get; set; } // from 0 to 5
         public string? Review { get; set; }
         public string? Status { get; set; } // abandoned, Not Begun, In Progress, Completed
-        public int? StockCount { get; set; }
+        // 1. ده بيمثل أنا أملك كام نسخة
+        public int TotalCopies { get; set; } = 1; // (هنغير اسمه من StockCount)
+
+        // 2. ده بيمثل كام نسخة معارة حالياً
+        public int CheckedOutCopies { get; set; } = 0;
+
+        // 3. ده هيتحسب أوتوماتيك ومش هيتخزن فالداتا بيز
+        [NotMapped]
+        public int AvailableCopies => TotalCopies - CheckedOutCopies;
+
+        // 4. عشان الرسوم البيانية الزمنية
+        public DateTime DateAdded { get; set; }
+
+        // 5. عشان الرسوم البيانية المالية
+        public decimal? Price { get; set; }
 
         [ForeignKey("User")]
         public string? UserId { get; set; }
         public AppUser? User { get; set; }
 
         //Relations 
-
-        // Book_Collection_Relationship 
         public ICollection<BookCollection> Collections { get; set; } = new List<BookCollection>();
-
-        // Book_Borrowings_relationship 
-
         public ICollection<Borrowing> Borrowings { get; set; } = new List<Borrowing>();
 
     }

@@ -221,8 +221,12 @@ namespace Biblio.Controllers
                 CoverImageUrl = model.CoverImageUrl,
                 Category = model.Category,
                 UserId = userId,
-                StockCount = 1,
-                Status = "Available"
+                // --- (التعديلات هنا) ---
+                TotalCopies = 1, // (بدلاً من StockCount)
+                CheckedOutCopies = 0,
+                DateAdded = DateTime.Now,
+                Price = null // (Google API مش بيدينا سعر)
+                // --- (نهاية التعديلات) ---
             };
 
             if (model.SelectedCollectionIds != null && model.SelectedCollectionIds.Any())
@@ -283,8 +287,13 @@ namespace Biblio.Controllers
                     Rating = model.Rating,
                     Review = model.Review,
                     Status = model.Status,
-                    StockCount = model.StockCount,
-                    UserId = userId
+                    UserId = userId,
+                    // --- (التعديلات هنا) ---
+                    TotalCopies = model.TotalCopies, // (بدلاً من StockCount)
+                    Price = model.Price,
+                    DateAdded = DateTime.Now,
+                    CheckedOutCopies = 0
+                    // --- (نهاية التعديلات) ---
                 };
 
                 foreach (var collectionId in model.SelectedCollectionIds)
@@ -346,7 +355,10 @@ namespace Biblio.Controllers
                 Rating = book.Rating,
                 Review = book.Review,
                 Status = book.Status,
-                StockCount = book.StockCount,
+                // --- (التعديلات هنا) ---
+                TotalCopies = book.TotalCopies, // (بدلاً من StockCount)
+                Price = book.Price,
+                // --- (نهاية التعديلات) ---
                 SelectedCollectionIds = book.Collections.Select(bc => bc.CollectionID).ToList(),
                 Collections = _context.Collections
                 .Where(c => c.UserId == userId)
@@ -389,16 +401,24 @@ namespace Biblio.Controllers
                 book.Rating = model.Rating;
                 book.Review = model.Review;
                 book.Status = model.Status;
-                book.StockCount = model.StockCount;
+                // --- (التعديلات هنا) ---
+                book.TotalCopies = model.TotalCopies; // (بدلاً من StockCount)
+                book.Price = model.Price;
+                // (مش هنعدل DateAdded ولا CheckedOutCopies هنا)
+                // --- (نهاية التعديلات) ---
                 book.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
                 var oldRelations = _context.BookCollections.Where(bc => bc.BookID == id);
                 _context.BookCollections.RemoveRange(oldRelations);
                 await _context.SaveChangesAsync();
+
+                book.Collections.Clear(); // (تأكيد إضافي)
                 foreach (var collectionId in model.SelectedCollectionIds)
                 {
                     book.Collections.Add(new BookCollection { CollectionID = collectionId , UserId = User.FindFirstValue(ClaimTypes.NameIdentifier) });
                 }
 
+                _context.Update(book); // تحديث الكتاب بالعلاقات الجديدة
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

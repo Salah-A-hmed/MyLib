@@ -36,8 +36,20 @@ namespace Biblio.Data
                 .HasDefaultValue(PlanType.Free);
 
             modelBuilder.Entity<Book>()
-                .Property(b => b.StockCount)
+                .Property(b => b.TotalCopies) // (تغيير الاسم)
                 .HasDefaultValue(1);
+
+            modelBuilder.Entity<Book>()
+                .Property(b => b.CheckedOutCopies) // (إضافة جديدة)
+                .HasDefaultValue(0);
+
+            modelBuilder.Entity<Book>()
+                .Property(b => b.DateAdded) // (إضافة جديدة)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<Book>()
+                .Property(b => b.Price) // (إضافة جديدة)
+                .HasColumnType("decimal(10, 2)");
 
             modelBuilder.Entity<Collection>()
                 .HasOne(c => c.User)

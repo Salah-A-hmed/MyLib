@@ -71,7 +71,7 @@ namespace Biblio.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var BookSelectListItems = _context.Books
-                .Where(b => b.UserId == userId)
+                .Where(b => b.UserId == userId && (b.TotalCopies - b.CheckedOutCopies) > 0)
                 .Select(b => new SelectListItem { Value = b.ID.ToString(), Text = b.Title }).ToList();
             var VisitorSelectListItems = _context.Visitors
                 .Where(v => v.UserId == userId)
@@ -88,12 +88,12 @@ namespace Biblio.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             borrowing.UserId = userId;
-            if (ModelState.IsValid)
+            var borrowedBook = await _context.Books.FirstOrDefaultAsync(b => b.ID == borrowing.BookID && b.UserId == userId);
+            if (ModelState.IsValid && borrowedBook != null)
             {
-                var borrowedBook = await _context.Books.FirstOrDefaultAsync(b => b.ID == borrowing.BookID && b.UserId == userId);
-                if (borrowedBook.StockCount > 0)
+                if (borrowedBook.AvailableCopies > 0)
                 {
-                    borrowedBook.StockCount--;
+                    borrowedBook.CheckedOutCopies++; // (تعديل: بنزود النسخ المعارة)
                     _context.Update(borrowedBook);
                     _context.Add(borrowing);
                     await _context.SaveChangesAsync();
@@ -105,7 +105,7 @@ namespace Biblio.Controllers
                 }
             }
             var BookSelectListItems = _context.Books
-                .Where(b => b.UserId == userId)
+                .Where(b => b.UserId == userId && (b.TotalCopies - b.CheckedOutCopies) > 0)
                 .Select(b => new SelectListItem { Value = b.ID.ToString(), Text = b.Title })
                 .ToList();
 
@@ -163,7 +163,7 @@ namespace Biblio.Controllers
                 try
                 {
                     var oldBorrowing = await _context.Borrowings
-                        .Include(b => b.Book)
+                        .AsNoTracking()
                         .FirstOrDefaultAsync(b => b.ID == id);
 
                     if (oldBorrowing == null)
@@ -173,33 +173,37 @@ namespace Biblio.Controllers
 
                     var oldStatus = oldBorrowing.Status;
                     var newStatus = borrowing.Status;
-
+                    var book = await _context.Books.FindAsync(borrowing.BookID);
+                    if (book == null)
+                    {
+                        ModelState.AddModelError("", "Book not found.");
+                        // (لازم نرجع نملى الـ ViewBags هنا)
+                        ViewBag.BookSelectList = await _context.Books.Where(b => b.UserId == userId).Select(b => new SelectListItem { Value = b.ID.ToString(), Text = b.Title, Selected = (b.ID == borrowing.BookID) }).ToListAsync();
+                        ViewBag.VisitorSelectList = await _context.Visitors.Where(v => v.UserId == userId).Select(v => new SelectListItem { Value = v.ID.ToString(), Text = v.Name, Selected = (v.ID == borrowing.VisitorID) }).ToListAsync();
+                        return View(borrowing);
+                    }
                     if ( (oldStatus == BorrowingStatus.Borrowed || oldStatus == BorrowingStatus.Overdue) && newStatus == BorrowingStatus.Returned)
                     {
-                        var book = await _context.Books.FindAsync(borrowing.BookID);
-                        if (book != null)
-                        {
-                            book.StockCount++;
+                            book.CheckedOutCopies--;
                             _context.Update(book);
-                        }
                     }
 
                     else if (oldStatus == BorrowingStatus.Returned && (newStatus == BorrowingStatus.Borrowed || newStatus == BorrowingStatus.Overdue))
                     {
-                        var book = await _context.Books.FindAsync(borrowing.BookID);
-                        if (book != null && book.StockCount > 0)
+                        if (book.AvailableCopies > 0)
                         {
-                            book.StockCount--;
-                            _context.Update(book);
+                            book.CheckedOutCopies++; // (تعديل: بنشيك على النسخ المتاحة)
+                            _context.Update(book);  // (تعديل: بنزود النسخ المعارة)
                         }
                         else
                         {
                             ModelState.AddModelError("", "This book is not available for borrowing right now.");
+                            ViewBag.BookSelectList = await _context.Books.Where(b => b.UserId == userId).Select(b => new SelectListItem { Value = b.ID.ToString(), Text = b.Title, Selected = (b.ID == borrowing.BookID) }).ToListAsync();
+                            ViewBag.VisitorSelectList = await _context.Visitors.Where(v => v.UserId == userId).Select(v => new SelectListItem { Value = v.ID.ToString(), Text = v.Name, Selected = (v.ID == borrowing.VisitorID) }).ToListAsync();
                             return View(borrowing);
                         }
                     }
-
-                    _context.Entry(oldBorrowing).CurrentValues.SetValues(borrowing);
+                    _context.Update(borrowing); // (تحديث الـ borrowing نفسها)
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction(nameof(Index));
@@ -218,15 +222,8 @@ namespace Biblio.Controllers
             }
 
             // في حالة الخطأ
-            var BookSelectListItems = _context.Books
-                .Where(b => b.UserId == userId)
-                .Select(b => new SelectListItem { Value = b.ID.ToString(), Text = b.Title, Selected = (b.ID == borrowing.BookID) }).ToList();
-            var VisitorSelectListItems = _context.Visitors
-                .Where(v => v.UserId == userId)
-                .Select(v => new SelectListItem { Value = v.ID.ToString(), Text = v.Name, Selected = (v.ID == borrowing.VisitorID) }).ToList();
-            ViewBag.BookSelectList = BookSelectListItems;
-            ViewBag.VisitorSelectList = VisitorSelectListItems;
-
+            ViewBag.BookSelectList = await _context.Books.Where(b => b.UserId == userId).Select(b => new SelectListItem { Value = b.ID.ToString(), Text = b.Title, Selected = (b.ID == borrowing.BookID) }).ToListAsync();
+            ViewBag.VisitorSelectList = await _context.Visitors.Where(v => v.UserId == userId).Select(v => new SelectListItem { Value = v.ID.ToString(), Text = v.Name, Selected = (v.ID == borrowing.VisitorID) }).ToListAsync();
             return View(borrowing);
         }
         // GET: Borrowings/Delete/5 (Replaced by a Modal)
@@ -261,9 +258,18 @@ namespace Biblio.Controllers
             var borrowing = await _context.Borrowings.FirstOrDefaultAsync(b => b.ID == id && b.UserId == userId);
             if (borrowing != null)
             {
+                // (تعديل إضافي) لو حذفنا استعارة وهي لسه مرجعتش، لازم نرجع النسخة للمخزن
+                if (borrowing.Status != BorrowingStatus.Returned)
+                {
+                    var book = await _context.Books.FindAsync(borrowing.BookID);
+                    if (book != null)
+                    {
+                        book.CheckedOutCopies--;
+                        _context.Update(book);
+                    }
+                }
                 _context.Borrowings.Remove(borrowing);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

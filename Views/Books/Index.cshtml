@@ -134,7 +134,9 @@
                 var rating = item.Rating?.ToString() ?? "";
                 var year = item.PublishYear?.ToString() ?? "";
                 var pages = item.Pages?.ToString() ?? "";
-				var stock = item.StockCount?.ToString() ?? "";
+                var totalCopies = item.TotalCopies.ToString() ?? "";
+                var availableCopies = item.AvailableCopies.ToString(); // (إضافة جديدة)
+                var price = item.Price?.ToString() ?? ""; // (إضافة جديدة)
                 var isbn = item.ISBN ?? "";
                 var status = item.Status ?? "No Status";
                 var cover = item.CoverImageUrl ?? "";
@@ -152,7 +154,9 @@
                      data-publisher="@publisher"
                      data-year="@year"
                      data-pages="@pages"
-                     data-stock="@stock"
+                     data-total-copies="@totalCopies"
+                     data-available-copies="@availableCopies"
+                     data-price="@price"
                      data-status="@status"
                      data-rating="@rating"
                      data-review="@review"
@@ -208,7 +212,9 @@
                      data-publisher="@publisher"
                      data-year="@year"
                      data-pages="@pages"
-                     data-stock="@stock"
+                     data-total-copies="@totalCopies"
+                     data-available-copies="@availableCopies"
+                     data-price="@price"
                      data-status="@status"
                      data-rating="@rating"
                      data-review="@review"
@@ -239,7 +245,9 @@
                      data-publisher="@publisher"
                      data-year="@year"
                      data-pages="@pages"
-                     data-stock="@stock"
+                     data-total-copies="@totalCopies"
+                     data-available-copies="@availableCopies"
+                     data-price="@price"
                      data-status="@status"
                      data-rating="@rating"
                      data-review="@review"
