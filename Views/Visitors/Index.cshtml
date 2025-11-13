@@ -1,53 +1,78 @@
-﻿@model IEnumerable<Biblio.Models.Visitor>
+﻿@model IEnumerable<Biblio.Models.ViewModels.VisitorIndexViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Visitors";
 }
-
-<h1>Index</h1>
+<style>
+    .content-area {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+</style>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-submit">
+		<i class="fas fa-plus-circle"></i>
+        New Visitor
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <button type="button" class="btn btn-link text-danger js-delete"
-                        data-bs-toggle="modal"
-                        data-bs-target="#DeleteConfirmationModal"
-                        data-delete-url="@Url.Action("Delete", "Visitors", new { id = item.ID })"
-                        data-entity-name="@item.Name">
-                    Delete
-                </button>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="table-container card shadow-sm">
+    <table class="table-content">
+        <thead class="table-header">
+            <tr>
+                <th class="header-cell">@Html.DisplayNameFor(model => model.Visitor.Name)</th>
+                <th class="header-cell"><i class="fas fa-envelope fa-fw me-2"></i>@Html.DisplayNameFor(model => model.Visitor.Email)</th>
+                <th class="header-cell"><i class="fas fa-phone fa-fw me-2"></i>@Html.DisplayNameFor(model => model.Visitor.Phone)</th>
+                <th class="header-cell">Total Overdue Fines</th>
+                <th class="header-cell"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vm in Model)
+            {
+
+                @* --- (التعديل هنا) ---
+               دمجنا كل الكلاسات في "class" واحدة بس
+            *@
+                <tr class="table-row clickable-row @(vm.TotalFines > 0 ? "overdue-row" : "")"
+                    data-href="@Url.Action("Details", new { id = vm.Visitor.ID })">
+
+                    <td class="data-cell">
+                        @Html.DisplayFor(modelItem => vm.Visitor.Name)
+                    </td>
+                    <td class="data-cell">
+                        @Html.DisplayFor(modelItem => vm.Visitor.Email)
+                    </td>
+                    <td class="data-cell">
+                        @Html.DisplayFor(modelItem => vm.Visitor.Phone)
+                    </td>
+                    <td class="data-cell">
+                        @if (vm.TotalFines > 0)
+                        {
+                            <span class="status-badge status-overdue">
+                                @vm.TotalFines.ToString("C", new System.Globalization.CultureInfo("en-EG"))
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-returned">
+                                No Fines
+                            </span>
+                        }
+                    </td>
+                    <td class="data-cell actions-cell">
+                        <button type="button" class="btn btn-icon-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#DeleteConfirmationModal"
+                                data-delete-url="@Url.Action("DeleteConfirmed", "Visitors", new { id = vm.Visitor.ID })"
+                                data-entity-name="@vm.Visitor.Name"
+                                title="Delete @vm.Visitor.Name">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

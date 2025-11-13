@@ -26,12 +26,13 @@ namespace Biblio.Data
             }
 
             // --- 2. Seed Admin User ---
+            var adminUserName = "Biblio_Admin";
             var adminEmail = "admin@biblio.com";
             var adminPassword = "Admin@123";
             AppUser adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
-                adminUser = new AppUser { UserName = adminEmail, Email = adminEmail, FullName = "System Administrator", EmailConfirmed = true, PlanType = PlanType.Library };
+                adminUser = new AppUser { UserName = adminUserName, Email = adminEmail, FullName = "System Administrator", EmailConfirmed = true, PlanType = PlanType.Library };
                 var result = await userManager.CreateAsync(adminUser, adminPassword);
                 if (result.Succeeded)
                 {

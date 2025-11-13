@@ -12,7 +12,7 @@ namespace Biblio.Models
         public int BookID { get; set; }
         public Book? Book { get; set; }
 
-        public double? FineAmount { get; set; }
+        public double FineAmount { get; set; } = 0.0;
         public DateTime BorrowDate { get; set; } = DateTime.Now;
         public DateTime DueDate { get; set; }
         public DateTime? ReturnDate { get; set; }

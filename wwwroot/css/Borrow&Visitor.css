@@ -1,0 +1,116 @@
+﻿/*
+=====================================================
+  Table Styles (v3.0 - Visitors/Borrowed)
+=====================================================
+*/
+
+.table-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.table-content {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table-header {
+    background: linear-gradient(135deg, #4bc1d2 5%, #0096b5 100%);
+}
+.header-cell {
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-cell {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 15px;
+    color: #212529;
+}
+
+.table-row:last-child .data-cell {
+    border-bottom: none;
+}
+
+/* --- (التعديل المهم بتاع الهوفر) --- */
+
+/* (1) الهوفر العادي (الرمادي) لكل الصفوف */
+.table-row:hover {
+    background-color: #f8f9fa; /* (ده لون الهوفر الرمادي) */
+}
+
+/* (2) اللون الأحمر الثابت للصفوف اللي عليها غرامة */
+.table-row.overdue-row {
+    background-color: rgba(220, 53, 69, 0.05); /* أحمر خفيف جداً (ثابت) */
+    border-left: 3px solid #dc3545; /* خط أحمر على الشمال زي v3.0 */
+}
+
+    /* (3) لما أعمل هوفر على الصف الأحمر، يقلب رمادي (زي ما طلبت) */
+.table-row.overdue-row:hover {
+    background-color: #f1f1f1; /* لون رمادي أغمق شوية من العادي */
+}
+/* --- (نهاية تعديل الهوفر) --- */
+
+
+/* (الـ Badges بتاعة الغرامات) */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+}
+.date-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+.status-overdue {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.status-returned {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+/* (ستايل زرار الحذف) */
+.actions-cell {
+    text-align: right;
+    width: 80px;
+}
+
+.btn-icon-danger {
+    background: none;
+    border: none;
+    color: #6c757d;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-icon-danger:hover {
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+
+/* (جديد) ستايل الـ Badge بتاع "Borrowed" */
+.status-badge.status-borrowed {
+    background-color: rgba(255, 193, 7, 0.1); /* خلفية صفراء باهتة */
+    color: #b28400; /* لون الخط أصفر غامق */
+}

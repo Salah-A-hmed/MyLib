@@ -220,5 +220,18 @@
 
     // شغل الكود ده أول ما الصفحة تفتح
     checkHashAndShowDetails();
+    // --- (جديد) لوجيك الصفوف القابلة للضغط ---
+    document.querySelectorAll('.clickable-row').forEach(row => {
+        row.addEventListener('click', function (e) {
+            // (مهم) متشتغلش لو المستخدم داس على زرار أو لينك جوه الصف
+            if (e.target.closest('A, BUTTON')) {
+                return;
+            }
 
-}); // نهاية الـ DOMContentLoaded
+            const href = this.dataset.href;
+            if (href) {
+                window.location.href = href;
+            }
+        });
+    });
+});

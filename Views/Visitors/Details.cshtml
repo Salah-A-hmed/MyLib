@@ -1,36 +1,159 @@
-﻿@model Biblio.Models.Visitor
-
+﻿@model Biblio.Models.ViewModels.VisitorDetailsViewModel
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Visitor.Name + " Details";
 }
 
-<h1>Details</h1>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="display-6">@Model.Visitor.Name</h1>
+                <ul class="list-unstyled text-muted mt-3">
+                    <li><i class="fas fa-envelope fa-fw me-2"></i>@Model.Visitor.Email</li>
+                    <li><i class="fas fa-phone fa-fw me-2"></i>@Model.Visitor.Phone</li>
+                </ul>
+            </div>
+            <div class="modal-actions flex-shrink-0 ms-3">
+                <a asp-action="Index" class="btn btn-outline-secondary mb-3" style="padding: 6px 12px;margin-top: 20px;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.Visitor.ID" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-<div>
-    <h4>Visitor</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-    </dl>
+<div class="row mb-4">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                Borrowings by Status
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <div id="statusPieChart" style="height: 300px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm mb-4">
+            <div id="kpiTotalBorrowings"></div>
+        </div>
+        <div class="card shadow-sm">
+            <div id="kpiTotalFines"></div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<h4 class="mt-4">Borrowing History</h4>
+<div class="table-container card shadow-sm">
+    <table class="table-content">
+        <thead class ="table-header">
+            <tr>
+                <th class="header-cell" style="width: 80px;">Cover</th>
+                <th class="header-cell">Book Title</th>
+                <th class="header-cell">Due Date</th>
+                <th class="header-cell">Return Date</th>
+                <th class="header-cell">Status</th>
+                <th class="header-cell">Fine</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var borrowing in Model.Borrowings)
+            {
+
+                @* تحديد كلاس الصف (عشان الهوفر الأحمر) *@
+                var rowClass = borrowing.Status == BorrowingStatus.Overdue ? "overdue-row" : "";
+
+                <tr class="table-row @rowClass">
+
+                    <td class="data-cell">
+                        <img src="@(borrowing.Book?.CoverImageUrl ?? "/img/missing.png")"
+                             alt="@borrowing.Book?.Title"
+                             style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;"
+                             onerror="this.onerror=null; this.src='/img/missing.png';" />
+                    </td>
+                    <td class="data-cell">
+                        @borrowing.Book?.Title
+                    </td>
+                    <td class="data-cell">
+                        <span class="date-badge">
+                            @borrowing.DueDate.ToShortDateString()
+                        </span>
+                    </td>
+                    <td class="data-cell">
+                        @if (borrowing.ReturnDate != null)
+                        {
+                            <span class="date-badge">
+                                @borrowing.ReturnDate.Value.ToShortDateString()
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="date-badge">
+                                N/A
+                            </span>
+                        }
+                    </td>
+                    <td class="data-cell">
+                        @* (تنسيق الـ Status Badge) *@
+                        @if (borrowing.Status == BorrowingStatus.Overdue)
+                        {
+                            <span class="status-badge status-overdue">Overdue</span>
+                        }
+                        else if (borrowing.Status == BorrowingStatus.Returned)
+                        {
+                            <span class="status-badge status-returned">Returned</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-borrowed">Borrowed</span>
+                        }
+                    </td>
+                    <td class="data-cell">
+                        @* (تنسيق الـ Fine Badge) *@
+                        @if (borrowing.FineAmount > 0)
+                        {
+                            <span class="status-badge status-overdue">
+                                @borrowing.FineAmount.ToString("C", new System.Globalization.CultureInfo("en-EG"))
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-returned">
+                                No Fine
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+@section Scripts {
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    @* (استدعاء الـ JS الجديد) *@
+    <script src="~/js/visitor-details.js" asp-append-version="true"></script>
+
+    <script>
+        // "الجسر"
+        $(document).ready(function () {
+
+            @* --- (التعديل هنا) ---
+               بدل ما نبعت "الموديل كله"، هنعمل أوبجكت جديد بالبيانات
+               اللي الـ JavaScript محتاجها فعلاً بس.
+            *@
+            const data = {
+                totalBorrowings: @Html.Raw(Json.Serialize(Model.TotalBorrowings)),
+                totalFines: @Html.Raw(Json.Serialize(Model.TotalFines)),
+                statusPieChart: @Html.Raw(Json.Serialize(Model.StatusPieChart))
+            };
+
+            initVisitorDetailsDashboard(data);
+        });
+    </script>
+}
