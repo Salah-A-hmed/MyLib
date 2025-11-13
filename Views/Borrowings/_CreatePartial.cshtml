@@ -1,0 +1,68 @@
+﻿@model Biblio.Models.Borrowing
+
+<div class="row">
+
+    <div class="col-lg-7">
+        <h4>1. Select a Book</h4>
+        <div class="form-group mb-3">
+            <input type="text" id="book-search-query" class="form-control" placeholder="Search for available books by title, author, or ISBN..." />
+        </div>
+        <div id="book-search-results" style="max-height: 450px; overflow-y: auto; padding-right: 10px;">
+            <p class="text-muted text-center p-5">Start typing to search for available books.</p>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+
+        <h4>2. Select a Visitor</h4>
+        <div class="form-group mb-3">
+            <input type="text" id="visitor-search-query" class="form-control" placeholder="Search for visitors by name or email..." />
+        </div>
+        <div id="visitor-search-results" style="max-height: 200px; overflow-y: auto; margin-bottom: 1.5rem;">
+            <p class="text-muted text-center p-3">Start typing to search for visitors.</p>
+        </div>
+
+        <form asp-action="Create" id="lend-form">
+
+            @* --- (التعديل 1) إضافة الـ Token --- *@
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="BookID" id="selectedBookId" />
+            <input type="hidden" asp-for="VisitorID" id="selectedVisitorId" />
+
+            <h4>3. Set Dates</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="BorrowDate" class="form-label"></label>
+                        @* --- (التعديل 2) إضافة الـ Value والـ Type --- *@
+                        <input asp-for="BorrowDate" class="form-control" type="date" value="@Model.BorrowDate.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="BorrowDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="DueDate" class="form-label"></label>
+                        <input asp-for="DueDate" class="form-control" type="date" />
+                        <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                <button type="submit" id="lend-button" class="btn btn-submit btn-lg w-100" disabled>
+                    Lend Book
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .lending-card.selected,
+    .list-group-item.selected {
+        border: 2px solid var(--active-bg);
+        box-shadow: 0 0 5px var(--active-bg);
+    }
+</style>

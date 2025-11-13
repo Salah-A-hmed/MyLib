@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Biblio.Models.Book>
+
+@if (!Model.Any())
+{
+    <p class="text-muted p-3">No available books found matching your search.</p>
+}
+
+@foreach (var item in Model)
+{
+    @* (ده كارت بسيط شبيه بـ AddBySearch) *@
+    <div class="card mb-2 lending-card js-book-select-card" data-book-id="@item.ID" style="cursor: pointer;">
+        <div class="card-body p-2">
+            <div class="d-flex align-items-center">
+                <img src="@(item.CoverImageUrl ?? "/img/missing.png")"
+                     alt="@item.Title"
+                     class="me-3"
+                     style="width: 40px; height: 60px; object-fit: cover; border-radius: 4px;"
+                     onerror="this.onerror=null; this.src='/img/missing.png';" />
+                <div>
+                    <span class="fw-bold d-block">@item.Title</span>
+                    <small class="text-muted">@item.Author</small>
+                </div>
+            </div>
+        </div>
+    </div>
+}

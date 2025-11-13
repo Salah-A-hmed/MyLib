@@ -82,25 +82,6 @@ namespace Biblio.Controllers
         }
 
         // GET: Books/Details/5 (Replaced by a partial view)
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        //    var book = await _context.Books
-        //        .Include(b => b.User)
-        //        .FirstOrDefaultAsync(m => m.ID == id && m.UserId == userId);
-        //    if (book == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(book);
-        //}
 
         // -----------------------------------------------------------------
         // الخطوة 1: تعديل الـ Controller
@@ -128,10 +109,6 @@ namespace Biblio.Controllers
 
 
         // (تم الحذف) GET: Books/AddBySearch
-        //public IActionResult AddBySearch()
-        //{
-        //    return View();
-        //}
 
         // POST: Books/AddBySearch  -> يبحث في Google Books ويرجع PartialView بنتايج البحث
         [HttpPost]
@@ -249,21 +226,6 @@ namespace Biblio.Controllers
         }
 
         //(تم الحذف) GET: Books/Create
-        //public IActionResult Create()
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    var viewModel = new BookCreateViewModel
-        //    {
-        //        Collections = _context.Collections
-        //            .Where(c => c.UserId == userId)
-        //            .Select(c => new SelectListItem
-        //            {
-        //                Value = c.ID.ToString(),
-        //                Text = c.Name
-        //            }).ToList()
-        //    };
-        //    return View(viewModel);
-        //}
 
         // POST: Books/Create
         [HttpPost]

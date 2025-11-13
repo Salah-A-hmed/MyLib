@@ -1,0 +1,83 @@
+﻿@model Biblio.Models.ViewModels.BorrowingsDashboardViewModel
+@using System.Globalization
+
+<div class="row mb-4">
+    <div class="col-lg-4">
+        <div class="card-returned kpi-card">
+            <div class="card-body">
+                <i class="fas fa-undo-alt"></i>
+                <div>
+                    <span class="count">@Model.KpiTotalReturned</span>
+                    <span class="title">Total Returned</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-ontime kpi-card">
+            <div class="card-body">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <span class="count">@Model.KpiOnTime</span>
+                    <span class="title">Returned On Time</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-fines kpi-card">
+            <div class="card-body">
+                <i class="fas fa-coins"></i>
+                <div>
+                    <span class="count">@Model.KpiTotalCollectedFines.ToString("C", new CultureInfo("en-EG"))</span>
+                    <span class="title">Total Fines Collected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-container card shadow-sm">
+    <table class="table-content">
+        <thead class ="table-header">
+            <tr>
+                <th class="header-cell">Book</th>
+                <th class="header-cell">Visitor</th>
+                <th class="header-cell">Due Date</th>
+                <th class="header-cell">Return Date</th>
+                <th class="header-cell">Fine</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ReturnedBorrowings)
+            {
+                <tr class="table-row">
+                    <td class="data-cell d-flex align-items-center">
+                        <img src="@(item.Book?.CoverImageUrl ?? "/img/missing.png")" alt="@item.Book?.Title" class="me-3" style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;" onerror="this.onerror=null; this.src='/img/missing.png';" />
+                        <div>
+                            <span class="fw-bold d-block">@item.Book?.Title</span>
+                            <small class="text-muted">@item.Book?.Author</small>
+                        </div>
+                    </td>
+                    <td class="data-cell">@item.Visitor?.Name</td>
+                    <td class="data-cell">@item.DueDate.ToShortDateString()</td>
+                    <td class="data-cell">@item.ReturnDate?.ToShortDateString()</td>
+                    <td class="data-cell">
+                        @if (item.FineAmount > 0)
+                        {
+                            <span class="status-badge status-overdue">
+                                @item.FineAmount.ToString("C", new CultureInfo("en-EG"))
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-returned">
+                                No Fine
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

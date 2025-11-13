@@ -137,22 +137,13 @@
     </div>
 
     <div class="form-group mt-4">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary" style="padding: 10px 25px;margin-top: 20px;">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
         @* بنستخدم نفس كلاسات البوتستراب اللي الـ Theme بتاعك بيظبطها *@
         <input type="submit" value="Save" class="btn btn-submit btn-lg" />
     </div>
 </form>
-
-@*
-      دلوقتي اللينك ده لما يرجع "للخلف"، هيرجع للـ URL
-      اللي هو /Books/Index#book-5
-      ولما الصفحة دي تفتح، الـ JavaScript (اللي في الخطوة 2) هيشتغل
-      ويقرأ الـ "هاش" (#book-5) ويفتحلك التفاصيل أوتوماتيك.
-    *@
-<div>
-    <a href="javascript:history.back()" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left"></i> Back to Details
-    </a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -1,0 +1,94 @@
+﻿@model Biblio.Models.ViewModels.BorrowingsDashboardViewModel
+@using System.Globalization
+
+<div class="row mb-4">
+    <div class="col-lg-4">
+        <div class="card-borrow kpi-card">
+            <div class="card-body">
+                <i class="fas fa-hand-holding-usd"></i>
+                <div>
+                    <span class="count">@Model.KpiTotalActive</span>
+                    <span class="title">Total Borrowed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-due kpi-card">
+            <div class="card-body">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <span class="count">@Model.KpiDueSoon</span>
+                    <span class="title">Due Soon</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-overdue kpi-card">
+            <div class="card-body">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <span class="count">@Model.KpiTotalOverdue</span>
+                    <span class="title">Overdue</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-container card shadow-sm">
+    <table class="table-content">
+        <thead class="table-header">
+            <tr>
+                <th class="header-cell">Book</th>
+                <th class="header-cell">Visitor</th>
+                <th class="header-cell">Borrow Date</th>
+                <th class="header-cell">Due Date</th>
+                <th class="header-cell"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ActiveBorrowings)
+            {
+                var today = DateTime.Now.Date;
+                var isOverdue = item.Status == BorrowingStatus.Overdue;
+                var isDueSoon = !isOverdue &&
+                (item.DueDate.Date >= today && item.DueDate.Date <= today.AddDays(2));
+
+                string rowClass = "";
+                if (isOverdue) { rowClass = "overdue-row"; }
+                else if (isDueSoon) { rowClass = "duesoon-row"; } // (الكلاس الجديد)
+
+                var daysLate = (item.DueDate.Date < today) ? (today - item.DueDate.Date).Days : 0;
+
+                <tr class="table-row @rowClass" id="borrow-row-@item.ID">
+                    <td class="data-cell d-flex align-items-center">
+                        <img src="@(item.Book?.CoverImageUrl ?? "/img/missing.png")" alt="@item.Book?.Title" class="me-3" style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;" onerror="this.onerror=null; this.src='/img/missing.png';" />
+                        <div>
+                            <span class="fw-bold d-block">@item.Book?.Title</span>
+                            <small class="text-muted">@item.Book?.Author</small>
+                        </div>
+                    </td>
+                    <td class="data-cell">@item.Visitor?.Name</td>
+                    <td class="data-cell">@item.BorrowDate.ToShortDateString()</td>
+                    <td class="data-cell">
+                        <span class="status-badge @(item.Status == BorrowingStatus.Overdue ? "status-overdue" : "status-borrowed")">
+                            @item.DueDate.ToShortDateString()
+                        </span>
+                    </td>
+                    <td class="data-cell actions-cell">
+                        <button type="button" class="btn btn-success return-btn"
+                                data-id="@item.ID"
+                                data-status="@item.Status"
+                                data-fine="@item.FineAmount"
+                                data-dayslate="@daysLate"
+                                data-booktitle="@item.Book?.Title">
+                            Return Book
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

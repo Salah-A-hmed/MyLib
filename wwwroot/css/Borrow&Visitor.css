@@ -17,7 +17,7 @@
     border-collapse: collapse;
 }
 .table-header {
-    background: linear-gradient(135deg, #4bc1d2 5%, #0096b5 100%);
+    background: linear-gradient(135deg, #4bc1d2 10%, #0096b5 100%);
 }
 .header-cell {
     padding: 16px 20px;
@@ -41,25 +41,34 @@
     border-bottom: none;
 }
 
-/* --- (التعديل المهم بتاع الهوفر) --- */
+/*
+=====================================================
+  Borrowings Row Styles
+=====================================================
+*/
 
-/* (1) الهوفر العادي (الرمادي) لكل الصفوف */
-.table-row:hover {
-    background-color: #f8f9fa; /* (ده لون الهوفر الرمادي) */
-}
-
-/* (2) اللون الأحمر الثابت للصفوف اللي عليها غرامة */
+/* (1) اللون الأحمر الثابت للصفوف اللي عليها غرامة (Overdue) */
 .table-row.overdue-row {
-    background-color: rgba(220, 53, 69, 0.05); /* أحمر خفيف جداً (ثابت) */
-    border-left: 3px solid #dc3545; /* خط أحمر على الشمال زي v3.0 */
+    background-color: rgba(220, 53, 69, 0.05); /* أحمر خفيف (ثابت) */
+    border-left: 2px solid #dc3545;
 }
 
-    /* (3) لما أعمل هوفر على الصف الأحمر، يقلب رمادي (زي ما طلبت) */
-.table-row.overdue-row:hover {
-    background-color: #f1f1f1; /* لون رمادي أغمق شوية من العادي */
+/* (2) (جديد) اللون الأصفر الثابت للصفوف (Due Soon) */
+.table-row.duesoon-row {
+    background-color: rgba(255, 193, 7, 0.05); /* أصفر خفيف (ثابت) */
+    border-left: 2px solid #ffc107;
 }
-/* --- (نهاية تعديل الهوفر) --- */
 
+/* (3) الهوفر العادي (الرمادي) */
+.table-row:hover {
+    background-color: #f8f9fa;
+}
+
+/* (4) لما أعمل هوفر على الصف الأحمر أو الأصفر، يقلب رمادي (زي ما طلبت) */
+.table-row.overdue-row:hover,
+.table-row.duesoon-row:hover {
+    background-color: #f1f1f1;
+}
 
 /* (الـ Badges بتاعة الغرامات) */
 .status-badge {
@@ -113,4 +122,77 @@
 .status-badge.status-borrowed {
     background-color: rgba(255, 193, 7, 0.1); /* خلفية صفراء باهتة */
     color: #b28400; /* لون الخط أصفر غامق */
+}
+/*
+=====================================================
+  KPI Card Styles (v3.0 - Borrowings)
+=====================================================
+*/
+
+.kpi-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
+    color: white;
+}
+
+    .kpi-card .card-body {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem;
+    }
+
+    .kpi-card i {
+        font-size: 2.5rem;
+        opacity: 0.5;
+    }
+
+    .kpi-card .count {
+        font-size: 2rem;
+        font-weight: 700;
+        display: block;
+        text-align: right;
+    }
+
+    .kpi-card .title {
+        font-size: 1rem;
+        font-weight: 500;
+        display: block;
+        text-align: right;
+        opacity: 0.9;
+    }
+
+/* (ألوان التاب الأول - Active) */
+.card-borrow {
+    background: linear-gradient(135deg, #0096b5, #4bc1d2);
+}
+
+.card-due {
+    background: linear-gradient(135deg, #ffc107, #ffe082);
+    color: #333;
+}
+
+.card-overdue {
+    background: linear-gradient(135deg, #dc3545, #f08080);
+}
+
+/* (ألوان التاب الثاني - Returned) */
+.card-returned {
+    background: linear-gradient(135deg, #198754, #52b788);
+}
+
+.card-ontime {
+    background: linear-gradient(135deg, #0dcaf0, #80eaff);
+    color: #222;
+}
+
+.card-fines {
+    background: linear-gradient(135deg, #6a040f, #a4133c);
+}
+
+/* (الـ Badge الأصفر اللي كان ناقص) */
+.status-badge.status-borrowed {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #b28400;
 }

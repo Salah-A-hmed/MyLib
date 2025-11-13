@@ -1,77 +1,68 @@
-﻿@model IEnumerable<Biblio.Models.Borrowing>
-
+﻿@model Biblio.Models.ViewModels.BorrowingsDashboardViewModel
+@using System.Globalization
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lending";
+    var antiForgeryToken = (string)ViewData["__RequestVerificationToken"];
 }
 
-<h1>Index</h1>
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-active-tab" data-bs-toggle="tab" data-bs-target="#nav-active"
+                type="button" role="tab" aria-controls="nav-active" aria-selected="true"
+                data-url="@Url.Action("GetActiveTabPartial")">
+            Active Borrowings
+        </button>
+        <button class="nav-link" id="nav-returned-tab" data-bs-toggle="tab" data-bs-target="#nav-returned"
+                type="button" role="tab" aria-controls="nav-returned" aria-selected="false"
+                data-url="@Url.Action("GetReturnedTabPartial")">
+            Returned
+        </button>
+        <button class="nav-link" id="nav-add-tab" data-bs-toggle="tab" data-bs-target="#nav-add"
+                type="button" role="tab" aria-controls="nav-add" aria-selected="false"
+                data-url="@Url.Action("Create")">
+            <i class="fas fa-plus-circle"></i> Add New
+        </button>
+    </div>
+</nav>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Visitor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FineAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BorrowDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DueDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReturnDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Visitor.ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Book.ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FineAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BorrowDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DueDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReturnDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <button type="button" class="btn btn-link text-danger js-delete"
-                            data-bs-toggle="modal"
-                            data-bs-target="#DeleteConfirmationModal"
-                            data-delete-url="@Url.Action("Delete", "Borrowings", new { id = item.ID })"
-                            data-entity-name="Borrowing record for @item.Book.Title">
-                        Delete
-                    </button>
-                </td>
-        </tr>
+<div class="tab-content p-3 border-end border-start border-bottom rounded-bottom" id="nav-tabContent">
+
+    <div class="tab-pane fade show active" id="nav-active" role="tabpanel" aria-labelledby="nav-active-tab" tabindex="0">
+        <div class="text-center p-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-returned" role="tabpanel" aria-labelledby="nav-returned-tab" tabindex="0">
+        <div class="text-center p-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-add" role="tabpanel" aria-labelledby="nav-add-tab" tabindex="0">
+        <div class="text-center p-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* (1) ضيف الـ Token هنا عشان الـ JS يلاقيه *@
+@Html.AntiForgeryToken()
+@* (3) استدعاء المودال (زي ما هو) *@
+<partial name="_ReturnModal" />
+
+@* (4) إضافة الـ Alert (زي ما هو) *@
+<div id="return-alert" class="alert alert-success alert-dismissible fade" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 2000; display: none;">
+    <strong id="return-alert-message"></strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@section Scripts {
+    @* هنستدعي الـ JS ده هنا بس، عشان يشتغل في صفحته بس *@
+    <script src="~/js/borrowings.js" asp-append-version="true"></script>
 }
-    </tbody>
-</table>

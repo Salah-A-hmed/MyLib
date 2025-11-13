@@ -1,0 +1,20 @@
+﻿@* مودال تأكيد الإرجاع مع الغرامة *@
+<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="returnModalLabel"><i class="fas fa-exclamation-triangle"></i> Overdue Return</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>This book is <strong id="returnDaysLate"></strong> days late.</p>
+                <p class="h4">Fine Amount: <strong id="returnFineAmount" class="text-danger"></strong></p>
+                <p class="text-muted mt-3">Press "OK" to confirm the fine has been collected and return the book.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="confirmReturnBtn" type="button" class="btn btn-warning">OK</button>
+            </div>
+        </div>
+    </div>
+</div>

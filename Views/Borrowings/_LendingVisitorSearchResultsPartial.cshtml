@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Biblio.Models.Visitor>
+
+@if (!Model.Any())
+{
+    <p class="text-muted p-3">No visitors found matching your search.</p>
+}
+
+@* (هنستخدم "list-group" عشان الستايل) *@
+<div class="list-group">
+    @foreach (var item in Model)
+    {
+        <a href="#" class="list-group-item list-group-item-action js-visitor-select-card" data-visitor-id="@item.ID">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">@item.Name</h6>
+            </div>
+            <small class="text-muted">@item.Email</small>
+        </a>
+    }
+</div>

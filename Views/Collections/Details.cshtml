@@ -8,18 +8,18 @@
         <h3 class="display-5 lead text-muted">@Model.CollectionDescription</h3>
     </div>
     <div class="modal-actions flex-shrink-0 ms-3">
-        <a asp-action="Index" class="btn btn-outline-secondary mb-3" style="padding: 6px 12px;margin-top: 20px;">
-            <i class="fas fa-arrow-left"></i> Back
+        <a asp-action="Index" class="btn btn-outline-secondary " style="padding: 6px 12px;margin-top: 15px; margin-bottom: 15px;">
+            <i class="fas fa-arrow-left"></i>
         </a>
         <a asp-action="Edit" asp-route-id="@Model.CollectionId" class="btn btn-warning">
-            <i class="fas fa-edit"></i> Edit
+            <i class="fas fa-edit"></i>
         </a>
         <button type="button" class="btn btn-danger"
                 data-bs-toggle="modal"
                 data-bs-target="#DeleteConfirmationModal"
                 data-delete-url="@Url.Action("DeleteConfirmed", "Collections", new { id = Model.CollectionId })"
                 data-entity-name="@Model.CollectionName">
-            <i class="fas fa-trash"></i> Delete
+            <i class="fas fa-trash"></i>
         </button>
     </div>
 </div>
