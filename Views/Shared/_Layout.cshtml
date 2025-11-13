@@ -29,8 +29,13 @@
                 </a>
             </div>
         </div>
-
         <nav class="sidebar-nav">
+            <div class="nav-item">
+                <a asp-controller="Home" asp-action="Index" class="nav-link" data-page="home">
+                    <i class="nav-icon fas fa-home"></i>
+                    <span class="nav-text">Home</span>
+                </a>
+            </div>
             <div class="nav-item">
                 <a asp-controller="Books" asp-action="Index" class="nav-link" data-page="library">
                     <i class="nav-icon fas fa-book-open"></i>
@@ -40,20 +45,35 @@
             <div class="nav-item">
                 <a asp-controller="Books" asp-action="AddBook" class="nav-link" data-page="add-items">
                     <i class="nav-icon fas fa-plus-circle"></i>
-                    <span class="nav-text">Add Books</span>
+                    <span class="nav-text">Add Book</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a asp-controller="Collections" asp-action="Index" class="nav-link" data-page="collections">
+                    <i class="nav-icon fas fa-layer-group"></i>
+                    <span class="nav-text">Collections</span>
                 </a>
             </div>
             <div class="nav-item">
                 <a asp-controller="Collections" asp-action="Create" class="nav-link" data-page="add-collection">
                     <i class="nav-icon fas fa-folder-plus"></i>
-                    <span class="nav-text">Collections</span>
+                    <span class="nav-text">Add Collection</span>
                 </a>
             </div>
-            <div class="nav-item">
-                <a asp-controller="Borrowings" asp-action="Index" class="nav-link" data-page="borrowings">
-                    <i class="nav-icon fas fa-exchange-alt"></i> @* fas fa-arrow-right-from-bracket *@
-                <span class="nav-text">Borrowings</span>
-                </a>
+            <div class ="sidebar-pro">
+                <div class="nav-item">
+                    <a asp-controller="Borrowings" asp-action="Index" class="nav-link" data-page="borrowings">
+                        <i class="nav-icon fas fa-exchange-alt"></i> @* fas fa-arrow-right-from-bracket *@
+                        <span class="nav-text">Lending</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a asp-controller="Visitors" asp-action="Index" class="nav-link" data-page="visitors">
+                        <i class="nav-icon fas fa-users"></i>
+                        <span class="nav-text">Visitors</span>
+                    </a>
+                </div>
+
             </div>
         </nav>
 

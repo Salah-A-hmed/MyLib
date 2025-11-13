@@ -21,19 +21,21 @@
                 <p class="dropdown-user-email">@UserManager.GetUserAsync(User).Result.Email</p>
                 <p class="dropdown-plan">@UserManager.GetUserAsync(User).Result.PlanType</p>
             </div>
-            <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Profile">
-				<i class="fas fa-user-circle"></i>
-				Profile
-                <i class="fas fa-chevron-right"></i>
+            <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Profile" data-page="profile">
+                <i class="nav-icon fas fa-user-circle"></i>
+                <span class="nav-text">Profile</span>
             </a>
-            <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
-                <i class="fas fa-gear"></i>
-                Account Settings
-                <i class="fas fa-chevron-right"></i>
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" data-page="account-settings">
+                <i class="nav-icon fas fa-gear"></i>
+                <span class="nav-text">Account Settings</span>
             </a>
-            <a href="#" class="dropdown-item">
+            <a asp-controller="Notifications" asp-action="Index" class="nav-link" data-page="notifications">
+                <i class="nav-icon fas fa-bell"></i>
+                <span class="nav-text">Notifications</span>
+            </a>
+            <a href="#" class="nav-link">
                 Go Pro!
-                <span class="upgrade-tag">Upgrade Now</span>
+                <span class="upgrade-tag m-3 mt-1 mb-1">Upgrade Now</span>
             </a>
         </div>
     </div>

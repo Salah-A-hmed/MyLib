@@ -3,37 +3,71 @@
     // -----------------------------------------------------------------
     //  (1) كود تحديد الصفحة النشطة (الخاص بك)
     // -----------------------------------------------------------------
-    try {
-        const path = window.location.pathname.toLowerCase();
-        const navLinks = document.querySelectorAll(".nav-link[data-page]");
-        navLinks.forEach((link) => link.classList.remove("active"));
-        let activePageData = null; 
+        // -----------------------------------------------------------------
+        //  (1) كود تحديد الصفحة النشطة (Logic Updated)
+        // -----------------------------------------------------------------
+        try {
+            const path = window.location.pathname.toLowerCase();
+            const navLinks = document.querySelectorAll(".nav-link[data-page]");
 
-        if (path.includes("/books/addbook")) {
-            activePageData = "add-items";
-        }
-        else if (path.startsWith("/collections")) {
-            activePageData = "add-collection";
-        }
-        else if (path.startsWith("/borrowings")) {
-            activePageData = "borrowings";
-        }
-        else if (path.startsWith("/books")) {
-            activePageData = "library";
-        }
-        else if (path.startsWith("/home") || path === "/") {
-            // No action
-        }
+            // إزالة الكلاس active من الجميع
+            navLinks.forEach((link) => link.classList.remove("active"));
 
-        if (activePageData) {
-            const activeLink = document.querySelector(`.nav-link[data-page="${activePageData}"]`);
-            if (activeLink) {
-                activeLink.classList.add("active");
+            let activePageData = null;
+
+            // (أ) Books
+            if (path.includes("/books/addbook")) {
+                activePageData = "add-items";
             }
+            else if (path.startsWith("/books")) {
+                activePageData = "library";
+            }
+
+            // (ب) Collections (اللوجيك الجديد)
+            else if (path.includes("/collections/create")) {
+                activePageData = "add-collection";
+            }
+            else if (path.startsWith("/collections")) {
+                activePageData = "collections";
+            }
+
+            // (ج) Borrowings
+            else if (path.startsWith("/borrowings")) {
+                activePageData = "borrowings";
+            }
+
+            // (د) Visitors
+            else if (path.startsWith("/visitors")) {
+                activePageData = "visitors";
+            }
+
+            // (هـ) Notifications
+            else if (path.startsWith("/notifications")) {
+                activePageData = "notifications";
+            }
+
+            else if (path.includes("/account/profile")) {
+                activePageData = "profile";
+            }
+            else if (path.includes("/account/manage")) {
+                activePageData = "account-settings";
+            }
+
+            // (و) Home (Default)
+            else if (path.startsWith("/home") || path === "/") {
+                activePageData = "home";
+            }
+
+            // تفعيل اللينك
+            if (activePageData) {
+                const activeLink = document.querySelector(`.nav-link[data-page="${activePageData}"]`);
+                if (activeLink) {
+                    activeLink.classList.add("active");
+                }
+            }
+        } catch (e) {
+            console.error("Error setting active nav link:", e);
         }
-    } catch (e) {
-        console.error("Error setting active nav link:", e);
-    }
 
     
     // -----------------------------------------------------------------

@@ -42,11 +42,15 @@ body {
 }
 
 .sidebar-header {
-  padding: 30px 10px;
+  padding: 20px 10px;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--sidebar-bg);
 }
-
+.sidebar-pro {
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 15px;
+}
 .logo-container {
   display: flex;
   align-items: center;
@@ -54,8 +58,8 @@ body {
 }
 
 .logo {
-  width: 48px;
-  height: 48px;
+  width: 60px;
+  height: 60px;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -109,9 +113,9 @@ body {
 }
 
 .nav-icon {
-  width: 20px;
+  width: 0px;
   height: 20px;
-  margin-right: 12px;
+  margin-right: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -122,14 +126,11 @@ body {
   flex-shrink: 0;
 }
 
-.nav-link:hover .nav-icon {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.nav-link.active .nav-icon {
-  opacity: 1;
-  transform: translateX(0);
+.nav-link:hover .nav-icon, .nav-link.active .nav-icon {
+    width: 20px;
+    margin-right: 12px;
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .nav-text {
@@ -166,9 +167,9 @@ body {
 }
 
 .logout-icon {
-  width: 20px;
+  width: 0px;
   height: 20px;
-  margin-right: 12px;
+  margin-right: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,14 +181,16 @@ body {
 }
 
 .logout-link:hover {
-  background-color: var(--sidebar-hover);
-  color: var(--sidebar-text);
-  text-decoration: none;
+    background-color: var(--sidebar-hover);
+    color: var(--sidebar-text);
+    text-decoration: none;
 }
 
 .logout-link:hover .logout-icon {
-  opacity: 1;
-  transform: translateX(0);
+    width: 20px;
+    margin-right: 12px;
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .logout-link:hover .nav-text {

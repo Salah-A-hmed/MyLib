@@ -266,21 +266,22 @@ namespace Biblio.Controllers
 
             return PartialView("_LendingVisitorSearchResultsPartial", visitors);
         }
-        // GET: Borrowings/Create (زي ما هو)
+        // (التعديل) الدالة دي بقت بترجع Partial View بالبيانات الصح
+        // GET: Borrowings/Create
         public IActionResult Create()
         {
+            // (1) ده اللوجيك اللي كان ناقص عشان يملى الـ Dropdowns
             var userId = _userManager.GetUserId(User);
-            var BookSelectListItems = _context.Books
+            ViewBag.BookSelectList = _context.Books
                 .Where(b => b.UserId == userId && (b.TotalCopies - b.CheckedOutCopies) > 0)
                 .Select(b => new SelectListItem { Value = b.ID.ToString(), Text = b.Title }).ToList();
-            var VisitorSelectListItems = _context.Visitors
+            ViewBag.VisitorSelectList = _context.Visitors
                 .Where(v => v.UserId == userId)
                 .Select(v => new SelectListItem { Value = v.ID.ToString(), Text = v.Name }).ToList();
-            ViewBag.BookSelectList = BookSelectListItems;
-            ViewBag.VisitorSelectList = VisitorSelectListItems;
-           return PartialView("_CreatePartial");
-        }
 
+            // (2) هنرجع الـ Partial View بموديل جديد عشان تاريخ النهاردة يظهر
+            return PartialView("_CreatePartial", new Borrowing());
+        }
         // POST: Borrowings/Create (زي ما هو)
         // POST: Borrowings/Create
         [HttpPost]
