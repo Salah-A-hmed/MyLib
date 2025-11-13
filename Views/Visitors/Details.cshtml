@@ -52,8 +52,7 @@
     <table class="table-content">
         <thead class ="table-header">
             <tr>
-                <th class="header-cell" style="width: 80px;">Cover</th>
-                <th class="header-cell">Book Title</th>
+                <th class="header-cell" style="width: 200px;">Book</th>
                 <th class="header-cell">Due Date</th>
                 <th class="header-cell">Return Date</th>
                 <th class="header-cell">Status</th>
@@ -70,13 +69,18 @@
                 <tr class="table-row @rowClass">
 
                     <td class="data-cell">
-                        <img src="@(borrowing.Book?.CoverImageUrl ?? "/img/missing.png")"
-                             alt="@borrowing.Book?.Title"
-                             style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;"
-                             onerror="this.onerror=null; this.src='/img/missing.png';" />
-                    </td>
-                    <td class="data-cell">
-                        @borrowing.Book?.Title
+                        <div class="d-flex flex-column align-items-center text-center" style="max-width:180px;">
+                            @{
+                                var cover = borrowing.Book?.CoverImageUrl ?? "/img/missing.png";
+                                var title = borrowing.Book?.Title ?? "Untitled";
+                            }
+                            <img src="@cover"
+                                 alt="@title"
+                                 style="width:76px;height:108px;object-fit:cover;border-radius:6px;"
+                                 class="mb-2"
+                                 onerror="this.onerror=null; this.src='/img/missing.png';" />
+                            <h3 class="h6 fw-semibold mb-0 w-100 text-truncate">@title</h3>
+                        </div>
                     </td>
                     <td class="data-cell">
                         <span class="date-badge">
