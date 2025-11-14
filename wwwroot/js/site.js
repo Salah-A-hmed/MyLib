@@ -53,11 +53,6 @@
                 activePageData = "account-settings";
             }
 
-            // (و) Home (Default)
-            else if (path.startsWith("/home") || path === "/") {
-                activePageData = "home";
-            }
-
             // تفعيل اللينك
             if (activePageData) {
                 const activeLink = document.querySelector(`.nav-link[data-page="${activePageData}"]`);

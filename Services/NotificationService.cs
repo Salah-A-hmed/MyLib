@@ -24,6 +24,11 @@ namespace Biblio.Services
         private const int VisitorFineThreshold = 150; // (رقم 7)
         private const int DueSoonDays = 2; // (رقم 2)
 
+        // New fields for daily stock-check flag and reset timer
+        private bool _stockChecked = false; // default false
+        private Timer? _stockResetTimer;
+        private readonly object _stockLock = new();
+
         public NotificationService(ILogger<NotificationService> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
@@ -35,6 +40,10 @@ namespace Biblio.Services
             _logger.LogInformation("Notification Background Service is starting.");
             // (هنخليها تشتغل كل ساعة)
             _timer = new Timer(DoWork, null, TimeSpan.FromMinutes(1), TimeSpan.FromHours(1));
+
+            //For testing purposes, you can uncomment the line below to run it immediately without delay
+            //_timer = new Timer(DoWork, null, TimeSpan.Zero, Timeout.InfiniteTimeSpan);
+
             return Task.CompletedTask;
         }
 
@@ -155,8 +164,40 @@ namespace Biblio.Services
                     }
                 }
 
-                // (طلب 5) "Out of Stock" (هنعمله بشكل يومي بسيط)
-                if (DateTime.Now.Hour == 5) // (هيشتغل مرة واحدة بس في اليوم، الساعة 5 الفجر)
+                // (طلب 5) "Out of Stock" using a boolean flag to ensure it runs once per 24 hours
+                bool shouldRunStockCheck = false;
+                lock (_stockLock)
+                {
+                    if (!_stockChecked)
+                    {
+                        // mark as checked and schedule reset in 24 hours
+                        _stockChecked = true;
+                        shouldRunStockCheck = true;
+
+                        // dispose previous reset timer if any
+                        try
+                        {
+                            _stockResetTimer?.Dispose();
+                        }
+                        catch { /* ignore */ }
+
+                        // schedule a one-shot timer to reset the flag after 24 hours
+                        _stockResetTimer = new Timer(state =>
+                        {
+                            lock (_stockLock)
+                            {
+                                _stockChecked = false;
+                            }
+                            try
+                            {
+                                _stockResetTimer?.Dispose();
+                            }
+                            catch { /* ignore */ }
+                        }, null, TimeSpan.FromDays(1), Timeout.InfiniteTimeSpan);
+                    }
+                }
+
+                if (shouldRunStockCheck)
                 {
                     var allUserIdsForStockCheck = await context.Books.Select(b => b.UserId).Distinct().ToListAsync();
                     foreach (var userId in allUserIdsForStockCheck)
@@ -222,6 +263,11 @@ namespace Biblio.Services
         public void Dispose()
         {
             _timer?.Dispose();
+            try
+            {
+                _stockResetTimer?.Dispose();
+            }
+            catch { /* ignore */ }
         }
     }
 }

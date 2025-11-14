@@ -1,0 +1,48 @@
+﻿@* Authentication layout used by Identity pages. Kept minimal and theme-consistent. *@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Biblio</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/Auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    @RenderSection("HeadScripts", required: false)
+</head>
+<body class="bgImg">
+    <nav class="navbar navbar-expand-sm navbar-light bg-transparent nav-layout position-absolute top-0 start-0 end-0 w-100">
+        <div class="container-fluid">
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center logo-container">
+                <img src="~/img/logo.png" alt="Biblio Logo" class="logo-img" />
+                <span class="brand-name ms-2">Biblio</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAuth" aria-controls="navbarAuth" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse ms-auto" id="navbarAuth">
+                <div class="ms-auto d-flex gap-2">
+                    <a asp-area="Identity" asp-page="/Account/Login" class="nav-buttons">Sign In</a>
+                    <a asp-area="Identity" asp-page="/Account/Register" class="nav-buttons">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="auth-container">
+        <div class="auth-right-panel">
+            @RenderBody()
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/Auth.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

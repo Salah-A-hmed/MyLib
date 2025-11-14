@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="~/css/Collection.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Borrow&Visitor.css" asp-append-version="true" />
 
+    @* Render optional page-specific styles section (prevents the "Styles" section not rendered" error) *@
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
@@ -30,12 +32,6 @@
             </div>
         </div>
         <nav class="sidebar-nav">
-            <div class="nav-item">
-                <a asp-controller="Home" asp-action="Index" class="nav-link" data-page="home">
-                    <i class="nav-icon fas fa-home"></i>
-                    <span class="nav-text">Home</span>
-                </a>
-            </div>
             <div class="nav-item">
                 <a asp-controller="Books" asp-action="Index" class="nav-link" data-page="library">
                     <i class="nav-icon fas fa-book-open"></i>
@@ -122,7 +118,7 @@
                     const icon = document.getElementById('notification-icon');
                     if (badge) {
                         if (data.count > 0) {
-                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.textContent = data.count > 9 ? '+9' : data.count;
                             badge.style.display = 'flex';
 							icon.style.display = 'block';
                         } else {

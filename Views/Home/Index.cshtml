@@ -1,8 +1,131 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@{
+    ViewData["Title"] = "Welcome to Biblio";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Library.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+          --primary-500: #4bc1d2;
+          --primary-600: #0096b5;
+          --muted: #6c757d;
+        }
+
+        .hero-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 72vh;
+            padding: 4rem 1rem;
+            background: linear-gradient(180deg, rgba(11,42,45,0.02), rgba(11,42,45,0.01));
+        }
+
+        .hero-section h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #06202a;
+        }
+
+        .hero-section .lead {
+            font-size: 1.125rem;
+            color: var(--muted);
+            margin-bottom: 1.75rem;
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-hero-primary {
+            background-color: var(--primary-500);
+            border-color: var(--primary-500);
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            font-weight: 700;
+        }
+        .btn-hero-primary:hover {
+            background-color: var(--primary-600);
+            border-color: var(--primary-600);
+        }
+
+        .navbar-landing {
+            padding: 1rem 1rem;
+            background: transparent;
+        }
+
+        .nav-buttons {
+            background-color: #03151e;
+            color: white;
+			font-weight: 700;
+            font-size: 18px;
+            padding: 10px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+            .nav-buttons:hover {
+                background-color: white;
+                color: black;
+                border: solid 2px black;
+                text-decoration: none;
+                transition: 0.2s ease-out;
+            }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-landing">
+        <div class="container">
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center">
+                <img src="~/img/logo.png" alt="Biblio Logo" class="logo-img" style="width:48px;height:48px;" />
+                <span class="brand-name ms-2">Biblio</span>
+            </a>
+
+            <div class="ms-auto d-flex gap-2">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <a asp-controller="Books" asp-action="Index" class="nav-buttons">My Library</a>
+                }
+                else
+                {
+                    <div class="ms-auto d-flex gap-2">
+                        <a asp-area="Identity" asp-page="/Account/Login" class="nav-buttons">Sign In</a>
+                        <a asp-area="Identity" asp-page="/Account/Register" class="nav-buttons">Get Started</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main role="main" class="container">
+    <section class="hero-section">
+        <div>
+            <h1>Manage Your Library, Simply.</h1>
+            <p class="lead">
+                Biblio helps you organize your book collection, track reading progress, and discover insights about your library.
+            </p>
+
+            @if (!SignInManager.IsSignedIn(User))
+            {
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-hero-primary btn-lg">Get Started for Free</a>
+            }
+        </div>
+    </section>
+</main>
+</body>
+</html>
