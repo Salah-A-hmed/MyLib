@@ -179,10 +179,9 @@ namespace Biblio.Controllers
         {
             // ... (الدالة دي زي ما هي) ...
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var visitor = await _context.Visitors.Include(v => v.Borrowings).Include(v => v.Notifications).FirstOrDefaultAsync(v => v.ID == id && v.UserId == userId);
+            var visitor = await _context.Visitors.Include(v => v.Borrowings).FirstOrDefaultAsync(v => v.ID == id && v.UserId == userId);
             if (visitor != null)
             {
-                _context.Notifications.RemoveRange(visitor.Notifications);
                 _context.Borrowings.RemoveRange(visitor.Borrowings);
                 _context.Visitors.Remove(visitor);
                 await _context.SaveChangesAsync();

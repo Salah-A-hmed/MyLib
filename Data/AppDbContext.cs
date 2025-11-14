@@ -81,21 +81,34 @@ namespace Biblio.Data
                 .HasForeignKey(n => n.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Visitor → Notifications (1-to-many)  // Simulate cascade delete in VisitorController
+            // Visitor → Notifications (1-to-many)
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.Visitor)
                 .WithMany(v => v.Notifications)
                 .HasForeignKey(n => n.VisitorID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction); // (تعديل: لو الزائر اتمسح، سيب الإشعار)
 
-            // Book → Borrowing (1-to-many) // Simulate cascade delete in BookController
+            // Book → Notifications (1-to-many)
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Book)
+                .WithMany() // (الكتاب مش محتاج لستة إشعارات)
+                .HasForeignKey(n => n.BookID)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Borrowing → Notifications (1-to-many)
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Borrowing)
+                .WithMany() // (الاستعارة مش محتاجة لستة إشعارات)
+                .HasForeignKey(n => n.BorrowingID)
+                .OnDelete(DeleteBehavior.NoAction); // changed from SetNull
+            // Book → Borrowing (1-to-many) 
             modelBuilder.Entity<Borrowing>()
                 .HasOne(b => b.Book)
                 .WithMany(bk => bk.Borrowings)
                 .HasForeignKey(b => b.BookID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Visitor → Borrowing (1-to-many) // Simulate cascade delete in VisitorController
+            // Visitor → Borrowing (1-to-many) 
             modelBuilder.Entity<Borrowing>()
                 .HasOne(b => b.Visitor)
                 .WithMany(v => v.Borrowings)

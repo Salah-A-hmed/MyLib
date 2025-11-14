@@ -23,15 +23,54 @@ namespace Biblio.Controllers
             _context = context;
             _userManager = userManager;
         }
+        // (جديد) دالة للـ AJAX عشان تجيب عدد الإشعارات غير المقروءة
+        [HttpGet]
+        public async Task<IActionResult> GetUnreadCount()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { count = 0 });
+            }
 
+            var count = await _context.Notifications
+                .Where(n => n.UserId == userId && n.Status == NotificationStatus.Unread)
+                .CountAsync();
+
+            return Json(new { count = count });
+        }
+        // (تم تعديل الدالة دي بالكامل)
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var appDbContext = _context.Notifications.Include(n => n.User).Include(n => n.Visitor).Where(n => n.UserId == userId);
-            return View(await appDbContext.ToListAsync());
-        }
 
+            // 1. هنجيب كل الإشعارات (الجديد والقديم)
+            var notifications = await _context.Notifications
+                .Where(n => n.UserId == userId)
+                .Include(n => n.Visitor) // (Join)
+                .Include(n => n.Book)    // (Join)
+                .OrderByDescending(n => n.Date) // (الأحدث أولاً)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // 2. (الأهم) هنجيب الإشعارات "غير المقروءة" بس عشان نعدلها
+            var unreadNotifications = await _context.Notifications
+                .Where(n => n.UserId == userId && n.Status == NotificationStatus.Unread)
+                .ToListAsync();
+
+            if (unreadNotifications.Any())
+            {
+                foreach (var notification in unreadNotifications)
+                {
+                    notification.Status = NotificationStatus.Read; // (نحولها لـ "مقروءة")
+                }
+                await _context.SaveChangesAsync(); // (احفظ التغيير ده في الداتا بيز)
+            }
+
+            // 3. ابعت اللستة الكاملة للـ View
+            return View(notifications);
+        }
         // GET: Notifications/Details/5
         public async Task<IActionResult> Details(int? id)
         {

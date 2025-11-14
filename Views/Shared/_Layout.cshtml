@@ -89,10 +89,11 @@
     <main class="main-content">
         <div class="top-header">
             <h1 class="page-title">@ViewData["Title"]</h1>
-
-             <div class="user-account">
+            <div class="user-account">
                 <partial name="_LoginPartial" />
             </div>
+            <i id="notification-icon" class="notification-icon fas fa-bell"></i>
+            <span id="notification-badge" class="notification-badge">0</span>
         </div>
 
         <div class="controls-section">
@@ -112,6 +113,34 @@
     <script src="~/js/collection-details.js" asp-append-version="true"></script>
     <script src="~/js/visitor-details.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        function fetchUnreadCount() {
+            fetch('@Url.Action("GetUnreadCount", "Notifications")')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notification-badge');
+                    const icon = document.getElementById('notification-icon');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 9 ? '9+' : data.count;
+                            badge.style.display = 'flex';
+							icon.style.display = 'block';
+                        } else {
+                            badge.style.display = 'none';
+							icon.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching notification count:', error));
+        }
+
+        // (1) هات العدد أول ما الصفحة تفتح
+        document.addEventListener('DOMContentLoaded', fetchUnreadCount);
+
+        // (2) هات العدد كل دقيقة (60000 ميللي ثانية)
+         setInterval(fetchUnreadCount, 60000);
+        // (ملاحظة: ممكن تلغي السطر ده لو عايز التحديث يحصل بس عند الريفريش)
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

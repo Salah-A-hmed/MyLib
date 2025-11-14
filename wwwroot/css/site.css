@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -28,4 +28,43 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+/* --- Notification Badge Styles --- */
+.user-account {
+    position: relative; /* (عشان الجرس ياخد مكانه صح) */
+}
+
+.notification-badge {
+    display: none; /* (مخفي افتراضياً) */
+    position: absolute;
+    top: 65px;
+    right: 65px; /* (ظبط المكان ده حسب شكل الديزاين) */
+    background-color: #dc3545;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    /* (عشان الرقم يتوسط) */
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+.notification-icon {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 65px;
+    color: #dc3545;
+    font-size: 20px;
+    font-weight: 700;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    /* (عشان الرقم يتوسط) */
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
 }

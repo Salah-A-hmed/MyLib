@@ -1,59 +1,131 @@
 ﻿@model IEnumerable<Biblio.Models.Notification>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Notifications";
 }
 
-<h1>Index</h1>
+@* (هنضيف شوية ستايل بسيط هنا عشان الأيقونات والألوان) *@
+<style>
+    .notification-card {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        text-decoration: none;
+        color: inherit;
+        transition: background-color 0.2s;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Visitor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Message)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Visitor.ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Message)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <button type="button" class="btn btn-link text-danger js-delete"
-                        data-bs-toggle="modal"
-                        data-bs-target="#DeleteConfirmationModal"
-                        data-delete-url="@Url.Action("Delete", "Notifications", new { id = item.ID })"
-                        data-entity-name="Notification">
-                    Delete
-                </button>
-                </td>
-        </tr>
-}
-    </tbody>
-</table>
+        .notification-card:hover {
+            background-color: #f8f9fa;
+        }
+
+    .notification-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        text-align: center;
+        margin-right: 1.25rem;
+    }
+
+        .notification-icon.type-Alert {
+            color: #dc3545;
+        }
+        /* (أحمر) */
+        .notification-icon.type-Warning {
+            color: #ffc107;
+        }
+        /* (أصفر) */
+        .notification-icon.type-Information {
+            color: #0dcaf0;
+        }
+    /* (أزرق) */
+
+    .notification-body {
+        flex-grow: 1;
+    }
+
+    .notification-message {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #212529;
+    }
+
+    .notification-meta {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+
+    .notification-date {
+        font-size: 0.85rem;
+        color: #6c757d;
+        flex-shrink: 0;
+    }
+
+    .notification-unread {
+        background-color: #fdfdfe;
+        border-left: 4px solid var(--active-bg);
+    }
+</style>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4>All Notifications</h4>
+    </div>
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="text-center p-5 text-muted">
+                <i class="fas fa-check-circle fa-3x mb-3"></i>
+                <h5>You're all caught up!</h5>
+                <p>You have no notifications right now.</p>
+            </div>
+        }
+        else
+        {
+            <div class="list-group list-group-flush">
+                @foreach (var item in Model)
+                {
+                    // (1) تحديد الأيقونة واللون حسب النوع
+                    string iconClass = "fa-info-circle";
+                    switch (item.Type)
+                    {
+                        case NotificationType.Alert:
+                            iconClass = "fa-exclamation-triangle";
+                            break;
+                        case NotificationType.Warning:
+                            iconClass = "fa-clock";
+                            break;
+                    }
+                    var cardClass = (item.Status == NotificationStatus.Unread) ? "notification-unread" : "";
+
+                    // (2) تحديد اللينك (لو مفيش لينك، خليه #)
+                    var link = string.IsNullOrEmpty(item.LinkUrl) ? "#" : Url.Content(item.LinkUrl);
+
+                    <a href="@link" class="notification-card @cardClass">
+                        <div class="notification-icon type-@item.Type">
+                            <i class="fas @iconClass"></i>
+                        </div>
+
+                        <div class="notification-body">
+                            <div class="notification-message">@item.Message</div>
+                            <div class="notification-meta">
+                                @if (item.Book != null)
+                                {
+                                    <span>Book: @item.Book.Title</span>
+                                }
+                                @if (item.Visitor != null)
+                                {
+                                    <span> | Visitor: @item.Visitor.Name</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="notification-date">
+                            @item.Date.ToString("MMM dd, hh:mm tt")
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>
