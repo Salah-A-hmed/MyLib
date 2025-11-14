@@ -39,22 +39,59 @@ namespace Biblio.Controllers
 
             return Json(new { count = count });
         }
-        // (تم تعديل الدالة دي بالكامل)
+        // (تعديل 1) دالة Index مبقتش بتمسح الإشعارات
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // 1. هنجيب كل الإشعارات (الجديد والقديم)
             var notifications = await _context.Notifications
                 .Where(n => n.UserId == userId)
-                .Include(n => n.Visitor) // (Join)
-                .Include(n => n.Book)    // (Join)
-                .OrderByDescending(n => n.Date) // (الأحدث أولاً)
+                .Include(n => n.Visitor)
+                .Include(n => n.Book)
+                .Include(n => n.Borrowing) // (بنحتاجه عشان اللينك)
+                .OrderByDescending(n => n.Date)
                 .AsNoTracking()
                 .ToListAsync();
 
-            // 2. (الأهم) هنجيب الإشعارات "غير المقروءة" بس عشان نعدلها
+            // (هنحسب العدد ونبعته عشان زرار "Mark all")
+            ViewData["UnreadCount"] = notifications.Count(n => n.Status == NotificationStatus.Unread);
+
+            return View(notifications);
+        }
+
+        // (جديد 2) الدالة دي بتقرا الإشعار وتوديك للينك بتاعه
+        [HttpGet]
+        public async Task<IActionResult> GoTo(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var notification = await _context.Notifications
+                .FirstOrDefaultAsync(n => n.ID == id && n.UserId == userId);
+
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+            // (1) علّم إنه اتقرا
+            notification.Status = NotificationStatus.Read;
+            await _context.SaveChangesAsync();
+
+            // (2) وديه للينك (لو مفيش لينك، رجعه لصفحة الإشعارات)
+            if (string.IsNullOrEmpty(notification.LinkUrl))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return Redirect(notification.LinkUrl);
+        }
+
+        // (جديد 3) الدالة دي بتمسح كل الإشعارات
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAllAsRead()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var unreadNotifications = await _context.Notifications
                 .Where(n => n.UserId == userId && n.Status == NotificationStatus.Unread)
                 .ToListAsync();
@@ -63,13 +100,12 @@ namespace Biblio.Controllers
             {
                 foreach (var notification in unreadNotifications)
                 {
-                    notification.Status = NotificationStatus.Read; // (نحولها لـ "مقروءة")
+                    notification.Status = NotificationStatus.Read;
                 }
-                await _context.SaveChangesAsync(); // (احفظ التغيير ده في الداتا بيز)
+                await _context.SaveChangesAsync();
             }
 
-            // 3. ابعت اللستة الكاملة للـ View
-            return View(notifications);
+            return RedirectToAction(nameof(Index));
         }
         // GET: Notifications/Details/5
         public async Task<IActionResult> Details(int? id)

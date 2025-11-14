@@ -1,10 +1,23 @@
 ﻿@model IEnumerable<Biblio.Models.Notification>
 @{
     ViewData["Title"] = "Notifications";
+    var unreadCount = (int)(ViewData["UnreadCount"] ?? 0);
 }
 
-@* (هنضيف شوية ستايل بسيط هنا عشان الأيقونات والألوان) *@
+@* (هنستخدم نفس الستايل اللي عملناه المرة اللي فاتت) *@
 <style>
+    /* Use a unique icon class to avoid global conflicts */
+    .notification-card .Index-Notification-Icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        width: 40px;
+        text-align: center;
+        margin-right: 1.25rem;
+        flex-shrink: 0;
+    }
+
     .notification-card {
         display: flex;
         align-items: center;
@@ -12,32 +25,31 @@
         border-bottom: 1px solid var(--border-color);
         text-decoration: none;
         color: inherit;
-        transition: background-color 0.2s;
+        transition: background-color 0.15s, color 0.15s;
     }
 
-        .notification-card:hover {
-            background-color: #f8f9fa;
-        }
-
-    .notification-icon {
-        font-size: 1.5rem;
-        width: 40px;
-        text-align: center;
-        margin-right: 1.25rem;
+    .notification-card:last-child {
+        border-bottom: none;
     }
 
-        .notification-icon.type-Alert {
-            color: #dc3545;
-        }
-        /* (أحمر) */
-        .notification-icon.type-Warning {
-            color: #ffc107;
-        }
-        /* (أصفر) */
-        .notification-icon.type-Information {
-            color: #0dcaf0;
-        }
-    /* (أزرق) */
+    /* Default hover for all notification cards (read) */
+    .notification-card:hover {
+        background-color: #f8f9fa;
+        text-decoration: none;
+    }
+
+    /* Per-type icon color */
+    .notification-card.type-Alert .Index-Notification-Icon {
+        color: #dc3545;
+    }
+
+    .notification-card.type-Warning .Index-Notification-Icon {
+        color: #b28400; /* darker yellow/brown for visibility */
+    }
+
+    .notification-card.type-Information .Index-Notification-Icon {
+        color: #0dcaf0;
+    }
 
     .notification-body {
         flex-grow: 1;
@@ -61,15 +73,45 @@
         flex-shrink: 0;
     }
 
-    .notification-unread {
-        background-color: #fdfdfe;
-        border-left: 4px solid var(--active-bg);
+    /* Unread variant — left border and bg vary by type to match icons */
+    .notification-card.notification-unread {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--active-bg); /* fallback */
+    }
+
+    .notification-card.notification-unread .notification-message {
+        font-weight: 700;
+    }
+
+    /* unread + type-specific left border + hover tint */
+    .notification-card.notification-unread.type-Alert {
+        border-left-color: #dc3545;
+        background-color: rgba(220,53,69,0.04);
+    }
+
+    .notification-card.notification-unread.type-Warning {
+        border-left-color: #ffc107;
+        background-color: rgba(255,193,7,0.04);
+    }
+
+    .notification-card.notification-unread.type-Information {
+        border-left-color: #0dcaf0;
+        background-color: rgba(13,202,240,0.04);
     }
 </style>
-
 <div class="card shadow-sm">
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h4>All Notifications</h4>
+
+        @* (تعديل 1) إضافة زرار "Mark All as Read" *@
+        @if (unreadCount > 0)
+        {
+            <form asp-action="MarkAllAsRead" method="post">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-check-double"></i> Mark all as read (@unreadCount)
+                </button>
+            </form>
+        }
     </div>
     <div class="card-body p-0">
         @if (!Model.Any())
@@ -85,7 +127,6 @@
             <div class="list-group list-group-flush">
                 @foreach (var item in Model)
                 {
-                    // (1) تحديد الأيقونة واللون حسب النوع
                     string iconClass = "fa-info-circle";
                     switch (item.Type)
                     {
@@ -97,12 +138,13 @@
                             break;
                     }
                     var cardClass = (item.Status == NotificationStatus.Unread) ? "notification-unread" : "";
+                    // add the type class to the card so css can style border/hover per type
+                    var typeClass = $"type-{item.Type}";
 
-                    // (2) تحديد اللينك (لو مفيش لينك، خليه #)
-                    var link = string.IsNullOrEmpty(item.LinkUrl) ? "#" : Url.Content(item.LinkUrl);
+                    // (تعديل 2) تغيير اللينك عشان يشاور على دالة "GoTo"
+                    <a asp-action="GoTo" asp-route-id="@item.ID" class="notification-card @cardClass @typeClass">
 
-                    <a href="@link" class="notification-card @cardClass">
-                        <div class="notification-icon type-@item.Type">
+                        <div class="Index-Notification-Icon type-@item.Type">
                             <i class="fas @iconClass"></i>
                         </div>
 
@@ -121,7 +163,7 @@
                         </div>
 
                         <div class="notification-date">
-                            @item.Date.ToString("MMM dd, hh:mm tt")
+                            @GetTimeAgo(@item.Date)
                         </div>
                     </a>
                 }
@@ -129,3 +171,23 @@
         }
     </div>
 </div>
+@* (جديد 3) دالة Helper بتاعة عرض الوقت *@
+@functions {
+    public static string GetTimeAgo(DateTime date)
+    {
+        TimeSpan timeSpan = DateTime.Now.Subtract(date);
+
+        if (timeSpan <= TimeSpan.FromSeconds(60))
+            return $"{timeSpan.Seconds}s ago";
+        if (timeSpan <= TimeSpan.FromMinutes(60))
+            return $"{timeSpan.Minutes}m ago";
+        if (timeSpan <= TimeSpan.FromHours(24))
+            return $"{timeSpan.Hours}h ago";
+        if (timeSpan <= TimeSpan.FromDays(30))
+            return $"{timeSpan.Days}d ago";
+        if (timeSpan <= TimeSpan.FromDays(365))
+            return $"{timeSpan.Days / 30}mo ago";
+
+        return $"{timeSpan.Days / 365}y ago";
+    }
+}

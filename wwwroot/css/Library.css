@@ -1012,3 +1012,12 @@ body {
 .table-hover .clickable-row {
     cursor: pointer;
 }
+
+.visitor-details-box {
+    margin-top: 10px;
+    background-color: #f8f9fa; /* لون رمادي خفيف */
+    border-left: 3px solid var(--active-bg); /* خط لبني على الشمال */
+    padding: 10px;
+    border-radius: 0 8px 8px 0;
+}
+

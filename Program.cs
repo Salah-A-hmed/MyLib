@@ -34,6 +34,7 @@ namespace Biblio
 
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IBookFilterService, BookFilterService>();
+            builder.Services.AddHostedService<NotificationService>();
 
             var app = builder.Build();
 

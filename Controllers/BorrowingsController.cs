@@ -25,35 +25,19 @@ namespace Biblio.Controllers
             _userManager = userManager;
         }
 
-        // (تم تعديل الدالة دي بالكامل)
+        // (تم تعديل الدالة دي وشيلنا منها كل لوجيك الإشعارات)
         // GET: Borrowings
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var today = DateTime.Now.Date;
 
-            // --- (الخطوة الأهم) تحديث الحالات المتأخرة (Overdue) تلقائياً ---
-            var borrowedItemsToUpdate = await _context.Borrowings
-                .Where(b => b.UserId == userId &&
-                            b.Status == BorrowingStatus.Borrowed && // (الحالة "Borrowed" فقط)
-                            b.DueDate.Date < today) // (تاريخ الاستحقاق فات)
-                .ToListAsync();
+            // (ملاحظة: الخدمة الخلفية هي اللي بتعمل تحديث للـ Overdue)
+            // (إحنا بس هنجيب الداتا ونعرضها زي ما هي)
 
-            if (borrowedItemsToUpdate.Any())
-            {
-                foreach (var item in borrowedItemsToUpdate)
-                {
-                    item.Status = BorrowingStatus.Overdue;
-                    item.FineAmount = ((today - item.DueDate.Date).Days) * FinePerDay;
-                    _context.Update(item);
-                }
-                await _context.SaveChangesAsync(); // (احفظ التغييرات دي الأول)
-            }
-
-            // --- بعد التحديث، هنجيب كل البيانات عشان نعرضها ---
             var allUserBorrowings = await _context.Borrowings
-                .Include(b => b.Book)    // (مهم عشان اسم وصورة الكتاب)
-                .Include(b => b.Visitor) // (مهم عشان اسم الزائر)
+                .Include(b => b.Book)
+                .Include(b => b.Visitor)
                 .Where(b => b.UserId == userId)
                 .AsNoTracking()
                 .ToListAsync();
@@ -61,12 +45,12 @@ namespace Biblio.Controllers
             // 1. فلترة البيانات
             var activeBorrowings = allUserBorrowings
                 .Where(b => b.Status == BorrowingStatus.Borrowed || b.Status == BorrowingStatus.Overdue)
-                .OrderBy(b => b.DueDate) // (الأقدم أولاً)
+                .OrderBy(b => b.DueDate)
                 .ToList();
 
             var returnedBorrowings = allUserBorrowings
                 .Where(b => b.Status == BorrowingStatus.Returned)
-                .OrderByDescending(b => b.ReturnDate) // (الأحدث أولاً)
+                .OrderByDescending(b => b.ReturnDate)
                 .ToList();
 
             // 2. تجهيز الـ ViewModel
@@ -78,10 +62,10 @@ namespace Biblio.Controllers
                 // 3. حساب KPIs التاب الثاني (Active)
                 KpiTotalActive = activeBorrowings.Count,
                 KpiTotalOverdue = activeBorrowings.Count(b => b.Status == BorrowingStatus.Overdue),
-                KpiDueSoon = activeBorrowings.Count(b =>
+                KpiDueSoon = activeBorrowings.Count(b => // (لسه بنحسبها للعرض)
                     b.Status == BorrowingStatus.Borrowed &&
                     b.DueDate.Date >= today &&
-                    b.DueDate.Date <= today.AddDays(2)), // (اللي معاده النهاردة أو بكرة أو بعده)
+                    b.DueDate.Date <= today.AddDays(2)),
 
                 // 4. حساب KPIs التاب الثالث (Returned)
                 KpiTotalReturned = returnedBorrowings.Count,
