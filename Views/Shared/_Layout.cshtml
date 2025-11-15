@@ -32,45 +32,72 @@
             </div>
         </div>
         <nav class="sidebar-nav">
-            <div class="nav-item">
-                <a asp-controller="Books" asp-action="Index" class="nav-link" data-page="library">
-                    <i class="nav-icon fas fa-book-open"></i>
-                    <span class="nav-text">Library</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a asp-controller="Books" asp-action="AddBook" class="nav-link" data-page="add-items">
-                    <i class="nav-icon fas fa-plus-circle"></i>
-                    <span class="nav-text">Add Book</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a asp-controller="Collections" asp-action="Index" class="nav-link" data-page="collections">
-                    <i class="nav-icon fas fa-layer-group"></i>
-                    <span class="nav-text">Collections</span>
-                </a>
-            </div>
-            <div class="nav-item">
-                <a asp-controller="Collections" asp-action="Create" class="nav-link" data-page="add-collection">
+            @if (User.IsInRole("Reader") || User.IsInRole("Librarian"))
+            {
+                <div class="nav-item">
+                    <a asp-controller="Books" asp-action="Index" class="nav-link" data-page="library">
+                        <i class="nav-icon fas fa-book-open"></i>
+                        <span class="nav-text">Library</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a asp-controller="Books" asp-action="AddBook" class="nav-link" data-page="add-items">
+                        <i class="nav-icon fas fa-plus-circle"></i>
+                        <span class="nav-text">Add Book</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a asp-controller="Collections" asp-action="Index" class="nav-link" data-page="collections">
+                        <i class="nav-icon fas fa-layer-group"></i>
+                        <span class="nav-text">Collections</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a asp-controller="Collections" asp-action="Create" class="nav-link" data-page="add-collection">
                     <i class="nav-icon fas fa-folder-plus"></i>
                     <span class="nav-text">Add Collection</span>
-                </a>
-            </div>
-            <div class ="sidebar-pro">
-                <div class="nav-item">
-                    <a asp-controller="Borrowings" asp-action="Index" class="nav-link" data-page="borrowings">
-                        <i class="nav-icon fas fa-exchange-alt"></i> @* fas fa-arrow-right-from-bracket *@
-                        <span class="nav-text">Lending</span>
                     </a>
                 </div>
-                <div class="nav-item">
-                    <a asp-controller="Visitors" asp-action="Index" class="nav-link" data-page="visitors">
-                        <i class="nav-icon fas fa-users"></i>
-                        <span class="nav-text">Visitors</span>
-                    </a>
-                </div>
+            }
+            @if (User.IsInRole("Librarian"))
+            {
+                <div class ="sidebar-pro">
+                    <div class="nav-item">
+                        <a asp-controller="Borrowings" asp-action="Index" class="nav-link" data-page="borrowings">
+                            <i class="nav-icon fas fa-exchange-alt"></i> @* fas fa-arrow-right-from-bracket *@
+                            <span class="nav-text">Lending</span>
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a asp-controller="Visitors" asp-action="Index" class="nav-link" data-page="visitors">
+                            <i class="nav-icon fas fa-users"></i>
+                            <span class="nav-text">Visitors</span>
+                        </a>
+                    </div>
 
-            </div>
+                </div>
+			}
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="nav-item">
+                    <a asp-controller="Admin" asp-action="Index" class="nav-link" data-page="admin-dashboard">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a asp-controller="Admin" asp-action="ManageUsers" class="nav-link" data-page="admin-users">
+                        <i class="nav-icon fas fa-users-cog"></i>
+                        <span class="nav-text">Manage Users</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a asp-controller="Admin" asp-action="SendNotification" class="nav-link" data-page="admin-notify">
+                        <i class="nav-icon fas fa-paper-plane"></i>
+                        <span class="nav-text">Send Notification</span>
+                    </a>
+                </div>
+            }
         </nav>
 
         <div class="sidebar-bottom">

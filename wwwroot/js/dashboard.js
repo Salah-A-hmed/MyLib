@@ -23,6 +23,19 @@
         yaxis: { gridcolor: '#e9ecef' }
     };
 
+    // (جديد) دالة بتحدد المسار الصح (هل إحنا أدمن ولا يوزر عادي)
+    function getRedirectUrl(id) {
+        // Make pathname comparison case-insensitive
+        const path = (window.location && window.location.pathname) ? window.location.pathname.toLowerCase() : '';
+        if (path.startsWith("/admin")) {
+            // لو إحنا في صفحة الأدمن، وديه لصفحة تفاصيل الكولكشن بتاعة الأدمن
+            return `/Admin/ViewCollectionDetails/${id}`;
+        } else {
+            // لو إحنا في صفحتنا العادية، وديه لصفحة التفاصيل العادية
+            return `/Collections/Details/${id}`;
+        }
+    }
+
     // --- (أ) رسم الـ Pie Chart (Google Charts) ---
     function drawGooglePieChart() {
         const chartDiv = document.getElementById('pieBookCountChart');
@@ -51,11 +64,17 @@
 
             // (جديد) إضافة event listener (ملاحظة: جوجل شارت لا تدعم "dblclick" بسهولة، سنستخدم "click")
             google.visualization.events.addListener(chart, 'select', function () {
-                var selection = chart.getSelection();
-                if (selection.length > 0) {
-                    var rowIndex = selection[0].row;
-                    var collectionId = dashboardData.collectionBookCountChart.ids[rowIndex];
-                    window.location.href = '/Collections/Details/' + collectionId;
+                try {
+                    var selection = chart.getSelection();
+                    if (selection && selection.length > 0) {
+                        var rowIndex = selection[0].row;
+                        var collectionId = dashboardData.collectionBookCountChart.ids[rowIndex];
+                        if (collectionId !== undefined && collectionId !== null) {
+                            window.location.href = getRedirectUrl(collectionId);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error handling pie chart selection:", e);
                 }
             });
 
@@ -98,9 +117,17 @@
 
             // (جديد) إضافة dblclick listener
             copiesChartDiv.on('plotly_doubleclick', function (data) {
-                var pointIndex = data.points[0].pointNumber;
-                var collectionId = dashboardData.collectionCopiesChart.ids[pointIndex];
-                window.location.href = '/Collections/Details/' + collectionId;
+                try {
+                    if (data && data.points && data.points.length > 0) {
+                        var pointIndex = data.points[0].pointNumber;
+                        var collectionId = dashboardData.collectionCopiesChart.ids[pointIndex];
+                        if (collectionId !== undefined && collectionId !== null) {
+                            window.location.href = getRedirectUrl(collectionId);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error handling copies chart doubleclick:", e);
+                }
             });
         } else {
             copiesChartDiv.innerHTML = "<p class='text-muted text-center p-5'>No data to display.</p>";
@@ -120,9 +147,17 @@
 
             // (جديد) إضافة dblclick listener
             valueChartDiv.on('plotly_doubleclick', function (data) {
-                var pointIndex = data.points[0].pointNumber;
-                var collectionId = dashboardData.collectionValueChart.ids[pointIndex];
-                window.location.href = '/Collections/Details/' + collectionId;
+                try {
+                    if (data && data.points && data.points.length > 0) {
+                        var pointIndex = data.points[0].pointNumber;
+                        var collectionId = dashboardData.collectionValueChart.ids[pointIndex];
+                        if (collectionId !== undefined && collectionId !== null) {
+                            window.location.href = getRedirectUrl(collectionId);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error handling value chart doubleclick:", e);
+                }
             });
         } else {
             valueChartDiv.innerHTML = "<p class='text-muted text-center p-5'>No pricing data available.</p>";

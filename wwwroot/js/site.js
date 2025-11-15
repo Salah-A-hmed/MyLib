@@ -14,7 +14,16 @@
             navLinks.forEach((link) => link.classList.remove("active"));
 
             let activePageData = null;
-
+            // Admin Panel (الجديد - لازم يتنفذ الأول)
+            if (path.startsWith("/admin/manageusers") || path.startsWith("/admin/edituser")) {
+                activePageData = "admin-users";
+            }
+            else if (path.startsWith("/admin/sendnotification")) {
+                activePageData = "admin-notify";
+            }
+            else if (path.startsWith("/admin")) {
+                activePageData = "admin-dashboard";
+            }
             // (أ) Books
             if (path.includes("/books/addbook")) {
                 activePageData = "add-items";

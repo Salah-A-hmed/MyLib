@@ -3,7 +3,8 @@
     // كلاس مساعد بسيط عشان نبعت البيانات للـ Charts
     public class ChartDataViewModel
     {
-        public List<int> Ids { get; set; } = new List<int>();
+        // Changed to string to support Identity user IDs (alphanumeric) and still hold numeric IDs as strings
+        public List<string> Ids { get; set; } = new List<string>();
         public List<string> Labels { get; set; } = new List<string>();
         public List<decimal> Data { get; set; } = new List<decimal>();
     }

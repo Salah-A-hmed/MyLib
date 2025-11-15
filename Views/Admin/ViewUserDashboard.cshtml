@@ -1,0 +1,101 @@
+﻿@model Biblio.Models.ViewModels.CollectionDashboardViewModel
+@{
+    ViewData["Title"] = $"{ViewData["TargetUserName"]}\'s Collection Dashboard";
+}
+@* (تعديل 1) استبدلنا المستطيلات (KPIs) بـ divs فاضية *@
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div id="kpiTotalBooks"></div> @* <-- Plotly هيرسم هنا *@
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div id="kpiTotalCopies"></div> @* <-- Plotly هيرسم هنا *@
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @* (تعديل 2) غيرنا كل <canvas> إلى <div> *@
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Collection Book Count (Unique)
+            </div>
+            <div class="card-body">
+                <div id="pieBookCountChart" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Collection Total Copies
+            </div>
+            <div class="card-body">
+                <div id="barCopiesChart" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Books Added This Year (@DateTime.Now.Year)
+            </div>
+            <div class="card-body">
+                <div id="colMonthlyChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Books Added By Year
+            </div>
+            <div class="card-body">
+                <div id="colYearlyChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                Total Collection Value (Est.)
+            </div>
+            <div class="card-body">
+                <div id="barValueChart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* (تعديل 3) تغيير الـ Scripts *@
+@section Scripts {
+    @* (حذفنا Chart.js) *@
+
+    @* (إضافة Plotly) *@
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    @* (إضافة Google Charts) *@
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    @* (إضافة ملف الـ JS الجديد بتاعنا) *@
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+
+    <script>
+        // (الجسر زي ما هو بالظبط)
+        $(document).ready(function () {
+            // (أ) بنحول بيانات C# لـ JavaScript
+            const data = @Html.Raw(Json.Serialize(Model));
+
+            // (ب) بنسلّم البيانات للدالة اللي في الملف الخارجي
+            initCollectionDashboard(data);
+        });
+    </script>
+}

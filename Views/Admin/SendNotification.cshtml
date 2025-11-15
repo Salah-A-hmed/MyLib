@@ -1,0 +1,466 @@
+﻿@model Biblio.Models.Notification
+
+@{
+    ViewData["Title"] = "Send Notification or Announcement";
+}
+
+<div class="notification-container">
+    <div class="notification-card">
+        
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form asp-action="SendNotification" method="post" class="notification-form">
+            @Html.AntiForgeryToken()
+
+            <!-- Section 1: Notification Content -->
+            <div class="form-section">
+                <h5 class="section-title">
+                    <i class="fas fa-pen-fancy"></i> Notification Content
+                </h5>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Type" class="form-label">
+                        <span class="required">*</span> Notification Type
+                    </label>
+                    <select asp-for="Type" asp-items="Html.GetEnumSelectList<NotificationType>()" 
+                            class="form-select" required>
+                        <option selected disabled>Select notification type...</option>
+                    </select>
+                    <span asp-validation-for="Type" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Message" class="form-label">
+                        <span class="required">*</span> Message
+                    </label>
+                    <textarea asp-for="Message" class="form-control" rows="5" 
+                              placeholder="Enter your notification message..." required></textarea>
+                    <small class="form-text text-muted d-block mt-1">
+                        <i class="fas fa-info-circle"></i> Be clear and concise. Maximum 500 characters recommended.
+                    </small>
+                    <span asp-validation-for="Message" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="LinkUrl" class="form-label">Link URL <span class="badge bg-secondary">Optional</span></label>
+                    <input asp-for="LinkUrl" class="form-control" 
+                           placeholder="/Books/Index or https://example.com" />
+                    <small class="form-text text-muted d-block mt-1">
+                        <i class="fas fa-link"></i> Users can click the notification to navigate to this URL.
+                    </small>
+                    <span asp-validation-for="LinkUrl" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <!-- Section 2: Target Audience -->
+            <div class="form-section mt-4">
+                <h5 class="section-title">
+                    <i class="fas fa-users"></i> Target Audience
+                </h5>
+
+                <div class="audience-options">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="target" id="targetAll" 
+                               value="All" checked onchange="toggleUserSelect()">
+                        <label class="form-check-label" for="targetAll">
+                            <i class="fas fa-globe"></i>
+                            <strong>All Users</strong>
+                            <span class="badge-info">(Broadcast)</span>
+                            <p class="option-description">Send to every registered user</p>
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="target" id="targetPro" 
+                               value="Pro" onchange="toggleUserSelect()">
+                        <label class="form-check-label" for="targetPro">
+                            <i class="fas fa-crown"></i>
+                            <strong>Pro Users</strong>
+                            <span class="badge-info">(Librarians)</span>
+                            <p class="option-description">Librarians with an active Library Plan</p>
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="target" id="targetReader" 
+                               value="Reader" onchange="toggleUserSelect()">
+                        <label class="form-check-label" for="targetReader">
+                            <i class="fas fa-book-reader"></i>
+                            <strong>Readers Only</strong>
+                            <span class="badge-info">(Free Plan)</span>
+                            <p class="option-description">Regular readers on the free plan</p>
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="target" id="targetSpecific" 
+                               value="Specific" onchange="toggleUserSelect()">
+                        <label class="form-check-label" for="targetSpecific">
+                            <i class="fas fa-user"></i>
+                            <strong>Specific User</strong>
+                            <span class="badge-info">(Single)</span>
+                            <p class="option-description">Send to a single user</p>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3" id="specificUserSelect" style="display:none;">
+                    <label class="form-label">
+                        <span class="required">*</span> Select User
+                    </label>
+                    <select name="specificUserId" asp-items="@ViewBag.UserList" 
+                            class="form-select" id="userSelectDropdown">
+                        <option selected disabled>Choose a user...</option>
+                    </select>
+                    <small class="form-text text-muted d-block mt-1">
+                        <i class="fas fa-info-circle"></i> Select the user who will receive this notification.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions mt-5 mb-3">
+                <button type="submit" class="btn btn-send">
+                    <i class="fas fa-paper-plane"></i> Send Notification
+                </button>
+                <a href="@Url.Action("Index", "Admin")" class="btn btn-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Notification Container Styling */
+        .notification-container {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .notification-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            border: 1px solid #e9ecef;
+        }
+
+        /* Form Sections */
+        .form-section {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #495057;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #4bc1d2;
+            font-size: 1.1rem;
+        }
+
+        /* Form Labels */
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .required {
+            color: #dc3545;
+            font-weight: 700;
+        }
+
+        .badge-info {
+            background-color: #e7f3f5;
+            color: #0096b5;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 6px;
+        }
+
+        /* Form Controls */
+        .form-select,
+        .form-control {
+            border: 2px solid #bad7e3;
+            background-color: #f8feff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 15px;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+
+        .form-select::placeholder,
+        .form-control::placeholder {
+            color: #9aa9af;
+        }
+
+        .form-select:focus,
+        .form-control:focus {
+            border-color: #4bc1d2;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 0.2rem rgba(75, 193, 210, 0.25);
+            outline: none;
+        }
+
+        .form-control[required]:invalid:not(:placeholder-shown) {
+            border-color: #dc3545;
+        }
+
+        /* Audience Options */
+        .audience-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 12px;
+            background-color: #f8feff;
+            border-radius: 8px;
+            border: 1px solid #bad7e3;
+            transition: all 0.3s ease;
+        }
+
+        .form-check:hover {
+            background-color: #f0f8fb;
+            border-color: #4bc1d2;
+        }
+
+        .form-check-input {
+            margin-top: 3px;
+            margin-right: 0;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #bad7e3;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .form-check-input:checked {
+            background-color: #4bc1d2;
+            border-color: #4bc1d2;
+        }
+
+        .form-check-input:focus {
+            border-color: #4bc1d2;
+            box-shadow: 0 0 0 0.2rem rgba(75, 193, 210, 0.25);
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            margin: 0;
+            flex: 1;
+        }
+
+        .form-check-label strong {
+            color: #212529;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .form-check-label strong i {
+            color: #4bc1d2;
+            font-size: 1rem;
+        }
+
+        .option-description {
+            font-size: 13px;
+            color: #6c757d;
+            margin: 4px 0 0;
+            font-style: italic;
+        }
+
+        /* Validation Messages */
+        .text-danger,
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 12px;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .form-text {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Action Buttons */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-send,
+        .btn-cancel {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-send {
+            background-color: #4bc1d2;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-send:hover {
+            background-color: #0096b5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(75, 193, 210, 0.3);
+        }
+
+        .btn-cancel {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-cancel:hover {
+            background-color: #dee2e6;
+            text-decoration: none;
+            color: #212529;
+        }
+
+        /* Alert Styling */
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-success {
+            background-color: #d1f4e8;
+            color: #0f6e3d;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+
+        .alert i {
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+        media (max-width: 576px) {
+            .notification-card {
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            .section-title {
+                font-size: 0.95rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-send,
+            .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-select,
+            .form-control {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleUserSelect();
+        });
+
+        function toggleUserSelect() {
+            const specificSelect = document.getElementById('specificUserSelect');
+            const userSelectDropdown = document.getElementById('userSelectDropdown');
+            const isSpecificSelected = document.getElementById('targetSpecific').checked;
+
+            if (isSpecificSelected) {
+                specificSelect.style.display = 'block';
+                userSelectDropdown.required = true;
+            } else {
+                specificSelect.style.display = 'none';
+                userSelectDropdown.required = false;
+            }
+        }
+
+        // Validate form on submit
+        document.querySelector('.notification-form').addEventListener('submit', function (e) {
+            const target = document.querySelector('input[name="target"]:checked').value;
+            if (target === 'Specific') {
+                const userSelect = document.getElementById('userSelectDropdown');
+                if (!userSelect.value) {
+                    e.preventDefault();
+                    alert('Please select a user for the specific notification.');
+                    return false;
+                }
+            }
+        });
+    </script>
+}

@@ -56,7 +56,8 @@ namespace Biblio.Controllers
                     .Select(c => new { Id = c.ID, Label = c.Name, Value = (decimal)c.Books.Count() })
                     .OrderByDescending(x => x.Value);
                 
-                viewModel.CollectionBookCountChart.Ids.AddRange(pieChartData.Select(x => x.Id));
+                // convert int IDs to string because ChartDataViewModel.Ids is now List<string>
+                viewModel.CollectionBookCountChart.Ids.AddRange(pieChartData.Select(x => x.Id.ToString()));
                 viewModel.CollectionBookCountChart.Labels.AddRange(pieChartData.Select(x => x.Label));
                 viewModel.CollectionBookCountChart.Data.AddRange(pieChartData.Select(x => x.Value));
 
@@ -69,7 +70,7 @@ namespace Biblio.Controllers
                     })
                     .OrderByDescending(x => x.Value);
 
-                viewModel.CollectionCopiesChart.Ids.AddRange(copiesChartData.Select(x => x.Id)); 
+                viewModel.CollectionCopiesChart.Ids.AddRange(copiesChartData.Select(x => x.Id.ToString())); 
                 viewModel.CollectionCopiesChart.Labels.AddRange(copiesChartData.Select(x => x.Label));
                 viewModel.CollectionCopiesChart.Data.AddRange(copiesChartData.Select(x => x.Value));
 
@@ -82,7 +83,7 @@ namespace Biblio.Controllers
                     })
                     .OrderByDescending(x => x.Value);
                 
-                viewModel.CollectionValueChart.Ids.AddRange(valueChartData.Select(x => x.Id));
+                viewModel.CollectionValueChart.Ids.AddRange(valueChartData.Select(x => x.Id.ToString()));
                 viewModel.CollectionValueChart.Labels.AddRange(valueChartData.Select(x => x.Label));
                 viewModel.CollectionValueChart.Data.AddRange(valueChartData.Select(x => x.Value));
 
