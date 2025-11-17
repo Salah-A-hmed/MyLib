@@ -32,6 +32,10 @@
             </div>
         </div>
         <nav class="sidebar-nav">
+            @*Admin temporarily added for testing purposes*@
+            @*@if (User.IsInRole("Reader") || User.IsInRole("Librarian") || User.IsInRole("Admin"))*@
+            @if (User.IsInRole("Reader") || User.IsInRole("Librarian"))
+            {
             <div class="nav-item">
                 <a asp-controller="Books" asp-action="Index" class="nav-link" data-page="library">
                     <i class="nav-icon fas fa-book-open"></i>
@@ -56,10 +60,11 @@
                 <span class="nav-text">Add Collection</span>
                 </a>
             </div>
-
+            }
 @*             Admin temporarily added for testing purposes*@
-            @if (User.IsInRole("Librarian") || User.IsInRole("Admin"))
-            {
+@*             @if (User.IsInRole("Librarian") || User.IsInRole("Admin"))*@
+                @if (User.IsInRole("Librarian"))
+                {
                 <div class ="sidebar-pro">
                     <div class="nav-item">
                         <a asp-controller="Borrowings" asp-action="Index" class="nav-link" data-page="borrowings">
@@ -116,9 +121,6 @@
             </div>
             <i id="notification-icon" class="notification-icon fas fa-bell"></i>
             <span id="notification-badge" class="notification-badge">0</span>
-        </div>
-
-        <div class="controls-section">
         </div>
 
         <div class="content-area">

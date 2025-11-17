@@ -2,6 +2,7 @@
 using Biblio.Models;
 using Biblio.Models.ViewModels;
 using Biblio.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -21,6 +22,8 @@ using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Biblio.Controllers
 {
+    [Authorize(Roles = "Reader,Librarian")]
+
     public class BooksController : Controller
     {
         private readonly AppDbContext _context;

@@ -10,9 +10,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Biblio.Data;
 using Biblio.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Biblio.Controllers
 {
+    [Authorize]
     public class NotificationsController : Controller
     {
         private readonly AppDbContext _context;

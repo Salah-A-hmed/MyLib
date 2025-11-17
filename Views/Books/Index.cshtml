@@ -53,14 +53,15 @@
                     <span>@fieldName</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown" style="padding:0px">
                     <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Title"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Title</a></li>
                     <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Author"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Author</a></li>
                     <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Publisher"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Publisher</a></li>
                     <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Category"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Category</a></li>
-                    <li><a class="dropdown-item" href='@Url.Action("Index", new { sortOrder = ToggleSort("Rating"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Rating</a></li>
+                    <li><a class="dropdown-item last-child" href='@Url.Action("Index", new { sortOrder = ToggleSort("Rating"), statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })'>Rating</a></li>
                 </ul>
             </div>
+
             <a class="btn btn-outline-secondary" href='@Url.Action("Index", new { sortOrder = toggled, statusFilter = currentStatus, searchString = currentSearch, collectionId = currentCollectionId })' title="Toggle direction">
                 <i class="@(currentSort.EndsWith("_desc") ? "bi bi-arrow-down" : "bi bi-arrow-up")"></i>
             </a>

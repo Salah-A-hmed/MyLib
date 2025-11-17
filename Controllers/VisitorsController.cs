@@ -15,7 +15,8 @@ using System.Threading.Tasks;
 namespace Biblio.Controllers 
 {
     //Admin temporarily added for testing purposes
-    [Authorize(Roles = "Admin,Librarian")]
+    //[Authorize(Roles = "Admin,Librarian")]
+    [Authorize(Roles = "Librarian")]
     public class VisitorsController : Controller
     {
         private readonly AppDbContext _context;

@@ -1,18 +1,21 @@
-﻿using System;
-using System.Security.Claims;
+﻿using Biblio.Data;
+using Biblio.Models;
+using Biblio.Models.ViewModels; // (إضافة جديدة)
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Biblio.Data;
-using Biblio.Models;
-using Biblio.Models.ViewModels; // (إضافة جديدة)
+using System;
+using System.Collections.Generic;
 using System.Globalization; // (إضافة جديدة)
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 namespace Biblio.Controllers
 {
+    [Authorize(Roles = "Reader,Librarian")]
+
     public class CollectionsController : Controller
     {
         private readonly AppDbContext _context;
