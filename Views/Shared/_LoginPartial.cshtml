@@ -43,14 +43,10 @@
 }
 else
 {
-    <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
-    </ul>
+    <div class="ms-auto d-flex gap-2">
+        <a asp-area="Identity" asp-page="/Account/Login" class="nav-buttons">Sign In</a>
+        <a asp-area="Identity" asp-page="/Account/Register" class="nav-buttons">Get Started</a>
+    </div>
 }
 
 
