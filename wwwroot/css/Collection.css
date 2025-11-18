@@ -325,11 +325,10 @@ body {
   color: #6c757d;
   margin: 2px 0 0 0;
 }
-
 .dropdown-plan {
-  font-size: 11px;
-  color: #6c757d;
-  margin: 2px 0 0 0;
+    box-shadow: 0 2px 6px rgba(0,0.1,0.1,0.3);
+    color: #6c757d;
+    margin: 2px 0 0 0;
 }
 
 .dropdown-item {

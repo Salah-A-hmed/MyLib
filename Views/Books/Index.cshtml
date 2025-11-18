@@ -159,6 +159,7 @@
                      data-available-copies="@availableCopies"
                      data-price="@price"
                      data-status="@status"
+                     data-category="@category"
                      data-rating="@rating"
                      data-review="@review"
                      data-edit-url="@Url.Action("Edit", "Books", new { id = item.ID })"
@@ -187,10 +188,10 @@
                                     <span>(@item.Publisher)</span>
                                 </div>
                                 <div class="text-sm text-gray-700 mb-3 text-left">
-                                    <span class="font-semibold text-black">ISBN:</span> @item.ISBN
+									<span class="font-semibold text-black">ISBN:</span> @item.ISBN
                                 </div>
                                 <div class="text-sm text-gray-700 mb-4 text-left">
-                                    <span class="font-semibold text-black">Status:</span> @item.Status
+                                    <span class="font-semibold text-black">Category: </span> @item.Category
                                 </div>
                                 <div class="border-t border-gray-200 pt-4 text-left">
                                     <p class="text-xs text-gray-700 leading-relaxed text-left">@item.Description</p>

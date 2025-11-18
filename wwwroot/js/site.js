@@ -117,6 +117,7 @@
         var cover = card.getAttribute('data-cover');
         var isbn = card.getAttribute('data-isbn');
         var publisher = card.getAttribute('data-publisher');
+        var category = card.getAttribute('data-category');
         var year = card.getAttribute('data-year');
         var pages = card.getAttribute('data-pages');
         // --- (التعديلات هنا) ---
@@ -138,6 +139,7 @@
         view.querySelector('#modalBookDescription').textContent = description || 'No description provided.';
         view.querySelector('#modalBookISBN').textContent = isbn || 'N/A';
         view.querySelector('#modalBookPublisher').textContent = publisher || 'N/A';
+        view.querySelector('#modalBookCategory').textContent = category || 'N/A';
         view.querySelector('#modalBookYear').textContent = year || 'N/A';
         view.querySelector('#modalBookPages').textContent = pages || 'N/A';
 

@@ -1,38 +1,152 @@
 ﻿@using Biblio.Models.ViewModels
 @model ProfileViewModel
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "My Profile";
 }
 
-<div class="container mt-4">
-    <div class="card shadow-lg p-4">
-        <h2 class="mb-4 text-center">User Profile</h2>
+<div class="container py-5">
+    <div class="row">
+        <!-- Profile Header Card -->
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Account Information</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center mb-3 mb-md-0">
+                            <!-- Profile Avatar -->
+                            <div class="profile-avatar mx-auto">
+                                @if (!string.IsNullOrEmpty(Model.ProfilePicture))
+                                {
+                                    <img src="@Model.ProfilePicture" alt="Profile Picture" class="rounded-circle img-fluid" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #f8f9fa;">
+                                }
+                                else
+                                {
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px; font-size: 48px; border: 4px solid #f8f9fa;">
+                                        @Model.FullName?.Substring(0, 1).ToUpper()
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h2 class="mb-2">@Model.FullName</h2>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-envelope-at me-1"></i>
+                                <strong class="me-2">Email:</strong>
+                                @Model.Email
+                                @if (Model.EmailConfirmed)
+                                {
+                                    <span class="badge bg-success m-2">Verified</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark m-2 ">Unverified</span>
+                                }
 
-        <dl class="row">
-            <dt class="col-sm-3">Full Name</dt>
-            <dd class="col-sm-9">@Model.FullName</dd>
-
-            <dt class="col-sm-3">Email</dt>
-            <dd class="col-sm-9">@Model.Email</dd>
-
-            <dt class="col-sm-3">Plan Type</dt>
-            <dd class="col-sm-9">@Model.PlanType</dd>
-
-            <dt class="col-sm-3">Role(s)</dt>
-            <dd class="col-sm-9">
-                @if (Model.Roles != null && Model.Roles.Count > 0)
-                {
-                    @string.Join(", ", Model.Roles)
-                }
-                else
-                {
-                    <span class="text-muted">No role assigned</span>
-                }
-            </dd>
-        </dl>
-
-        <div class="text-center mt-4">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-person-gear me-1"></i>
+                                <strong class="me-2">Username:</strong>
+                                @Model.UserName
+                                <span class="badge rounded-pill fs-6 mb-2 bg-light text-dark m-1 shadow">@string.Join(", ", ViewBag.UserRole)</span>
+                            </p>
+                            @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                            {
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-telephone me-2"></i>@Model.PhoneNumber
+                                </p>
+                            }
+                            else
+                            {
+							<p class="text-mutedmb-2">
+                                    <i class="bi bi-telephone me-2"></i><em>No phone number</em>
+                                </p>
+							}
+                        </div>
+                        <div class="col-md-3 text-md-end">
+                            <a asp-area="Identity" asp-page="/Account/Manage/Index" data-page="account-settings" class="btn btn-primary mb-2 w-100">
+                                <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                            </a>
+                            <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword" data-page="account-settings" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-shield-lock me-2"></i>Change Password
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Statistics Cards -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-book text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 class="mb-1">@ViewBag.TotalBooks</h3>
+                    <p class="text-muted mb-0">Books in Library</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-collection text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 class="mb-1">@ViewBag.TotalCollections</h3>
+                    <p class="text-muted mb-0">Collections</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-arrow-left-right text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h3 class="mb-1">@ViewBag.ActiveBorrowings</h3>
+                    <p class="text-muted mb-0">Active Borrowings</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .profile-avatar {
+            position: relative;
+        }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .alert {
+            font-size: 0.9rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Auto-dismiss notifications after 5 seconds
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
+    </script>
+}

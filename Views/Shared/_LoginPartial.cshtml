@@ -3,13 +3,12 @@
 
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
-
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="user-account">
         <div class="user-info" id="userInfo" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="user-details">
-                <p class="user-name">@UserManager.GetUserName(User)</p>
+                <p class="user-name">@UserManager.GetUserAsync(User).Result.FullName</p>
                 <p class="account-menu-text">Account Menu</p>
             </div>
             <img src="~/img/userlogo.jpg" alt="User Avatar" class="user-avatar" />
@@ -18,7 +17,7 @@
 
         <div class="user-dropdown dropdown-menu dropdown-menu-end" id="userDropdown">
             <div class="dropdown-header">
-                <p class="dropdown-user-name">@UserManager.GetUserName(User)</p>
+                <p class="dropdown-user-name">@UserManager.GetUserAsync(User).Result.FullName</p>
                 <p class="dropdown-user-email">@UserManager.GetUserAsync(User).Result.Email</p>
                 <p class="dropdown-plan">@UserManager.GetUserAsync(User).Result.PlanType</p>
             </div>
