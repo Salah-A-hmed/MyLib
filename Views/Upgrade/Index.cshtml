@@ -1,0 +1,267 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Biblio.Models
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@{
+    ViewData["Title"] = "Upgrade Your Plan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // تحديد ما إذا كان المستخدم مشتركاً حالياً في خطة Pro
+    var isPro = User.IsInRole("Librarian") || User.IsInRole("Admin");
+}
+
+@section Styles {
+    <style>
+        /* تنسيقات مخصصة لضمان عدم انكماش الكروت */
+        .plan-card {
+            transition: all 0.3s ease;
+            min-height: 500px; /* ضمان حد أدنى للارتفاع */
+        }
+
+            .plan-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            }
+
+        /* تلوين خلفية كارت الـ Pro عند الترقية (باستخدام Gradient) */
+        .pro-bg-gradient {
+            background: linear-gradient(135deg, #4bc1d2 10%, #0096b5 100%);
+            color: white;
+            border-color: #4bc1d2 !important;
+        }
+
+        /* تنسيق زر الـ Toggle */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #4bc1d2;
+        }
+
+            .toggle-checkbox:checked + .toggle-label {
+                background-color: #4bc1d2;
+            }
+    </style>
+}
+
+<div class="container py-5">
+    <div class="!mb-12 !text-center">
+        <h1 class="!text-4xl md:!text-5xl !font-bold !text-[#2C3E50] !mb-4">
+            <i class="fas fa-crown !text-info !mr-3"></i>
+            Upgrade Your Plan
+        </h1>
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <p class="!text-lg !text-[#34495E] !max-w-2xl !mx-auto">
+            Choose the perfect plan for your library management needs. Unlock powerful features and take your library to the next level.
+        </p>
+    </div>
+
+    @if (!isPro)
+    {
+        <div class="d-flex justify-content-center align-items-center mt-4 mb-5 gap-3">
+            <span class="fw-bold text-dark" id="monthlyLabel">Monthly</span>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="billingToggle" style="width: 3.5em; height: 1.75em; cursor: pointer;">
+            </div>
+
+            <span class="fw-bold text-muted" id="yearlyLabel">
+                Yearly <span class="badge bg-success rounded-pill ms-1" style="font-size: 0.7em;">Save 20%</span>
+            </span>
+        </div>
+    }
+
+
+    <div class="row justify-content-center gap-4">
+
+        <div class="col-md-5 col-lg-4">
+            <div class="card plan-card h-100 border-2 border-[#dee2e6] shadow-sm rounded-4">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold text-dark">Reader</h3>
+                    <div class="my-3">
+                        <span class="display-3 fw-bold">$0</span>
+                        <span class="text-muted">/mo</span>
+                    </div>
+                    <p class="text-muted mb-4">Essential features for personal use.</p>
+
+                    @if (isPro)
+                    {
+                        <form asp-controller="Upgrade" asp-action="Downgrade" method="post" id="downgradeForm">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" id="downgradeBtn" class="btn btn-outline-secondary w-100 py-3 rounded-3 fw-bold mb-4">
+                                <i class="fas fa-arrow-down me-2"></i> Downgrade to Free
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-secondary w-100 py-3 rounded-3 fw-bold mb-4" disabled>
+                            Current Plan
+                        </button>
+                    }
+
+                    <ul class="list-unstyled space-y-3 text-start">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Basic Book Management</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 100 Unique Books</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Personal Collections</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times me-2 text-danger"></i> Lending System</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times me-2 text-danger"></i> Visitor Management</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times me-2 text-danger"></i> Overdue Notifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 col-lg-4">
+            <div class="card plan-card h-100 border-2 shadow-xl rounded-4 position-relative overflow-hidden @(isPro ? "pro-bg-gradient text-white" : "border-info")">
+
+                <div class="position-absolute !-top-4 !left-1/2 !transform !-translate-x-1/2 !px-6 !py-1 !bg-white !text-info !rounded-full !text-sm !font-bold !shadow-lg">
+                    <i class="fas fa-star !mr-1"></i>
+                    Most Popular
+                </div>
+
+                <div class="card-body p-5">
+                    <h3 class="fw-bold @(isPro ? "text-white" : "text-primary")">Library Pro</h3>
+
+                    <div class="my-3">
+                        <span class="display-3 fw-bold @(isPro ? "text-white" : "text-dark")" id="priceDisplay">$29</span>
+                        <span class="text-muted @(isPro ? "text-white opacity-75" : "")" id="periodDisplay">/mo</span>
+                    </div>
+                    <p class="text-muted mb-4 @(isPro ? "text-white opacity-75" : "")" id="billingText">Billed Monthly</p>
+
+                    <form id="upgradeForm" method="post" asp-controller="Upgrade" asp-action="CreateCheckoutSession" onsubmit="handleUpgradeSubmit(event)">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="planType" id="selectedPlanType" value="monthly">
+
+                        <button type="submit" id="upgradeBtn" class="btn w-100 py-3 rounded-3 fw-bold mb-4 shadow-sm"
+                                @(isPro ? "disabled class='btn-light fw-bold'" : "class='btn-info text-white'")>
+                            @(isPro ? "Current Plan" : "Upgrade Now")
+                        </button>
+                    </form>
+
+                    <ul class="list-unstyled space-y-3 text-start @(isPro ? "text-white" : "text-dark")">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2 @(isPro ? "text-white" : "")"></i> <strong>Unlimited</strong> Books & Collections</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2 @(isPro ? "text-white" : "")"></i> Full <strong>Lending System</strong> (Borrow/Return)</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2 @(isPro ? "text-white" : "")"></i> Manage **Visitors** & Patron Records</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2 @(isPro ? "text-white" : "")"></i> Track <strong>Fines & Fees</strong> Automatically</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2 @(isPro ? "text-white" : "")"></i> Overdue & Due Soon Notifications</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2 @(isPro ? "text-white" : "")"></i> Advanced Dashboard Analytics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="!max-w-5xl !mx-auto !mb-12">
+        <h2 class="!text-3xl !font-bold !text-[#2C3E50] !mb-6 !text-center">
+            <i class="fas fa-table !text-info !mr-2"></i>
+            Feature Comparison
+        </h2>
+        <div class="!bg-white !rounded-2xl !shadow-lg !overflow-hidden border border-light">
+            <div class="!overflow-x-auto">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="!bg-[#E8EFF3]">
+                        <tr>
+                            <th class="!px-6 !py-4 !text-start !text-[#2C3E50] !font-semibold">Feature</th>
+                            <th class="!px-6 !py-4 !text-center !text-[#2C3E50] !font-semibold">Free (Reader)</th>
+                            <th class="!px-6 !py-4 !text-center !text-info !font-semibold">Library Pro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Maximum Unique Books</td>
+                            <td class="!px-6 !py-4 !text-center">100</td>
+                            <td class="!px-6 !py-4 !text-center"><span class="!text-info !font-semibold">Unlimited</span></td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Lending & Borrowing System</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times !text-danger"></i></td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check !text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Visitor Management & Fines</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times !text-danger"></i></td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check !text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Overdue & Due Soon Alerts</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times !text-danger"></i></td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check !text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Advanced Dashboard Analytics</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times !text-danger"></i></td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check !text-success"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Librarian User Role</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times !text-danger"></i></td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check !text-success"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="!max-w-4xl !mx-auto !mb-12">
+        <h2 class="!text-3xl !font-bold !text-[#2C3E50] !mb-6 !text-center">
+            <i class="fas fa-question-circle !text-info !mr-2"></i>
+            Frequently Asked Questions
+        </h2>
+        <div class="!space-y-4">
+            <div class="!bg-white !rounded-xl !p-4 !shadow-sm !border !border-[#dee2e6]">
+                <h3 class="!text-lg !font-semibold !text-[#2C3E50] !mb-2">
+                    <i class="fas fa-chevron-down !text-info !mr-2"></i>
+                    Can I switch plans anytime?
+                </h3>
+                <p class="!text-[#34495E] !mt-2">
+                    Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected immediately after the successful claims update.
+                </p>
+            </div>
+            <div class="!bg-white !rounded-xl !p-4 !shadow-sm !border !border-[#dee2e6]">
+                <h3 class="!text-lg !font-semibold !text-[#2C3E50] !mb-2">
+                    <i class="fas fa-chevron-down !text-info !mr-2"></i>
+                    What happens if I downgrade?
+                </h3>
+                <p class="!text-[#34495E] !mt-2">
+                    If you downgrade to the Free plan, you will lose access to the Lending, Visitors, and Advanced Dashboard features. Your user role will revert to "Reader."
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="!max-w-4xl !mx-auto !text-center !py-12 !px-6 !bg-gradient-to-r !from-[#4bc1d2] !to-[#0096b5] !rounded-2xl !shadow-xl">
+        <h2 class="!text-3xl md:!text-4xl !font-bold !text-white !mb-4">
+            Ready to Upgrade?
+        </h2>
+        <p class="!text-white !text-lg !mb-8 !opacity-90">
+            Join thousands of libraries already using Library Pro to manage their collections efficiently.
+        </p>
+
+        @if (!isPro)
+        {
+            <button onclick="document.getElementById('upgradeBtn').click()" class="!px-8 !py-4 !bg-white !text-info !rounded-lg !font-bold !text-lg !transition-all !duration-300 hover:!bg-[#E8EFF3] hover:!shadow-2xl hover:!scale-105">
+                <i class="fas fa-rocket !mr-2"></i>
+                Start Your Pro Journey Today
+            </button>
+        }
+        else
+        {
+            <span class="!px-8 !py-4 !bg-white/50 !text-white !rounded-lg !font-bold !text-lg">
+                <i class="fas fa-check !mr-2"></i>
+                You are currently a Pro Member!
+            </span>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Upgrade.js" asp-append-version="true"></script>
+}
