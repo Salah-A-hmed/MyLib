@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+﻿using Biblio.Data;
 using Biblio.Models;
+using Biblio.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Linq;
-using Biblio.Data;
-using Biblio.Models.ViewModels;
 
 namespace Biblio.Controllers
 {
@@ -43,51 +44,92 @@ namespace Biblio.Controllers
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
         }
-
-        // POST: /Upgrade/CreateCheckoutSession (محدث)
+        // الخطوة 1: إنشاء جلسة الدفع وتوجيه المستخدم
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCheckoutSession(string payingPlanType)
         {
+            if (string.IsNullOrEmpty(payingPlanType))
+            {
+                TempData["Error"] = "Paying Plan type is missing.";
+                return RedirectToAction(nameof(Index));
+            }
+            var isYearly = payingPlanType == "Yearly";
+            var price = isYearly ? 278 : 29;
+            var amountInCents = 100 * price;
+            string priceName = isYearly ? "Library Pro (Yearly)" : " Library Pro (Monthly)";
+
+            var domain = "https://" + Request.Host; // الحصول على رابط الموقع الحالي
+
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = amountInCents,
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = priceName,
+                            },
+                        },
+                        Quantity = 1,
+                    },
+                },
+                Mode = "payment", // أو "subscription" لو عندك خطط جاهزة على Stripe
+                // عند النجاح، أرسل المستخدم للـ Action الجديد مع نوع الخطة
+                SuccessUrl = domain + $"/Upgrade/PaymentSuccess?payingPlanType={payingPlanType}",
+                CancelUrl = domain + "/Upgrade/Index",
+            };
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            // توجيه المستخدم لصفحة الدفع الخاصة بـ Stripe
+            return Redirect(session.Url);
+        }
+        // الخطوة 2: استقبال المستخدم بعد الدفع وتنفيذ الترقية
+        [HttpGet] // Stripe بيرجع المستخدم بـ GET Request
+        public async Task<IActionResult> PaymentSuccess(string payingPlanType)
+        {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
 
-            // 1. **(جديد) معالجة الدفع (Simulation)**
-            // هنا يتم استدعاء API لخدمة الدفع (Stripe/PayPal)
-            bool paymentSuccess = true; // نفترض النجاح للمحاكاة
-
-            if (paymentSuccess)
+            if (user == null)
             {
-                // 2. تحديث الخطة والأدوار
-                user.PlanType = PlanType.Library;
-                user.PayingPlanType = payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? PayingPlanType.Monthly : PayingPlanType.Yearly;
-                user.LastPaymentDate = DateTime.Now;
-                user.NextPaymentDate = DateTime.UtcNow.AddMonths(payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? 1 : 12);
-                await _userManager.UpdateAsync(user);
+                return RedirectToAction("Index", "Upgrade");
+            }
 
+            // 2. تحديث الخطة والأدوار
+            user.PlanType = PlanType.Library;
+            user.PayingPlanType = payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? PayingPlanType.Monthly : PayingPlanType.Yearly;
+            user.LastPaymentDate = DateTime.Now;
+            user.NextPaymentDate = DateTime.UtcNow.AddMonths(payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? 1 : 12);
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            if (updateResult.Succeeded)
+            {
                 var newRole = "Librarian";
                 var oldRoles = await _userManager.GetRolesAsync(user);
                 var rolesToRemove = oldRoles.Where(r => r != "Admin").ToList();
 
                 await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
                 await _userManager.AddToRoleAsync(user, newRole);
-
-                // 3. تحديث الجلسة فوراً
-                await _signInManager.SignOutAsync();
-                await _signInManager.SignInAsync(user, isPersistent: true);
-
-                // 4. إرسال Notification
-                await CreateUserSystemNotification(user, NotificationType.Information,
-                    "Your subscription has been upgraded to Library Pro! You now have full access to all features.",
-                    "/Account/Profile");
-
-                // نرجع OK status code للـ JavaScript
-                //return Json(new { success = true, message = "Upgrade complete. Permissions updated." });
-                return RedirectToAction("Profile", "Account");
             }
+            // 3. تحديث الجلسة فوراً
+            await _signInManager.SignOutAsync();
+            await _signInManager.SignInAsync(user, isPersistent: true);
 
-            //return Json(new { success = false, message = "Payment failed. Please try again." });
-            return RedirectToAction("Index", "Upgrade");
+            // 4. إرسال Notification
+            await CreateUserSystemNotification(user, NotificationType.Information,
+                "Your subscription has been upgraded to Library Pro! You now have full access to all features.",
+                "/Account/Profile");
+
+            return RedirectToAction("Profile", "Account");
         }
 
         // POST: /Upgrade/Downgrade (محدث)

@@ -31,7 +31,10 @@ namespace Biblio.Controllers
 
             var roles = await _userManager.GetRolesAsync(user);
             var userId = user.Id;
-
+            var paymentprice = 0;
+            var PaymentPlan = user.PayingPlanType;
+            if (PaymentPlan==PayingPlanType.Monthly) {paymentprice = 29;}
+            else if(PaymentPlan == PayingPlanType.Yearly) {paymentprice = 278;}
             var vm = new ProfileViewModel
             {
                 FullName = user.FullName,
@@ -41,7 +44,16 @@ namespace Biblio.Controllers
                 PlanType = user.PlanType.ToString(),
                 EmailConfirmed = user.EmailConfirmed,
                 PhoneNumber = user.PhoneNumber,
+                PaymentPlan = user.PayingPlanType.ToString(),
+                NextPayment = user.NextPaymentDate?.ToString("yyyy-MM-dd"),
+                PaymentPrice = paymentprice
             };
+            if(user.PlanType == PlanType.Free)
+            {
+                vm.PaymentPlan = "N/A";
+                vm.NextPayment = "N/A";
+                vm.PaymentPrice = 0;
+            }
             var userBooks = await _context.Books
                         .Where(b => b.UserId == userId)
                         .AsNoTracking()

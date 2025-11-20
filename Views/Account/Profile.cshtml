@@ -63,6 +63,14 @@
                                     <i class="bi bi-telephone me-2"></i><em>No phone number</em>
                                 </p>
 							}
+                            <div class="mt-4">
+                                <h5>Payment Plan Details</h5>
+                                <div class="Payment-details-box">
+                                    <p id="PaymentDetails">Payment Plan: @Model.PaymentPlan</p>
+                                    <p id="PaymentDetails">Plan Price: $@Model.PaymentPrice</p>
+                                    <p id="PaymentDetails">Next payment at: @Model.NextPayment</p>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-3 text-md-end">
                             <a asp-area="Identity" asp-page="/Account/Manage/Index" data-page="account-settings" class="btn btn-primary mb-2 w-100">
@@ -138,6 +146,34 @@
 
         .alert {
             font-size: 0.9rem;
+        }
+
+        .Payment-details-box {
+            background-color: #fdfdfd;
+            border: 1px dashed #e0e0e0; /* بوردر منقط */
+            padding: 1rem;
+            border-radius: 8px;
+            max-height: 150px; /* ارتفاع أصغر */
+            overflow-y: auto;
+			text-align: left;
+        }
+
+        #PaymentDetails {
+            font-size: 1.2rem;
+            color: black;
+			margin: 1px;
+            margin-left : 20px;
+		}
+
+        h5 {
+            font-size: 0.85rem !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--sidebar-text); /* لون الثيم */
+            border-bottom: 2px solid var(--active-bg); /* خط بلون الثيم */
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            display: inline-block; /* عشان الخط يقف مع آخر كلمة */
         }
     </style>
 }

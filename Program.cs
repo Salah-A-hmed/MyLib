@@ -63,7 +63,7 @@ namespace Biblio
                 var services = scope.ServiceProvider;
                 await SeedData.InitializeAsync(services);
             }
-
+            Stripe.StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
             app.Run();
         }
     }
