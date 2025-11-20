@@ -1,0 +1,25 @@
+﻿@model Biblio.Models.ViewModels.DowngradeModalViewModel
+
+<div class="modal fade" id="downgradeConfirmationModal" tabindex="-1" aria-labelledby="downgradeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content !bg-white rounded-4 !max-w-md !w-full !shadow-2xl !transform !transition-all">
+            <div class="!text-center m-3">
+                <div class="!inline-flex align-items-center !justify-center !w-16 !h-16 bg-warning !rounded-full !mb-4 mt-3">
+                    <i class="fas fa-exclamation-triangle !text-white !text-2xl"></i>
+                </div>
+                <h3 class="!text-2xl !font-bold !text-[#2C3E50] !mb-2">Downgrade to Free</h3>
+                <p class="fw-bold text-danger mt-3">Are you sure you want to downgrade?</p>
+                <p class="text-dark mt-1 bg-[#f8f9fa]" style="border-left:solid;border-color:orangered">You will immediately lose access to the Lending System, Visitor Management، and Advanced Dashboards.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn !flex-1 !py-3 !px-6 !bg-[#E8EFF3] !text-[#34495E] !rounded-lg !font-semibold !transition-all hover:!bg-gray-200" data-bs-dismiss="modal">Cancel</button>
+                <form id="confirmDowngradeForm" method="post" action="@Model.ActionUrl" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" id="modalConfirmDowngradeBtn" class="btn btn-warning text-dark !flex-1 !py-3 !px-6 !rounded-lg !font-semibold !transition-all">
+                        Confirm Downgrade
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

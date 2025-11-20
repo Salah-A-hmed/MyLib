@@ -12,7 +12,6 @@
 
     // دالة تحديث الواجهة (تعمل فقط إذا لم يكن المستخدم مشتركاً بالفعل)
     function updatePricing() {
-        // قراءة حالة الـ Pro من الـ DOM (وجود كلاس pro-bg-gradient)
         const isPro = document.getElementById('currentPlanBadge').classList.contains('pro-bg-gradient');
         if (isPro) return;
 
@@ -47,14 +46,6 @@
         // تشغيل التحديث الأولي عند التحميل
         updatePricing();
     }
-
-    // دالة لمعالجة إرسال فورم الترقية
-    window.handleUpgradeSubmit = function (e) {
-        const btn = document.getElementById('upgradeBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing Payment...';
-    };
-
     // دالة بسيطة لعمل تأثير عداد الأرقام (Animation)
     function animateValue(obj, start, end, duration) {
         let startTimestamp = null;
@@ -72,20 +63,59 @@
         window.requestAnimationFrame(step);
     }
 
-    // معالجة زر الداونغريد (إظهار التحميل)
-    const downgradeBtn = document.getElementById('downgradeBtn');
-    if (downgradeForm) {
-        downgradeForm.addEventListener('submit', function (e) {
-            // التأكد من أن المستخدم قد أكد العملية قبل أي شيء
-            if (!confirm("Are you sure you want to downgrade to the Free plan? You will lose access to all Pro features.")) {
-                e.preventDefault();
+    // --------------------------------------------------------
+    // 1. منطق الـ Modal للترقية (Upgrade)
+    // --------------------------------------------------------
+    $('#openUpgradeModalBtn').on('click', function () {
+        // قراءة الرابط من الـ data-url attribute
+        const baseUrl = $(this).data('url');
+        const payingPlanType = hiddenInput ? hiddenInput.value : "Monthly";
+
+        // دمج الرابط مع الـ Query String
+        const finalUrl = `${baseUrl}?payingPlanType=${payingPlanType}`;
+
+        $('#upgradeModalContainer').load(finalUrl, function (response, status, xhr) {
+            if (status == "error") {
+                alert("Error loading modal: " + xhr.status + " " + xhr.statusText);
                 return;
             }
 
-            // إذا تم التأكيد، نغير حالة الزر إلى التحميل
-            const btn = downgradeForm.querySelector('#downgradeBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Downgrading...';
+            const modalElement = document.getElementById('upgradeConfirmationModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            // ربط زر التأكيد داخل المودال
+            $('#modalConfirmUpgradeBtn').on('click', function () {
+                const btn = $(this);
+                btn.prop('disabled', true);
+                btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+                $('#confirmUpgradeForm').submit();
+            });
         });
-    }
+    });
+    // --------------------------------------------------------
+    // 2. منطق الـ Modal للعودة للخطة المجانية (Downgrade)
+    // --------------------------------------------------------
+    $('#openDowngradeModalBtn').on('click', function () {
+        // قراءة الرابط من الـ data-url attribute
+        const url = $(this).data('url');
+
+        $('#downgradeModalContainer').load(url, function (response, status, xhr) {
+            if (status == "error") {
+                alert("Error loading modal: " + xhr.status + " " + xhr.statusText);
+                return;
+            }
+
+            const modalElement = document.getElementById('downgradeConfirmationModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            $('#modalConfirmDowngradeBtn').on('click', function () {
+                const btn = $(this);
+                btn.prop('disabled', true);
+                btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Downgrading...');
+                $('#confirmDowngradeForm').submit();
+            });
+        });
+    });
 });

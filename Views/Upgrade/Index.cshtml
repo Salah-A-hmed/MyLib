@@ -42,20 +42,6 @@
             <i class="fas fa-crown !text-[#4bc1d2] !mr-3"></i>
             Upgrade Your Plan
         </h1>
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle"></i> @TempData["Success"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
         <p class="!text-lg !text-[#34495E] !max-w-2xl !mx-auto">
             Choose the perfect plan for your library management needs. Unlock powerful features and take your library to the next level.
         </p>
@@ -111,12 +97,11 @@
                     </ul>
                 @if (isPro)
                 {
-                    <form asp-controller="Upgrade" asp-action="Downgrade" method="post" id="downgradeForm">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" id="downgradeBtn" class="btn btn-outline-secondary w-100 py-3 rounded-3 fw-bold mb-4 mt-2">
+                        <button type="button" id="openDowngradeModalBtn"
+                            data-url="@Url.Action("GetDowngradeModal", "Upgrade")"
+                            class="btn btn-outline-secondary w-100 py-3 rounded-3 fw-bold mb-4 mt-2">
                             <i class="fas fa-arrow-down me-2"></i> Downgrade to Free
                         </button>
-                    </form>
                 }
                 else
                 {
@@ -184,14 +169,12 @@
                 }
                 else
                 {
-                    <form id="upgradeForm" method="post" asp-controller="Upgrade" asp-action="CreateCheckoutSession" onsubmit="handleUpgradeSubmit(event)">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="payingPlanType" id="selectedPlanType">
-
-                        <button type="submit" id="upgradeBtn" class="btn-light !bg-white !text-[#4bc1d2] w-100 py-3 rounded-3 fw-bold mb-4 mt-2 !transition-all !duration-300 hover:!bg-[#E8EFF3] hover:!shadow-lg">
+                        <input type="hidden" id="selectedPlanType" name="planType" />
+                        <button type="button" id="openUpgradeModalBtn"
+                            data-url="@Url.Action("GetUpgradeModalData", "Upgrade")"
+                            class="btn-light !bg-white !text-[#4bc1d2] w-100 py-3 rounded-3 fw-bold mb-4 mt-2 !transition-all !duration-300 hover:!bg-[#E8EFF3] hover:!shadow-lg">
                             <i class="fas fa-arrow-up me-2"></i> Upgrade Now
                         </button>
-                    </form>
                 }
                 </div>
             </div>
@@ -312,7 +295,7 @@
 
         @if (!isPro)
         {
-            <button onclick="document.getElementById('upgradeBtn').click()" class="!px-8 !py-4 !bg-white !text-[#4bc1d2] !rounded-lg !font-bold !text-lg !transition-all !duration-300 hover:!bg-[#E8EFF3] hover:!shadow-2xl hover:!scale-105">
+            <button onclick="document.getElementById('openUpgradeModalBtn').click()" class="!px-8 !py-4 !bg-white !text-[#4bc1d2] !rounded-lg !font-bold !text-lg !transition-all !duration-300 hover:!bg-[#E8EFF3] hover:!shadow-2xl hover:!scale-105">
                 <i class="fas fa-rocket !mr-2"></i>
                 Start Your Pro Journey Today
             </button>
@@ -328,5 +311,12 @@
 </div>
 
 @section Scripts {
+    <div id="upgradeModalContainer"></div>
+    <div id="downgradeModalContainer"></div>
+
+    <script>
+        // Store Anti-Forgery Token for AJAX requests (if needed, but here we use the hidden form field)
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    </script>
     <script src="~/js/Upgrade.js" asp-append-version="true"></script>
 }
