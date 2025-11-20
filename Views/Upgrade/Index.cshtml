@@ -4,7 +4,7 @@
 @inject UserManager<AppUser> UserManager
 
 @{
-    ViewData["Title"] = "Upgrade Your Plan";
+    ViewData["Title"] = "Upgrade your plan";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     // تحديد ما إذا كان المستخدم مشتركاً حالياً في خطة Pro
@@ -14,6 +14,9 @@
 
 @section Styles {
     <style>
+        .top-header{
+            display :none;
+        }
         /* تنسيقات مخصصة لضمان عدم انكماش الكروت */
         .plan-card {
             transition: all 0.3s ease;
@@ -99,12 +102,12 @@
 
                 <p class="text-dark fw-bold mb-3 text-start">Essential features for personal use</p>
                     <ul class="list-unstyled !space-y-3 text-lg-start">
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Basic Book Management</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 100 Unique Books</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Personal Collections</li>
-                        <li class="mb-2 text-muted"><i class="fas fa-times me-2 text-danger"></i> Lending System</li>
-                        <li class="mb-2 text-muted"><i class="fas fa-times me-2 text-danger"></i> Visitor Management</li>
-                        <li class="mb-2 text-muted"><i class="fas fa-times me-2 text-danger"></i> Overdue Notifications</li>
+                    <li class="mb-2"><i class="fas fa-star !text-[#4bc1d2] me-2"></i> Unlimited Books Management</li>
+                    <li class="mb-2"><i class="fas fa-star !text-[#4bc1d2] me-2"></i> Custom Collections</li>
+                    <li class="mb-2"><i class="fas fa-star !text-[#4bc1d2] me-2"></i> Smart Book Search</li>
+                    <li class="mb-2"><i class="fas fa-star me-2 !text-[#4bc1d2]"></i> Stock Tracking</li>
+                    <li class="mb-2"><i class="fas fa-star me-2 !text-[#4bc1d2]"></i> System Notifications</li>
+                    <li class="mb-2"><i class="fas fa-star me-2 !text-[#4bc1d2]"></i> Clean & Simple Dashboard</li>
                     </ul>
                 @if (isPro)
                 {
@@ -133,7 +136,7 @@
                 </div>
 
                 <div class="card-body p-5">
-                    <h3 class="fw-bold text-white">Library Pro</h3>
+                <h3 class="fw-bold text-white">Biblio Pro</h3>
 
                 @if (isPro)
                 {
@@ -165,12 +168,12 @@
                 <br />
                 <p class="text-white fw-bold mb-3 text-start">All features for professional library management</p>
                     <ul class="list-unstyled !space-y-3 text-lg-start text-white">
-                        <li class="mb-2"><i class="fas fa-check text-white me-2"></i> <strong>Unlimited</strong> Books & Collections</li>
-                        <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Full <strong>Lending System</strong> (Borrow/Return)</li>
-                        <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Manage **Visitors** & Patron Records</li>
-                        <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Track <strong>Fines & Fees</strong> Automatically</li>
-                        <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Overdue & Due Soon Notifications</li>
-                        <li class="mb-2"><i class="fas fa-check text-white me-2"></i> Advanced Dashboard Analytics</li>
+                        <li class="mb-2"><i class="fas fa-star text-white me-2"></i> <strong>All Standard Features Included</strong></li>
+                        <li class="mb-2"><i class="fas fa-star text-white me-2"></i> Full <strong>Lending System</strong> (Borrow/Return)</li>
+                        <li class="mb-2"><i class="fas fa-star text-white me-2"></i> Manage <strong>Visitors Records</strong> (Create/Trak-borrowings) </li>
+                        <li class="mb-2"><i class="fas fa-star text-white me-2"></i> Track <strong>Fines & Fees</strong> Automatically</li>
+                        <li class="mb-2"><i class="fas fa-star text-white me-2"></i> <strong>Overdue & Due</strong> Soon Notifications</li>
+                        <li class="mb-2"><i class="fas fa-star text-white me-2"></i> <strong>Advanced Dashboard Analytics</strong></li>
                     </ul>
                 @if (isPro)
                 {
@@ -207,39 +210,64 @@
                         <tr>
                             <th class="!px-6 !py-4 !text-start !text-[#2C3E50] !font-semibold">Feature</th>
                             <th class="!px-6 !py-4 !text-center !text-[#2C3E50] !font-semibold">Free (Reader)</th>
-                            <th class="!px-6 !py-4 !text-center !text-[#4bc1d2] !font-semibold">Library Pro</th>
+                            <th class="!px-6 !py-4 !text-center !text-[#4bc1d2] !font-semibold">Biblio Pro</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="!px-6 !py-4 !text-[#34495E]">Maximum Unique Books</td>
-                            <td class="!px-6 !py-4 !text-center">100</td>
-                            <td class="!px-6 !py-4 !text-center !text-[#4bc1d2]"><span class="!text-info !font-semibold">Unlimited</span></td>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Books Management</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
                         </tr>
                         <tr>
-                            <td class="!px-6 !py-4 !text-[#34495E]">Lending & Borrowing System</td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger"></i></td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success"></i></td>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Collections Management</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
                         </tr>
                         <tr>
-                            <td class="!px-6 !py-4 !text-[#34495E]">Visitor Management & Fines</td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger"></i></td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success"></i></td>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Search by Title / ISBN</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
                         </tr>
                         <tr>
-                            <td class="!px-6 !py-4 !text-[#34495E]">Overdue & Due Soon Alerts</td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger"></i></td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success"></i></td>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Stock Tracking</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
                         </tr>
                         <tr>
-                            <td class="!px-6 !py-4 !text-[#34495E]">Advanced Dashboard Analytics</td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger"></i></td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success"></i></td>
+                            <td class="!px-6 !py-4 !text-[#34495E]">System Notifications</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
                         </tr>
                         <tr>
-                            <td class="!px-6 !py-4 !text-[#34495E]">Librarian User Role</td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger"></i></td>
-                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success"></i></td>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Borrowing System</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger me-1"></i> Not Available</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Visitors Management</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger me-1"></i> Not Available</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Borrowing Notifications</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger me-1"></i> Not Available</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Vsistors Notifications</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger me-1"></i> Not Available</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Borrowing History</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger me-1"></i> Not Available</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Included</td>
+                        </tr>
+                        <tr>
+                            <td class="!px-6 !py-4 !text-[#34495E]">Full Analytics Dashboard</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-times text-danger me-1"></i>Only Collection</td>
+                            <td class="!px-6 !py-4 !text-center"><i class="fas fa-check text-success me-1"></i> Advanced</td>
                         </tr>
                     </tbody>
                 </table>
@@ -258,7 +286,7 @@
                     <i class="fas fa-chevron-down !text-[#4bc1d2] !mr-2"></i>
                     Can I switch plans anytime?
                 </h3>
-                <p class="!text-[#34495E] !mt-2">
+                <p class="!text-[#34495E] text-start !mt-2">
                     Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected immediately after the successful claims update.
                 </p>
             </div>
@@ -267,8 +295,8 @@
                     <i class="fas fa-chevron-down !text-[#4bc1d2] !mr-2"></i>
                     What happens if I downgrade?
                 </h3>
-                <p class="!text-[#34495E] !mt-2">
-                    If you downgrade to the Free plan, you will lose access to the Lending, Visitors, and Advanced Dashboard features. Your user role will revert to "Reader."
+                <p class="!text-[#34495E] text-start !mt-2">
+                    You will lose access to the Lending, Visitors and Advanced Dashboard features. Your user role will revert to "Reader".
                 </p>
             </div>
         </div>
@@ -279,7 +307,7 @@
             Ready to Upgrade?
         </h2>
         <p class="!text-white !text-lg !mb-8 !opacity-90">
-            Join thousands of libraries already using Library Pro to manage their collections efficiently.
+            Join thousands of libraries already using Biblio Pro to manage their collections efficiently.
         </p>
 
         @if (!isPro)
