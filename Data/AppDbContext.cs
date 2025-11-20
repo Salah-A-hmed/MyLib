@@ -34,6 +34,10 @@ namespace Biblio.Data
                 .Property(u => u.PlanType)
                 .HasConversion<string>()
                 .HasDefaultValue(PlanType.Free);
+            
+            modelBuilder.Entity<AppUser>()
+                .Property(u => u.PayingPlanType)
+                .HasConversion<string>();
 
             modelBuilder.Entity<Book>()
                 .Property(b => b.TotalCopies) // (تغيير الاسم)

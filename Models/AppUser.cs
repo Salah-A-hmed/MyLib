@@ -9,6 +9,11 @@ namespace Biblio.Models
         // Additional properties can be added here if needed
         public string? FullName { get; set; }
         public PlanType PlanType { get; set; } = PlanType.Free;
+        public PayingPlanType? PayingPlanType { get; set; }
+        public DateTime? LastPaymentDate { get; set; }
+        public DateTime? NextPaymentDate { get; set; }
+
+
         // Navigation property => A User can have many Collections
         public ICollection<Collection> Collections { get; set; } = new List<Collection>();
         public ICollection<Book> Books { get; set; } = new List<Book>();
@@ -19,4 +24,5 @@ namespace Biblio.Models
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }
     public enum PlanType { Free, Library }
+    public enum PayingPlanType { Monthly, Yearly }
 }

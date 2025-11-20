@@ -23,12 +23,12 @@ namespace Biblio.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCheckoutSession(string planType)
+        public async Task<IActionResult> CreateCheckoutSession(string payingPlanType)
         {
             // هذا مجرد نموذج. في التطبيق الحقيقي، هنا تتم معالجة الدفع
-            if (string.IsNullOrEmpty(planType))
+            if (string.IsNullOrEmpty(payingPlanType))
             {
-                TempData["Error"] = "Plan type is missing.";
+                TempData["Error"] = "paying Plan type is missing.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -43,6 +43,9 @@ namespace Biblio.Controllers
 
             // 1. تحديث الخطة في الداتابيز
             user.PlanType = PlanType.Library; // الترقية إلى خطة المكتبة
+            user.PayingPlanType = payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? PayingPlanType.Monthly : PayingPlanType.Yearly;
+            user.LastPaymentDate = DateTime.Now;
+            user.NextPaymentDate = DateTime.UtcNow.AddMonths(payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? 1 : 12);
             var updateResult = await _userManager.UpdateAsync(user);
 
             if (updateResult.Succeeded)
@@ -91,6 +94,9 @@ namespace Biblio.Controllers
 
             // 1. تحديث الخطة إلى Free
             user.PlanType = PlanType.Free;
+            user.PayingPlanType = null;
+            user.LastPaymentDate = null;
+            user.NextPaymentDate = null;
             var updateResult = await _userManager.UpdateAsync(user);
 
             // 2. حذف الأدوار القديمة ثم إضافة دور Reader

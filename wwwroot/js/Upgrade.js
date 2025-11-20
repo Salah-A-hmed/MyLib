@@ -13,7 +13,7 @@
     // دالة تحديث الواجهة (تعمل فقط إذا لم يكن المستخدم مشتركاً بالفعل)
     function updatePricing() {
         // قراءة حالة الـ Pro من الـ DOM (وجود كلاس pro-bg-gradient)
-        const isPro = document.querySelector('#proPlanCard').classList.contains('pro-bg-gradient');
+        const isPro = document.getElementById('currentPlanBadge').classList.contains('pro-bg-gradient');
         if (isPro) return;
 
         // تغيير تسمية الـ Toggle Labels
@@ -25,7 +25,7 @@
             animateValue(priceDisplay, priceMonthly, priceYearly, 300);
             periodDisplay.textContent = "/yr";
             billingText.textContent = `Billed $${priceYearly} Yearly (Save $${priceSave})`;
-            hiddenInput.value = "yearly";
+            hiddenInput.value = "Yearly";
 
             yearlyLabel.classList.remove('text-muted');
             monthlyLabel.classList.add('text-muted');
@@ -33,8 +33,8 @@
             // الحالة الشهرية
             animateValue(priceDisplay, priceYearly, priceMonthly, 300);
             periodDisplay.textContent = "/mo";
-            billingText.textContent = "Billed Monthly";
-            hiddenInput.value = "monthly";
+            billingText.textContent = `Billed $${priceMonthly} Monthly`;
+            hiddenInput.value = "Monthly";
 
             yearlyLabel.classList.add('text-muted');
             monthlyLabel.classList.remove('text-muted');
@@ -53,7 +53,6 @@
         const btn = document.getElementById('upgradeBtn');
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing Payment...';
-        // لا نمنع الـ submit هنا (e.preventDefault())، نترك الفورم يرسل بشكل طبيعي للـ Controller
     };
 
     // دالة بسيطة لعمل تأثير عداد الأرقام (Animation)
@@ -87,13 +86,6 @@
             const btn = downgradeForm.querySelector('#downgradeBtn');
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Downgrading...';
-
-            // لا نحتاج لـ e.preventDefault() هنا لأننا نريد للـ Form أن يرسل بشكل طبيعي بعد تغيير حالة الزر
-            // الـ Form سيقوم بالإرسال إلى /Upgrade/Downgrade
         });
-
-        // نحذف الـ Event Listener القديم الموجود على الزر نفسه إن وجد
-        // ونقوم بتعطيل الـ event listener المباشر على الزر في حالة ما إذا كان مربوطاً بالـ HTML مباشرة
-        // (الآن الزر مربوط بالـ Form، وهذا أفضل)
     }
 });
