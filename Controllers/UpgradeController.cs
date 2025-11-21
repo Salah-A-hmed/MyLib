@@ -4,6 +4,7 @@ using Biblio.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using Stripe.Checkout;
 using System.Linq;
 using System.Security.Claims;
@@ -17,12 +18,13 @@ namespace Biblio.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly AppDbContext _context;
-
-        public UpgradeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, AppDbContext context)
+        private readonly IConfiguration _configuration;
+        public UpgradeController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, AppDbContext context, IConfiguration configuration)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _context = context;
+            _configuration = configuration;
         }
         [HttpGet]
         public IActionResult Index()
@@ -55,9 +57,7 @@ namespace Biblio.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var isYearly = payingPlanType == "Yearly";
-            var price = isYearly ? 278 : 29;
-            var amountInCents = 100 * price;
-            string priceName = isYearly ? "Library Pro (Yearly)" : " Library Pro (Monthly)";
+            string priceId = isYearly ? _configuration["Stripe:PriceId_Yearly"] : _configuration["Stripe:PriceId_Monthly"];
 
             var domain = "https://" + Request.Host; // الحصول على رابط الموقع الحالي
 
@@ -68,21 +68,13 @@ namespace Biblio.Controllers
                 {
                     new SessionLineItemOptions
                     {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            UnitAmount = amountInCents,
-                            Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = priceName,
-                            },
-                        },
+                        Price = priceId,
                         Quantity = 1,
                     },
                 },
-                Mode = "payment", // أو "subscription" لو عندك خطط جاهزة على Stripe
+                Mode = "subscription",
                 // عند النجاح، أرسل المستخدم للـ Action الجديد مع نوع الخطة
-                SuccessUrl = domain + $"/Upgrade/PaymentSuccess?payingPlanType={payingPlanType}",
+                SuccessUrl = domain + $"/Upgrade/PaymentSuccess?payingPlanType={payingPlanType}&session_id={{CHECKOUT_SESSION_ID}}",
                 CancelUrl = domain + "/Upgrade/Index",
             };
 
@@ -94,7 +86,7 @@ namespace Biblio.Controllers
         }
         // الخطوة 2: استقبال المستخدم بعد الدفع وتنفيذ الترقية
         [HttpGet] // Stripe بيرجع المستخدم بـ GET Request
-        public async Task<IActionResult> PaymentSuccess(string payingPlanType)
+        public async Task<IActionResult> PaymentSuccess(string payingPlanType, string session_id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
@@ -109,7 +101,14 @@ namespace Biblio.Controllers
             user.PayingPlanType = payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? PayingPlanType.Monthly : PayingPlanType.Yearly;
             user.LastPaymentDate = DateTime.Now;
             user.NextPaymentDate = DateTime.UtcNow.AddMonths(payingPlanType.Equals("Monthly", StringComparison.OrdinalIgnoreCase) ? 1 : 12);
-            var updateResult = await _userManager.UpdateAsync(user);
+            if(!string.IsNullOrEmpty(session_id))
+            {
+                var sessionService = new SessionService();
+                var session = await sessionService.GetAsync(session_id);
+                user.StripeCustomerId = session.CustomerId;
+                user.StripeSubscriptionId = session.SubscriptionId;
+            }
+                var updateResult = await _userManager.UpdateAsync(user);
 
             if (updateResult.Succeeded)
             {
@@ -139,7 +138,20 @@ namespace Biblio.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
+            if (!string.IsNullOrEmpty(user.StripeSubscriptionId))
+            {
+                    var subscriptionService = new SubscriptionService();
+                    var cancelOptions = new SubscriptionCancelOptions
+                    {
+                        InvoiceNow = false,
+                        Prorate = false,
+                    };
 
+                    await subscriptionService.CancelAsync(user.StripeSubscriptionId, cancelOptions);
+
+                    user.StripeSubscriptionId = null;
+                    user.StripeCustomerId = null;
+            }
             user.PlanType = PlanType.Free;
             user.PayingPlanType = null;
             user.LastPaymentDate = null;
@@ -162,7 +174,6 @@ namespace Biblio.Controllers
                 "/Account/Profile");
 
             return RedirectToAction("Profile", "Account");
-            //return Json(new { success = true, message = "Downgrade complete. Permissions updated." });
         }
 
         // GET: /Upgrade/GetUpgradeModalData (جديد)

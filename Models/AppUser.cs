@@ -12,7 +12,8 @@ namespace Biblio.Models
         public PayingPlanType? PayingPlanType { get; set; }
         public DateTime? LastPaymentDate { get; set; }
         public DateTime? NextPaymentDate { get; set; }
-
+        public string? StripeCustomerId { get; set; }
+        public string? StripeSubscriptionId { get; set; }
 
         // Navigation property => A User can have many Collections
         public ICollection<Collection> Collections { get; set; } = new List<Collection>();

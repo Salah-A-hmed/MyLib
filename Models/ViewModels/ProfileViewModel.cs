@@ -12,6 +12,7 @@
         public string? PaymentPlan { get; set; }
         public string? NextPayment { get; set; }
         public decimal? PaymentPrice { get; set; }
+        public string? StatusMessage { get; set; }
 
     }
 }

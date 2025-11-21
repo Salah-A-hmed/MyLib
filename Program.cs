@@ -3,6 +3,7 @@ using Biblio.Models;
 using Biblio.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,7 @@ namespace Biblio
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IBookFilterService, BookFilterService>();
             builder.Services.AddHostedService<NotificationService>();
-
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
