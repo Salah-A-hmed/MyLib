@@ -1,70 +1,105 @@
-# Biblio
+# Biblio - Smart Library Management System 📚
 
-Biblio is a comprehensive web application for managing a personal or small library. It allows users to manage their books, collections, borrowings, and visitors. The application is built with ASP.NET Core and Entity Framework Core, and it uses a SQL Server database.
+Biblio is a comprehensive, SaaS-ready web application designed for managing personal or small-to-medium libraries. It streamlines book tracking, borrowing cycles, visitor management, and membership subscriptions.
 
-## Features
+Built with **ASP.NET Core MVC (.NET 9)**, adhering to modern clean code principles and secure architecture.
 
-  * **Book Management:** Add, edit, delete, and view books in your library.
-  * **Search:** Find books using the Google Books API and add them to your collection.
-  * **Collections:** Organize your books into collections.
-  * **Borrowing System:** Keep track of borrowed books, due dates, and returns.
-  * **Visitor Management:** Manage a list of people who can borrow books.
-  * **Notifications:** Get notified about overdue books and other events.
-  * **User Authentication:** Secure user accounts with ASP.NET Core Identity.
-  * **User Roles:** Different levels of access for different user types (Admin, Librarian, Reader).
+## ✨ Key Features
 
-## Technologies Used
+### 📖 Core Library Management
+* **Book Inventory:** Add books manually or fetch details automatically via **Google Books API**.
+* **Search:** Find books using the Google Books API and add them to your collection.
+* **Collections:** Organize books into custom collections (e.g., Sci-Fi, Favorites).
+* **Borrowing System:** Track checked-out books, due dates, and returns.
+* **Visitor Management:** Maintain a database of library visitors and their borrowing history.
 
-  * **Framework:** ASP.NET Core MVC
-  * **Database:** Microsoft SQL Server
-  * **Object-Relational Mapper (ORM):** Entity Framework Core
-  * **Authentication:** ASP.NET Core Identity
-  * **Front-End:** HTML, CSS, JavaScript, Bootstrap
-  * **API Integration:** Google Books API
+### 💰 Monetization & Subscriptions (SaaS)
+* **Stripe Integration:** Secure payment processing for subscription plans.
+* **Tiered Access:**
+    * **Reader (Free):** Basic access to manage personal books.
+    * **Librarian (Pro):** Unlocks Lending System, Visitor Management, and Advanced Analytics.
+* **Flexible Billing:** Monthly and Yearly subscription options with auto-downgrade handling.
 
-## Setup and Installation
+### 🤖 Automation & Background Services
+* **Smart Notifications:** Automated system alerts for overdue books and low stock.
+* **Fine Calculation:** Daily background jobs to calculate and update overdue fines.
+* **Email Service:** Integrated SMTP email notifications for account verification and password resets.
+
+### 📊 Dashboards & Analytics
+* **Interactive Charts:** Visual insights using Plotly and Google Charts.
+* **Admin Panel:** Full control over users, roles, and platform-wide statistics.
+* **User Profile:** Personalized dashboard showing reading stats, borrowing history, and subscription status.
+
+## 🛠️ Tech Stack
+
+* **Framework:** ASP.NET Core 9 MVC
+* **Database:** Microsoft SQL Server (Entity Framework Core Code-First)
+* **Authentication:** ASP.NET Core Identity (Roles & Claims)
+* **Payments:** Stripe API
+* **Frontend:** HTML5, CSS3, Bootstrap 5, Tailwind CSS (Utility classes), JavaScript (ES6+)
+* **External APIs:** Google Books API
+
+## 🚀 Getting Started
+
+Follow these instructions to get the project up and running on your local machine.
+
+### Prerequisites
+* .NET 9.0 SDK
+* SQL Server (LocalDB or Express)
+* Stripe Account (for payments)
+* Gmail Account (for email sending - optional)
+
+### Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/salah-a-hmed/mylib.git
+    git clone [https://github.com/salah-a-hmed/mylib.git](https://github.com/salah-a-hmed/mylib.git)
+    cd mylib
     ```
-2.  **Navigate to the project directory:**
-    ```bash
-    cd mylib/MyLib-30f2380ef1f96f3965a9a6f23e8961a4d514e2dd
+
+2.  **Configure Settings:**
+    Update `appsettings.json` or use **User Secrets** (Recommended) with your connection string and API keys:
+
+    ```json
+    {
+      "ConnectionStrings": {
+        "DefaultConnection": "Server=YOUR_SERVER;Database=Biblio_DB;Trusted_Connection=True;TrustServerCertificate=True;"
+      },
+      "Stripe": {
+        "SecretKey": "sk_test_...",
+        "PublishableKey": "pk_test_...",
+        "PriceId_Monthly": "price_...",
+        "PriceId_Yearly": "price_..."
+      },
+      "EmailSettings": {
+        "Host": "smtp.gmail.com",
+        "Port": 587,
+        "FromEmail": "your-email@gmail.com",
+        "Password": "your-app-password"
+      }
+    }
     ```
-3.  **Configure the database connection:**
-      * Open `appsettings.json`.
-      * Modify the `DefaultConnection` string to point to your SQL Server instance.
-4.  **Apply database migrations:**
+
+3.  **Apply Migrations:**
+    Create the database and apply the schema.
     ```bash
     dotnet ef database update
     ```
-5.  **Run the application:**
+
+4.  **Run the Application:**
     ```bash
     dotnet run
     ```
-6.  **Access the application:**
-      * Open your web browser and navigate to `http://localhost:5035` or `https://localhost:7292`.
 
-## Usage
+### 👤 Default Admin User (Seeded)
+The application seeds a default admin user on the first run:
+* **Email:** `admin@biblio.com`
+* **Password:** `Admin@123`
 
-  * **Register a new account:** Create a new user account to start managing your library.
-  * **Add Books:** You can add books manually or use the search feature to find books from the Google Books API.
-  * **Create Collections:** Organize your books by creating collections.
-  * **Manage Visitors:** Add and manage visitors who can borrow books.
-  * **Track Borrowings:** Create borrowing records to track which books are borrowed, by whom, and when they are due.
+## 🤝 Contributing
 
-## Database Schema
+contributions are welcome! Please feel free to submit a Pull Request.
 
-The application uses a relational database with the following main entities:
-
-  * **Books:** Stores information about the books in the library.
-  * **Collections:** Represents collections of books.
-  * **Borrowings:** Tracks the borrowing of books by visitors.
-  * **Visitors:** Stores information about the people who borrow books.
-  * **Notifications:** Stores notifications for users.
-  * **AppUser:** Represents the application's users.
-
-## License
+## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
