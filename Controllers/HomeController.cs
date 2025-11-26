@@ -1,4 +1,4 @@
-using Biblio.Models;
+﻿using Biblio.Models;
 using Biblio.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +31,41 @@ namespace Biblio.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        // --- (صفحات Features Section) ---
+        public IActionResult Catalog()
+        {
+            return View();
+        }
 
+        public IActionResult Features()
+        {
+            return View();
+        }
+
+        public IActionResult Events()
+        {
+            return View();
+        }
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        // --- (صفحات Bottom Links) ---
+        public IActionResult DataProtection()
+        {
+            return View();
+        }
+
+        public IActionResult CookiePreferences()
+        {
+            return View();
+        }
+
+        public IActionResult UserAgreement()
+        {
+            return View();
+        }
 
     }
 }

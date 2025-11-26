@@ -1,0 +1,276 @@
+﻿@{
+    ViewData["Title"] = "Cookie Preferences";
+    Layout = "~/Views/Shared/_PagesLayout.cshtml";
+}
+<!-- Header -->
+<section class="!bg-gradient-to-br !from-[#2C3E50] !to-[#3d5a73] !py-16 !px-[6%]">
+    <div class="!max-w-4xl !mx-auto !text-center">
+        <h1 class="!text-4xl md:!text-5xl !font-bold !text-white !mb-4">
+            <i class="fas fa-cookie-bite !text-[#4bc1d2] !mr-3"></i>
+            Cookie Preferences
+        </h1>
+        <p class="!text-white/80">Manage how we use cookies on your device</p>
+    </div>
+</section>
+
+<!-- Content -->
+<section class="!py-16 !px-[6%]">
+    <div class="!max-w-4xl !mx-auto">
+        <div class="!bg-white !rounded-2xl !p-8 md:!p-12 !shadow-lg">
+
+            <!-- Introduction -->
+            <div class="!mb-10">
+                <h2 class="!text-2xl !font-bold !text-[#2C3E50] !mb-4">
+                    <i class="fas fa-info-circle !text-[#4bc1d2] !mr-2"></i>
+                    About Cookies
+                </h2>
+                <p class="!text-[#34495E] !leading-relaxed">
+                    Cookies are small text files that are stored on your device when you visit our website. They help us provide you with a better experience by remembering your preferences and understanding how you use our service. You can manage your cookie preferences below.
+                </p>
+            </div>
+
+            <!-- Cookie Settings -->
+            <div class="!mb-10">
+                <h2 class="!text-2xl !font-bold !text-[#2C3E50] !mb-6">
+                    <i class="fas fa-sliders-h !text-[#4bc1d2] !mr-2"></i>
+                    Your Cookie Settings
+                </h2>
+
+                <!-- Essential Cookies -->
+                <div class="!bg-[#E8EFF3] !rounded-xl !p-6 !mb-4">
+                    <div class="!flex !items-start !justify-between !gap-4">
+                        <div class="!flex-1">
+                            <div class="!flex !items-center !gap-2 !mb-2">
+                                <h3 class="!font-bold !text-[#2C3E50]">Essential Cookies</h3>
+                                <span class="!bg-[#4bc1d2] !text-white !px-2 !py-0.5 !rounded !text-xs">Required</span>
+                            </div>
+                            <p class="!text-[#34495E] !text-sm">
+                                These cookies are necessary for the website to function properly. They enable core functionality such as security, network management, and accessibility. You cannot disable these cookies.
+                            </p>
+                        </div>
+                        <div class="!flex-shrink-0">
+                            <div class="!w-12 !h-6 !bg-[#4bc1d2] !rounded-full !relative !cursor-not-allowed !opacity-70">
+                                <div class="!absolute !right-1 !top-1 !w-4 !h-4 !bg-white !rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Cookies -->
+                <div class="!bg-white !border-2 !border-[#dee2e6] !rounded-xl !p-6 !mb-4">
+                    <div class="!flex !items-start !justify-between !gap-4">
+                        <div class="!flex-1">
+                            <h3 class="!font-bold !text-[#2C3E50] !mb-2">Performance Cookies</h3>
+                            <p class="!text-[#34495E] !text-sm">
+                                These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our site. They help us know which pages are the most and least popular.
+                            </p>
+                        </div>
+                        <div class="!flex-shrink-0">
+                            <label class="!cursor-pointer">
+                                <input type="checkbox" id="performanceCookies" class="!hidden" checked>
+                                <div class="cookie-toggle !w-12 !h-6 !bg-[#4bc1d2] !rounded-full !relative !transition-colors">
+                                    <div class="!absolute !right-1 !top-1 !w-4 !h-4 !bg-white !rounded-full !transition-all toggle-dot"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Functional Cookies -->
+                <div class="!bg-white !border-2 !border-[#dee2e6] !rounded-xl !p-6 !mb-4">
+                    <div class="!flex !items-start !justify-between !gap-4">
+                        <div class="!flex-1">
+                            <h3 class="!font-bold !text-[#2C3E50] !mb-2">Functional Cookies</h3>
+                            <p class="!text-[#34495E] !text-sm">
+                                These cookies enable enhanced functionality and personalization, such as remembering your login details, language preferences, and customized settings.
+                            </p>
+                        </div>
+                        <div class="!flex-shrink-0">
+                            <label class="!cursor-pointer">
+                                <input type="checkbox" id="functionalCookies" class="!hidden" checked>
+                                <div class="cookie-toggle !w-12 !h-6 !bg-[#4bc1d2] !rounded-full !relative !transition-colors">
+                                    <div class="!absolute !right-1 !top-1 !w-4 !h-4 !bg-white !rounded-full !transition-all toggle-dot"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Marketing Cookies -->
+                <div class="!bg-white !border-2 !border-[#dee2e6] !rounded-xl !p-6 !mb-4">
+                    <div class="!flex !items-start !justify-between !gap-4">
+                        <div class="!flex-1">
+                            <h3 class="!font-bold !text-[#2C3E50] !mb-2">Marketing Cookies</h3>
+                            <p class="!text-[#34495E] !text-sm">
+                                These cookies are used to track visitors across websites. They are used to display ads that are relevant and engaging for individual users.
+                            </p>
+                        </div>
+                        <div class="!flex-shrink-0">
+                            <label class="!cursor-pointer">
+                                <input type="checkbox" id="marketingCookies" class="!hidden">
+                                <div class="cookie-toggle !w-12 !h-6 !bg-gray-300 !rounded-full !relative !transition-colors">
+                                    <div class="!absolute !left-1 !top-1 !w-4 !h-4 !bg-white !rounded-full !transition-all toggle-dot"></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="!flex !flex-col sm:!flex-row !gap-4 !mb-10">
+                <button id="savePreferences" class="!flex-1 !py-3 !bg-[#4bc1d2] !text-white !rounded-lg !font-bold !transition-all hover:!bg-[#0096b5]">
+                    <i class="fas fa-save !mr-2"></i>
+                    Save Preferences
+                </button>
+                <button id="acceptAll" class="!flex-1 !py-3 !bg-[#2C3E50] !text-white !rounded-lg !font-bold !transition-all hover:!bg-[#1a252f]">
+                    <i class="fas fa-check-double !mr-2"></i>
+                    Accept All
+                </button>
+                <button id="rejectAll" class="!flex-1 !py-3 !bg-[#E8EFF3] !text-[#2C3E50] !rounded-lg !font-bold !transition-all hover:!bg-gray-200">
+                    <i class="fas fa-times !mr-2"></i>
+                    Reject All
+                </button>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="!hidden !mb-10 !p-4 !bg-green-100 !border !border-green-400 !rounded-lg !text-green-700 !text-center">
+                <i class="fas fa-check-circle !mr-2"></i>
+                Your cookie preferences have been saved.
+            </div>
+
+            <!-- More Information -->
+            <div class="!mb-10">
+                <h2 class="!text-2xl !font-bold !text-[#2C3E50] !mb-4">
+                    <i class="fas fa-question-circle !text-[#4bc1d2] !mr-2"></i>
+                    More Information
+                </h2>
+                <div class="!space-y-4">
+                    <div class="!border-l-4 !border-[#4bc1d2] !pl-4">
+                        <h4 class="!font-semibold !text-[#2C3E50]">How long are cookies stored?</h4>
+                        <p class="!text-[#34495E] !text-sm">Session cookies are deleted when you close your browser. Persistent cookies remain on your device for a set period or until you delete them.</p>
+                    </div>
+                    <div class="!border-l-4 !border-[#4bc1d2] !pl-4">
+                        <h4 class="!font-semibold !text-[#2C3E50]">How to delete cookies?</h4>
+                        <p class="!text-[#34495E] !text-sm">You can delete cookies through your browser settings. Note that this may affect your experience on our website.</p>
+                    </div>
+                    <div class="!border-l-4 !border-[#4bc1d2] !pl-4">
+                        <h4 class="!font-semibold !text-[#2C3E50]">Third-party cookies</h4>
+                        <p class="!text-[#34495E] !text-sm">Some cookies are placed by third-party services that appear on our pages. We do not control these cookies.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="!bg-[#4bc1d2]/10 !p-6 !rounded-xl">
+                <h2 class="!text-xl !font-bold !text-[#2C3E50] !mb-3">
+                    <i class="fas fa-envelope !text-[#4bc1d2] !mr-2"></i>
+                    Questions About Cookies?
+                </h2>
+                <p class="!text-[#34495E] !mb-4">
+                    For more information about our use of cookies, please review our
+                    <a asp-controller="Home" asp-action="DataProtection" class="!text-[#4bc1d2] !font-semibold hover:!underline">Privacy Policy</a>
+                    or contact us.
+                </p>
+                <a asp-controller="Home" asp-action="Contact" class="!inline-flex !items-center !gap-2 !text-[#4bc1d2] !font-semibold hover:!underline !no-underline">
+                    <i class="fas fa-arrow-right"></i>
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+
+    // Cookie toggle functionality
+    const toggles = document.querySelectorAll('.cookie-toggle');
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const toggle = this.nextElementSibling;
+            const dot = toggle.querySelector('.toggle-dot');
+
+            if (this.checked) {
+                toggle.classList.remove('!bg-gray-300');
+                toggle.classList.add('!bg-[#4bc1d2]');
+                dot.classList.remove('!left-1');
+                dot.classList.add('!right-1');
+            } else {
+                toggle.classList.add('!bg-gray-300');
+                toggle.classList.remove('!bg-[#4bc1d2]');
+                dot.classList.add('!left-1');
+                dot.classList.remove('!right-1');
+            }
+        });
+    });
+
+    // Save preferences
+    document.getElementById('savePreferences').addEventListener('click', function() {
+        const preferences = {
+            performance: document.getElementById('performanceCookies').checked,
+            functional: document.getElementById('functionalCookies').checked,
+            marketing: document.getElementById('marketingCookies').checked
+        };
+        localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
+        showSuccess();
+    });
+
+    // Accept all
+    document.getElementById('acceptAll').addEventListener('click', function() {
+        document.getElementById('performanceCookies').checked = true;
+        document.getElementById('functionalCookies').checked = true;
+        document.getElementById('marketingCookies').checked = true;
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.dispatchEvent(new Event('change'));
+        });
+
+        localStorage.setItem('cookiePreferences', JSON.stringify({
+            performance: true,
+            functional: true,
+            marketing: true
+        }));
+        showSuccess();
+    });
+
+    // Reject all (except essential)
+    document.getElementById('rejectAll').addEventListener('click', function() {
+        document.getElementById('performanceCookies').checked = false;
+        document.getElementById('functionalCookies').checked = false;
+        document.getElementById('marketingCookies').checked = false;
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.dispatchEvent(new Event('change'));
+        });
+
+        localStorage.setItem('cookiePreferences', JSON.stringify({
+            performance: false,
+            functional: false,
+            marketing: false
+        }));
+        showSuccess();
+    });
+
+    function showSuccess() {
+        const msg = document.getElementById('successMessage');
+        msg.classList.remove('!hidden');
+        setTimeout(() => {
+            msg.classList.add('!hidden');
+        }, 3000);
+    }
+
+    // Load saved preferences
+    const saved = localStorage.getItem('cookiePreferences');
+    if (saved) {
+        const prefs = JSON.parse(saved);
+        document.getElementById('performanceCookies').checked = prefs.performance;
+        document.getElementById('functionalCookies').checked = prefs.functional;
+        document.getElementById('marketingCookies').checked = prefs.marketing;
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.dispatchEvent(new Event('change'));
+        });
+    }
+</script>
+

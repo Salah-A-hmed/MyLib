@@ -1,0 +1,308 @@
+﻿@{
+    ViewData["Title"] = "Book Catalog";
+    Layout = "~/Views/Shared/_PagesLayout.cshtml";
+}
+
+<!-- Hero Section -->
+<section class="!bg-gradient-to-br !from-[#2C3E50] !to-[#3d5a73] !py-16 !px-[6%]">
+    <div class="!max-w-6xl !mx-auto !text-center">
+        <h1 class="!text-4xl md:!text-6xl !font-bold !text-white !mb-6">
+            <i class="fas fa-book !text-[#4bc1d2] !mr-4"></i>
+            Book Catalog
+        </h1>
+        <p class="!text-xl !text-white/90 !max-w-3xl !mx-auto !mb-8">
+            Explore our extensive collection of books. Search, filter, and discover your next great read.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="!max-w-2xl !mx-auto !relative">
+            <input type="text" id="searchInput" placeholder="Search by title, author, or ISBN..."
+                   class="!w-full !px-6 !py-4 !pl-14 !pr-28 !rounded-full !text-lg !border-2 !border-[#4bc1d2] !bg-white !text-[#2C3E50] !shadow-xl focus:!outline-none focus:!ring-4 focus:!ring-[#4bc1d2]/30 placeholder:!text-[#6c757d]">
+            <i class="fas fa-search !absolute !left-5 !top-1/2 !-translate-y-1/2 !text-[#4bc1d2] !text-xl"></i>
+            <button class="!absolute !right-2 !top-1/2 !-translate-y-1/2 !bg-[#4bc1d2] !text-white !px-6 !py-2 !rounded-full !font-semibold hover:!bg-[#0096b5] !transition-colors">
+                Search
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Filters & Catalog Section -->
+<section class="!py-12 !px-[6%]">
+    <div class="!max-w-7xl !mx-auto">
+        <!-- Filter Bar -->
+        <div class="!bg-white !rounded-xl !p-6 !shadow-lg !mb-8">
+            <div class="!flex !flex-wrap !gap-4 !items-center !justify-between">
+                <div class="!flex !flex-wrap !gap-4">
+                    <!-- Category Filter -->
+                    <select id="categoryFilter" class="!px-4 !py-2 !border-2 !border-[#bad7e3] !rounded-lg !bg-[#f8feff] focus:!border-[#4bc1d2] focus:!outline-none">
+                        <option value="">All Categories</option>
+                        <option value="fiction">Fiction</option>
+                        <option value="non-fiction">Non-Fiction</option>
+                        <option value="science">Science</option>
+                        <option value="history">History</option>
+                        <option value="biography">Biography</option>
+                        <option value="children">Children</option>
+                    </select>
+
+                    <!-- Availability Filter -->
+                    <select id="availabilityFilter" class="!px-4 !py-2 !border-2 !border-[#bad7e3] !rounded-lg !bg-[#f8feff] focus:!border-[#4bc1d2] focus:!outline-none">
+                        <option value="">All Books</option>
+                        <option value="available">Available</option>
+                        <option value="borrowed">Currently Borrowed</option>
+                    </select>
+
+                    <!-- Sort By -->
+                    <select id="sortBy" class="!px-4 !py-2 !border-2 !border-[#bad7e3] !rounded-lg !bg-[#f8feff] focus:!border-[#4bc1d2] focus:!outline-none">
+                        <option value="title">Sort by Title</option>
+                        <option value="author">Sort by Author</option>
+                        <option value="year">Sort by Year</option>
+                        <option value="rating">Sort by Rating</option>
+                    </select>
+                </div>
+
+                <div class="!flex !gap-2">
+                    <button id="gridViewBtn" class="!p-2 !bg-[#4bc1d2] !text-white !rounded-lg">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button id="listViewBtn" class="!p-2 !bg-gray-200 !text-gray-600 !rounded-lg hover:!bg-gray-300 !transition-colors">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Count -->
+        <p class="!text-[#34495E] !mb-6"><span class="!font-bold">24</span> books found</p>
+
+        <!-- Book Grid -->
+        <div id="bookGrid" class="!grid lg:!grid-cols-4 md:!grid-cols-3 sm:!grid-cols-2 !gap-6">
+            <!-- Book Card 1 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#4bc1d2] !to-[#0096b5] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-green-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Available</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">The Great Library</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by Sarah Mitchell</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star-half-alt !text-yellow-400 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(4.5)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">Fiction</span>
+                </div>
+            </div>
+
+            <!-- Book Card 2 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#2C3E50] !to-[#3d5a73] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-red-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Borrowed</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">Data Science Basics</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by John Anderson</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-gray-300 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(4.0)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">Science</span>
+                </div>
+            </div>
+
+            <!-- Book Card 3 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#e74c3c] !to-[#c0392b] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-green-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Available</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">World History Vol. 1</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by Emily Roberts</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(5.0)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">History</span>
+                </div>
+            </div>
+
+            <!-- Book Card 4 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#9b59b6] !to-[#8e44ad] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-green-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Available</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">The Mind's Eye</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by Michael Chen</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star-half-alt !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-gray-300 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(3.5)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">Non-Fiction</span>
+                </div>
+            </div>
+
+            <!-- Book Card 5 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#f39c12] !to-[#e67e22] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-green-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Available</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">Adventures in Space</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by Lisa Park</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-gray-300 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(4.0)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">Children</span>
+                </div>
+            </div>
+
+            <!-- Book Card 6 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#1abc9c] !to-[#16a085] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-red-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Borrowed</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">Steve Jobs: A Life</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by Walter Isaacson</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(5.0)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">Biography</span>
+                </div>
+            </div>
+
+            <!-- Book Card 7 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#34495e] !to-[#2c3e50] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-green-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Available</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">Mystery at Midnight</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by Agatha Williams</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star-half-alt !text-yellow-400 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(4.5)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">Fiction</span>
+                </div>
+            </div>
+
+            <!-- Book Card 8 -->
+            <div class="!bg-white !rounded-xl !overflow-hidden !shadow-lg hover:!shadow-xl !transition-all !duration-300 !group">
+                <div class="!relative !h-64 !bg-gradient-to-br !from-[#3498db] !to-[#2980b9] !flex !items-center !justify-center">
+                    <i class="fas fa-book !text-white/30 !text-8xl"></i>
+                    <span class="!absolute !top-3 !right-3 !bg-green-500 !text-white !px-3 !py-1 !rounded-full !text-xs !font-semibold">Available</span>
+                </div>
+                <div class="!p-5">
+                    <h3 class="!font-bold !text-[#2C3E50] !mb-1 !text-lg">Ocean Wonders</h3>
+                    <p class="!text-[#34495E] !text-sm !mb-2">by David Marine</p>
+                    <div class="!flex !items-center !gap-1 !mb-3">
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-yellow-400 !text-sm"></i>
+                        <i class="fas fa-star !text-gray-300 !text-sm"></i>
+                        <span class="!text-[#34495E] !text-sm !ml-1">(4.0)</span>
+                    </div>
+                    <span class="!bg-[#E8EFF3] !text-[#34495E] !px-3 !py-1 !rounded-full !text-xs">Science</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="!flex !justify-center !mt-12">
+            <div class="!flex !items-center !gap-2">
+                <button class="!px-4 !py-2 !rounded-lg !bg-white !text-[#34495E] !border !border-gray-200 hover:!bg-gray-100 !transition-colors">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="!px-4 !py-2 !rounded-lg !bg-[#4bc1d2] !text-white !font-semibold">1</button>
+                <button class="!px-4 !py-2 !rounded-lg !bg-white !text-[#34495E] !border !border-gray-200 hover:!bg-gray-100 !transition-colors">2</button>
+                <button class="!px-4 !py-2 !rounded-lg !bg-white !text-[#34495E] !border !border-gray-200 hover:!bg-gray-100 !transition-colors">3</button>
+                <span class="!px-2 !text-[#34495E]">...</span>
+                <button class="!px-4 !py-2 !rounded-lg !bg-white !text-[#34495E] !border !border-gray-200 hover:!bg-gray-100 !transition-colors">8</button>
+                <button class="!px-4 !py-2 !rounded-lg !bg-white !text-[#34495E] !border !border-gray-200 hover:!bg-gray-100 !transition-colors">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="!py-16 !px-[6%] !bg-gradient-to-r !from-[#4bc1d2] !to-[#0096b5]">
+    <div class="!max-w-4xl !mx-auto !text-center">
+        <h2 class="!text-3xl !font-bold !text-white !mb-4">Can't Find What You're Looking For?</h2>
+        <p class="!text-white/90 !text-lg !mb-6">
+            Sign up for an account to request new books or get personalized recommendations.
+        </p>
+        <a <a asp-area="Identity" asp-page="/Account/Register" class="!inline-block !px-8 !py-4 !bg-white !text-[#4bc1d2] !rounded-lg !font-bold !text-lg !transition-all !duration-300 hover:!bg-gray-100 hover:!shadow-lg !no-underline">
+            <i class="fas fa-user-plus !mr-2"></i>
+            Create Free Account
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // (سكريبت الـ Toggle View من ملفك الأصلي)
+        const gridViewBtn = document.getElementById('gridViewBtn');
+        const listViewBtn = document.getElementById('listViewBtn');
+        const bookGrid = document.getElementById('bookGrid');
+
+        if(gridViewBtn && listViewBtn && bookGrid) {
+            gridViewBtn.addEventListener('click', () => {
+                gridViewBtn.classList.add('!bg-[#4bc1d2]', '!text-white');
+                gridViewBtn.classList.remove('!bg-gray-200', '!text-gray-600');
+                listViewBtn.classList.add('!bg-gray-200', '!text-gray-600');
+                listViewBtn.classList.remove('!bg-[#4bc1d2]', '!text-white');
+                bookGrid.classList.remove('!grid-cols-1');
+                bookGrid.classList.add('lg:!grid-cols-4', 'md:!grid-cols-3', 'sm:!grid-cols-2');
+            });
+
+            listViewBtn.addEventListener('click', () => {
+                listViewBtn.classList.add('!bg-[#4bc1d2]', '!text-white');
+                listViewBtn.classList.remove('!bg-gray-200', '!text-gray-600');
+                gridViewBtn.classList.add('!bg-gray-200', '!text-gray-600');
+                gridViewBtn.classList.remove('!bg-[#4bc1d2]', '!text-white');
+                bookGrid.classList.remove('lg:!grid-cols-4', 'md:!grid-cols-3', 'sm:!grid-cols-2');
+                bookGrid.classList.add('!grid-cols-1');
+            });
+        }
+    </script>
+}
